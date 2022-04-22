@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+enum TypeUser {
+  ADMIN = 0;
+  DEVELOPER = 1;
+  BASE_USER = 2;
+  COMMON_USER = 3;
+  TOP_USER = 4;
+}
+
+message Auth {
+  string fullName = 1;
+  string token = 2;
+  TypeUser typeUser = 3;
+}
+
+message AuthResult {
+  bool succeeded = 1;
+  string error = 2;
+}
