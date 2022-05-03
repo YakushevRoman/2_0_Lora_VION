@@ -6,5 +6,6 @@ pluginManagement {
     }
     
 }
+include("protobuf")
 rootProject.name = "2_0_Lora_VION"
 

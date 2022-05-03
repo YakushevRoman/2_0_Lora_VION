@@ -22,9 +22,9 @@ suspend fun main() {
     val result = stub.onAuthNotify(hello)
     print("Success is ${result.succeeded}")
 
-    if (result.succeeded)
-        stub.onGpsUpdate(Empty.getDefaultInstance()).collect {
-            stub.onGpsUpdate(Empty.getDefaultInstance())
-        }
+    stub.onGpsUpdate(Empty.getDefaultInstance()).collect {
+        stub.onGpsUpdate(Empty.getDefaultInstance())
+        print("$it")
+    }
 
 }

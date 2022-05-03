@@ -20,20 +20,28 @@ repositories {
 }
 
 dependencies {
+    project("protobuf")
+
     testImplementation(kotlin("test"))
     implementation(compose.desktop.currentOs)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8
     implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
-
     implementation("com.google.protobuf:protobuf-kotlin:3.19.4")
-    api("io.grpc:grpc-protobuf:1.44.0")
     api("com.google.protobuf:protobuf-java-util:3.19.4")
     api("com.google.protobuf:protobuf-kotlin:3.19.4")
+
+    api("io.grpc:grpc-protobuf:1.44.0")
     api("io.grpc:grpc-kotlin-stub:1.2.1")
     api("io.grpc:grpc-stub:1.44.0")
     runtimeOnly("io.grpc:grpc-netty:1.44.0")
+
+    // https://square.github.io/kotlinpoet/
+    implementation("com.squareup:javapoet:1.13.0")
+    implementation("com.squareup:kotlinpoet:1.11.0")
+
+    implementation("com.google.protobuf:protoc:3.19.4")
 }
 
 tasks.test {
