@@ -6,15 +6,8 @@ public class HelloWorld{
   var value : Int? = null
 
   fun testapi(): Boolean {
-    value = 5
-    value?.let {
-      return true
-    }
 
-    return false
   }
-
-
 
 }
 

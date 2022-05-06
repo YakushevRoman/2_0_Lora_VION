@@ -7,7 +7,7 @@ import java.io.IOException
 
 
 
-
+// https://github.com/protocolbuffers/protobuf/releases
 class ProtoServer {
     
     fun sendCommand(connection: ProtoServer.Connection, i: Int, message: Any?): Boolean {
@@ -19,6 +19,10 @@ class ProtoServer {
 
     }
 
+    fun sendMessageName(idMassage : Int) : String = ""
+
+    fun recieveMessageName(idMassage : String)  : String = ""
+
     public interface Connection {
         fun setApi(o: Any?)
         fun getApi () : KotlinApi.Connection
@@ -28,7 +32,7 @@ class ProtoServer {
     interface ProtocolDispatcher {
         @Throws(IOException::class)
         fun parseMessage(commandId: Int, inputStream: CodedInputStream?): Message?
-        fun dispatchMessage(connection: Connection, commandId: Int, message: Message): Boolean
+        fun dispatchMessage(connection: Connection, commandId: Int, message: Message)
         fun notifyOnDisconnected(connection: Connection)
         fun notifyOnConnected(connection: Connection)
     }

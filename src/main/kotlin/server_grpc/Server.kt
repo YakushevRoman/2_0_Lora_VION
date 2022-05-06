@@ -1,5 +1,6 @@
 package server_grpc
 
+import AuthKt
 import GpsParametersKt
 import authResult
 import com.google.protobuf.Empty
@@ -20,7 +21,6 @@ private class CommonService(private val dbLocation: SharedFlow<Gps.GpsParameter>
 
     // save data from observable stream and collect
     val gpsData = mutableListOf<Gps.GpsParameter>()
-
 
     init {
         // start listening stream gsp

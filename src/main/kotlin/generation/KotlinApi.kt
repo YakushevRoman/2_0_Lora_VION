@@ -11,12 +11,16 @@ import java.io.IOException
 class KotlinApi {
 
     interface Connection {
+        // для 2 параметров метода доп метод с деф реализ
         fun sendStartGame(message: StartGame): Boolean
         fun sendStopGame(): Boolean
         fun disconnect()
 
+        // для примера использования block
+        fun sendGps (block: GpsParameterKt.Dsl.() -> Unit) : Boolean
+
         var attachment: Any?
-        val serverConnection: ProtoServer.Connection?
+        val serverConnection: ProtoServer.Connection
     }
 
 
@@ -48,22 +52,18 @@ class KotlinApi {
     @Volatile
     var onDisconnectedListener: OnDisconnectedListener? = null
 
-    private fun notifyHelloFromDevReceived(connection: ProtoServer.Connection, message: HelloFromDev): Boolean {
+    private fun notifyHelloFromDevReceived(connection: ProtoServer.Connection, message: HelloFromDev) {
         val localCopy = onHelloFromDevListener
         localCopy?.apply {
             onHelloFromDevReceived(connection.getApi(), message)
-            return true
         }
-        return false
     }
 
-    private fun notifyPingReceived(connection: ProtoServer.Connection): Boolean {
+    private fun notifyPingReceived(connection: ProtoServer.Connection) {
         val localCopy = onPingListener
         localCopy?.apply {
             onPingReceived(connection.getApi())
-            return true
         }
-        return false
     }
 
     val protocolDispatcher: ProtocolDispatcher = object : ProtocolDispatcher {
@@ -77,11 +77,11 @@ class KotlinApi {
             }
         }
 
-        override fun dispatchMessage(connection: ProtoServer.Connection, commandId: Int, message: Message): Boolean {
+        override fun dispatchMessage(connection: ProtoServer.Connection, commandId: Int, message: Message) {
             return when (commandId) {
                 1 -> notifyHelloFromDevReceived(connection, message as HelloFromDev)
                 7 -> notifyPingReceived(connection)
-                else -> false
+                else -> {}
             }
         }
 
@@ -111,6 +111,12 @@ class KotlinApi {
 
         override fun disconnect() =
             server.disconnectClient(serverConnection)
+
+        // для примера использования block
+        override fun sendGps(block: GpsParameterKt.Dsl.() -> Unit): Boolean=
+            server.sendCommand(serverConnection, 5, block)
+
     }
+
 
 }

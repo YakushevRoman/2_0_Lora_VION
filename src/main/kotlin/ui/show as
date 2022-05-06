@@ -1,0 +1,38 @@
+
+//send message example in connection
+
+fun sendGps (block: GpsParameterKt.Dsl.() -> Unit) : Boolean
+
+//realization in server api
+
+override fun sendGps(block: GpsParameterKt.Dsl.() -> Unit): Boolean=
+            server.sendCommand(serverConnection, 5, block)
+
+//configuration message
+
+connection.sendGps {
+    lat = 1
+    long = 2
+    height = 3
+}
+
+connection.sendGps {
+    lat = 1
+    long = 2
+}
+
+connection.sendGps {
+    lat = 1
+}
+connection.sendGps {
+}
+
+при такой реализации default instance сообщения спрятан с dsl builder и можно конфигурировать любой обьет даже без полей
+
+ fun sendGps (connection: ProtoServer.Connection, gpsLat: Int = 0, gpsLong : Int = 0, gpsHeight : Int = 0) {
+        connection.getApi().sendGps {
+            lat = gpsLat
+            long = gpsLong
+            height = gpsHeight
+        }
+    }
