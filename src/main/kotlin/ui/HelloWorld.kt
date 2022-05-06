@@ -1,13 +1,11 @@
-import generation.KotlinApi
+import generation.KotlinServerApi
 
 public class HelloWorld{
 
-  val api = KotlinApi()
+  val api = KotlinServerApi()
   var value : Int? = null
 
-  fun testapi(): Boolean {
-
-  }
+  fun testapi(): Boolean  = true
 
 }
 

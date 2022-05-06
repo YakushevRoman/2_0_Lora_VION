@@ -3,12 +3,14 @@ package generation
 
 import com.google.protobuf.CodedInputStream
 import com.google.protobuf.Message
-import generation.ForpostServer.HelloFromDev
-import generation.ForpostServer.StartGame
-import generation.ProtoServer.ProtocolDispatcher
+import generation.files.ForpostServer
+import generation.files.ForpostServer.HelloFromDev
+import generation.files.ForpostServer.StartGame
+import generation.files.ProtoServer
+import generation.files.ProtoServer.ProtocolDispatcher
 import java.io.IOException
 
-class KotlinApi {
+class KotlinServerApi {
 
     interface Connection {
         // для 2 параметров метода доп метод с деф реализ

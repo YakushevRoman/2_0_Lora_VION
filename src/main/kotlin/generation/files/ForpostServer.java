@@ -1,4 +1,4 @@
-package generation;
+package generation.files;
 
     public final class ForpostServer {
         private ForpostServer() {}

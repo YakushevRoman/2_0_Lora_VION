@@ -1,7 +1,8 @@
-package generation
+package generation.files
 
 import com.google.protobuf.CodedInputStream
 import com.google.protobuf.Message
+import generation.KotlinServerApi
 
 import java.io.IOException
 
@@ -10,12 +11,12 @@ import java.io.IOException
 // https://github.com/protocolbuffers/protobuf/releases
 class ProtoServer {
     
-    fun sendCommand(connection: ProtoServer.Connection, i: Int, message: Any?): Boolean {
+    fun sendCommand(connection: Connection, i: Int, message: Any?): Boolean {
 
         return false
     }
 
-    fun disconnectClient(connection: ProtoServer.Connection) {
+    fun disconnectClient(connection: Connection) {
 
     }
 
@@ -25,7 +26,7 @@ class ProtoServer {
 
     public interface Connection {
         fun setApi(o: Any?)
-        fun getApi () : KotlinApi.Connection
+        fun getApi () : KotlinServerApi.Connection
         fun getServer(): ProtoServer
     }
 

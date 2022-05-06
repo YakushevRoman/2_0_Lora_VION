@@ -2,9 +2,12 @@ package generation;
 
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
+import generation.files.ForpostServer;
+import generation.files.ProtoServer;
+
 import java.io.IOException;
 
-class JavaAPi {
+class JavaServerApi {
 
     public ProtoServer.ProtocolDispatcher getProtocolDispatcher() {
         return mProtocolDispatcher;
