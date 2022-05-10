@@ -19,7 +19,7 @@ class KotlinServerApi {
         fun disconnect()
 
         // для примера использования block
-        fun sendGps (block: GpsParameterKt.Dsl.() -> Unit) : Boolean
+        fun sendGps(block: GpsParameterKt.Dsl.() -> Unit): Boolean
 
         var attachment: Any?
         val serverConnection: ProtoServer.Connection
@@ -115,10 +115,32 @@ class KotlinServerApi {
             server.disconnectClient(serverConnection)
 
         // для примера использования block
-        override fun sendGps(block: GpsParameterKt.Dsl.() -> Unit): Boolean=
+        override fun sendGps(block: GpsParameterKt.Dsl.() -> Unit): Boolean =
             server.sendCommand(serverConnection, 5, block)
 
     }
+
+    fun getSendCommandName(commandId: Int): String =
+        when (commandId) {
+            1 -> "StatFromKit"
+            2 -> "SettingsArena25"
+            3 -> "StartGame"
+            4 -> "StopGame"
+            5 -> "Respawn"
+            else -> "Unknown command id"
+        }
+
+    fun getRecvCommandName(commandId: Int): String =
+        when (commandId) {
+            0 -> "HelloFromDev"
+            1 -> "StatFromKit"
+            2 -> "SettingsArena25"
+            29 -> "SetFlagState"
+            12 -> "ChangeId"
+            19 -> "StatById"
+            17 -> "Ping"
+            else -> "Unknown command id"
+        }
 
 
 }

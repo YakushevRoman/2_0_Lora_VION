@@ -23,9 +23,8 @@ public class UIThreadClientCommandDispatcher implements ProtoClient.ProtocolDisp
     }
 
     @Override
-    public boolean dispatchMessage(final int commandId, final MessageLite message) {
+    public void dispatchMessage(final int commandId, final MessageLite message) {
         executor.executeInUiThread(() -> realDispatcher.dispatchMessage(commandId, message));
-        return true;
     }
 
     @Override

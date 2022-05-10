@@ -40,3 +40,4 @@ class ProtoServer {
 
 
 }
+// отдельный моду

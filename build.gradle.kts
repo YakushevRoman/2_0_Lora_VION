@@ -40,6 +40,10 @@ dependencies {
     // https://square.github.io/kotlinpoet/
     implementation("com.squareup:javapoet:1.13.0")
     implementation("com.squareup:kotlinpoet:1.11.0")
+
+    // https://mvnrepository.com/artifact/com.googlecode.protobuf-java-format/protobuf-java-format
+    implementation ("com.googlecode.protobuf-java-format:protobuf-java-format:1.4")
+
 }
 
 tasks.test {
