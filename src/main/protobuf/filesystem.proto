@@ -1,0 +1,158 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+option optimize_for = LITE_RUNTIME;
+option go_package = "forpost_server";
+
+// Reserved (300 - 400) range
+option (c2s_base) = 300; //set in config file
+option (s2c_base) = 300; //set in config file
+
+
+// Server -> Client  command
+// Client -> Server  responce
+
+
+message FSInfo {
+  option (s2c_id)  = 1;
+  option (txt_cmd) = "fsif";
+}
+
+message FSInfoReply {
+  option (c2s_id)  = 1;
+  option (txt_cmd) = "fsir";
+	
+	int32  status        = 1;
+	uint32 totalBytes    = 2;
+	uint32 usedBytes     = 3;
+	uint32 blockSize     = 4;
+	uint32 pageSize      = 5;
+	uint32 maxOpenFiles  = 6;
+	uint32 maxPathLength = 7;
+	string fsname        = 8;
+}
+
+
+message FormatFS {
+  option (s2c_id)  = 2;
+  option (txt_cmd) = "form";
+}
+
+message FormatFSReply {
+  option (c2s_id)  = 2;
+  option (txt_cmd) = "forr";
+	
+	int32 status = 1;
+}
+
+
+message LsDir {
+  option (s2c_id)  = 3;
+  option (txt_cmd) = "lsdi";
+	
+	string path = 1;
+}
+
+message DirReply {
+	string filename = 1;
+	uint32 size     = 2;
+	uint32 page_ix  = 3;
+}
+
+message LsDirReply {
+  option (c2s_id)  = 3;
+  option (txt_cmd) = "lsdr";
+	
+	int32    status            = 1;
+	repeated DirReply files = 2;
+}
+
+
+message FileInfo {
+  option (s2c_id)  = 4;
+  option (txt_cmd) = "finf";
+	
+	string filename  = 1;
+}
+
+message FileInfoReply {
+  option (c2s_id)  = 4;
+  option (txt_cmd) = "finr";
+	
+	int32  status  = 1;
+	uint32 size    = 2;
+	uint32 page_ix = 3;
+}
+
+
+message DelFile {
+  option (s2c_id)  = 5;
+  option (txt_cmd) = "fdel";
+	
+	uint32 page_ix = 1;
+}
+
+message DelFileReply {
+  option (c2s_id)  = 5;
+  option (txt_cmd) = "fder";
+	
+	int32 status = 1;
+}
+
+
+message ReadFile {
+  option (s2c_id)  = 6;
+  option (txt_cmd) = "read";
+	
+	uint32 page_ix  = 1;
+	uint32 offset   = 2;
+	uint32 lenght   = 3;
+}
+
+message ReadFileReply {
+  option (c2s_id)  = 6;
+  option (txt_cmd) = "read";
+	
+	int32 status = 1;
+	bytes data   = 2;
+}
+
+
+message WriteFile {
+  option (s2c_id)  = 7;
+  option (txt_cmd) = "wrte";
+	
+	string filename  = 1;
+	uint32 offset    = 2;
+	bytes  data      = 3;
+	uint32 flags     = 4;
+	uint32 file_size = 5;
+}
+
+message WriteFileReply {
+  option (c2s_id)  = 7;
+  option (txt_cmd) = "wrte";
+	
+	int32  status  = 1;
+	uint32 written = 2;
+	uint32 offset  = 3;
+}
+
+
+message CalcMD5 {
+	option (s2c_id)  = 8;
+  option (txt_cmd) = "md5c";
+	
+	uint32 page_ix	= 1;
+	string filename = 2;
+}
+
+message CalcMD5Reply {
+	option (c2s_id)  = 8;
+	option (txt_cmd) = "md5c";
+	
+	bytes checksum = 1;
+	int32  status  = 2;
+}
+

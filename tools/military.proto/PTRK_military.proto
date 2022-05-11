@@ -1,0 +1,65 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+option go_package = "military";
+
+// Reserve (500-600) range
+option (c2s_base) = 500;
+option (s2c_base) = 500;
+
+// Сообщение серверу о текущей статистике клиента
+message StatFromPTRK {
+	option (c2s_id) = 1;
+	option (s2c_id) = 1;
+		
+	int32 current_health = 1;   // Текущее количесвто единиц прочности ПТРК
+	int32 game_status = 2;      // Игровое состояние
+	int32 quantity_shots = 3;   // Количесвто выстрелов
+}
+
+// Сообщение клиенту об установке настроек              
+message PTRKSettings {
+	option (c2s_id) = 2;
+	option (s2c_id) = 2;
+
+	int32 default_health = 1;    	// Количесвто единиц прочности ПТРК 
+	int32 team_color = 2;           // Цвет подразделения
+	int32 time_reload = 3;          // Время перезарядки
+	int32 quantity_missiles = 4;    // Количество ракет
+	int32 IR_power = 5;             // Мощность ик - лазера
+	int32 missile_speed = 6; 	    // Скорость полета ракеты
+}
+
+// Команда клиенту перезарядить ПТРК
+// Сообщение серверу о том что ПТРК был перезаряжен
+message ReloadPtrk{
+	option (c2s_id) = 3;
+	option (s2c_id) = 3;
+	
+	int32 residue_quantity_missiles = 1; // Количесвто оставшихся ракет
+}
+
+// Сообщение серверу о пуске ракеты с ПТРК
+message LaunchingRocket{
+    option (c2s_id) = 4;
+}
+
+// Сообщение серверу о статусе полета ракеты
+message StatusFlightRocket{
+    option (c2s_id) = 5;
+    
+    int32 time = 1;
+    bool  was_target = 2;
+}
+
+// Сообщение серверу об окончании полета ракеты
+message StatusEndFlightRocket{
+    option (c2s_id) = 6;
+    
+    bool is_hit = 1;
+    int32 last_time = 2;
+}
+

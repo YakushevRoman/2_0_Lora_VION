@@ -1,0 +1,221 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+
+option go_package = "vest_rs485";
+
+
+option (c2s_base) = 3200;
+option (s2c_base) = 3200;
+
+enum DeviceType {
+    BlasterInd_3_0 = 0;
+    VestInd_3_0 = 1;
+}
+
+// this is hello message, must be first message after connection
+message HelloFromMaster {
+    option (s2c_id) = 1;
+
+	DeviceType devtype          = 1;
+	int32 serial_number        	= 2;  // Физический номер флэш памяти
+	bytes firmware_ver_main     = 3;
+    bytes firmware_ver_boot     = 4;
+    bytes firmware_ver_fboot    = 5;
+}
+
+message HelloFromSlave {
+    option (c2s_id) = 1;
+
+    DeviceType devtype          = 1;
+	int32 serial_number        	= 2;  // Физический номер флэш памяти
+	bytes firmware_ver_main     = 3;
+    bytes firmware_ver_boot     = 4;
+    bytes firmware_ver_fboot    = 5;
+}
+
+message SettingsVest {
+    option (s2c_id) = 2;
+
+    uint32 brightness_led    = 1;
+    uint32 volume            = 2;
+}
+
+enum IndicationSchemeLed {
+    IN_GAME_INVERT_SCH = 0;           // во время игры инверсия
+    IN_GAME_SCH = 1;                 // во время игры
+    NOT_IN_GAME_SCH = 2;              // после включения до момента игры
+    KIT_INCLUSION_SCH = 3;           // включение комплекта
+    DEACTIVATION_SCH = 4;           // смерть комплекта
+    HIT_NO_ZONE_SCH = 5;            // попадание в комплект без индикации зоны в которую попали
+    RADIATION_SCH = 6;              // воздействие радиации на комплект
+    HEALING_SCH = 7;                // лечение комплекта
+    BONUS_SCH = 8;                  // взятие бонуса
+    PRESSING_TOUCH_BUTTON_SCH = 9;    // нажатие на сенсорную кнопку
+    INFO_SCH = 10;                  // пришла внутриигровая информация (смена присета, настройки с сервера ит.д.)
+    SERVICE_MODE_SCH = 11;			// во время сервисного режима
+    ERROR_SCH = 12;                // ошибка в комплекте
+	HIT_IN_ZONE_SCH = 13;			// попадание в комплект с индикацией зоны в которую попали
+	CONST_IND_SCH = 14;				// засветить все зоны статическим цветом
+	SUPERIORITY_SCH = 15;			// индикация лидирующего игрока
+	MOMENT_OF_DEATH_SCH = 16;		// индикация непосредственно в момент смерти
+	SHUTDOWN_SCH = 17;				// индикация при выключении
+	NINJA_MODE_SCH = 18;			// индикация при которой выключены св. и иногда мигают
+	DOCTOR_MODE_SCH = 19;			// индикация супер доктора
+	SHIELD_MODE_SCH = 20;			// индикация включенного щита
+	KAMIKADZE_MODE_SCH = 21;		// индикация взрывающегося игрока
+	ULTIMATE_DAMAGE_MODE_SCH = 22;	// индикация игрока с ультра уроном
+	HIT_ONLI_ONE_ZONE_SCH = 23;		// индикация попадания с подсветкой только зоны в которую попали
+	PROGRESS_BAR_FRONT_SCH = 24;	// индикация прогресс бара на переднем датчике жилета
+	SQUIRE_MODE_SCH = 25;			// индикация в режиме флагоносца
+	HOSTAGE_PRESET_SCH = 26;		// индикация при выставленном пресете заложник
+}
+
+enum VibroKitIds {
+	VIBRO_ALL_KIT = 0;
+	VIBRO_LEFT_SHOLDER = 1;
+	VIBRO_RIGHT_SHOLDER = 2;
+	VIBRO_FRONT = 3;
+	VIBRO_BACK = 4;
+	VIBRO_MOTOR_BACK = 5;
+}
+
+message SetStateIndication {
+    option (s2c_id) = 3; 
+
+    IndicationSchemeLed sch     = 1;
+    uint32 brightness_led       = 2;
+    uint32 color                = 3;
+	uint32 userData				= 4;
+}
+
+message SetEventIndication {
+    option (s2c_id) = 4; 
+
+    SetStateIndication descr_indication = 1;
+
+    uint32 duration     = 2;
+    uint32 addrSens     = 3;
+}
+
+message SendIr {
+    option (s2c_id) = 5; 
+
+    uint32 packet      = 1;
+    uint32 bits         = 2;                 
+    uint32 power        = 3;
+    uint32 dest         = 4;
+}
+
+message ReciveIr {
+    option (c2s_id) = 2;
+
+    uint32 packet      = 1;
+    uint32 bits         = 2;
+    uint32 source       = 3;
+}
+
+message Vibro {
+    option (s2c_id) = 6;
+
+    uint32 duration     = 1;
+    uint32 dest         = 2;
+}
+
+enum ChanelNumber {
+    CHL = 0;
+    CHR = 1;
+    CHLR = 2;
+}
+
+message DescrAudioFile {
+	string name_file    = 1;
+    uint32 volume       = 2;
+    uint32 repeat_count = 3;
+    bool is_solo        = 4;
+    ChanelNumber ch     = 5;
+}
+
+message PlaySoundToSlave {
+    option (s2c_id) = 7;
+    repeated DescrAudioFile files = 1;
+}
+
+message SystemCommand {
+    option (s2c_id) = 8;
+
+    uint32 command      = 1;
+}
+
+message StateBattery {
+    option (c2s_id) = 3;
+
+    uint32 charge       = 1;
+}
+
+message PowerOnCommand {
+    option (c2s_id) = 4;
+    option (s2c_id) = 12;
+}
+
+message PowerOffCommand {
+    option (c2s_id) = 5;
+    option (s2c_id) = 13;
+}
+
+message GetStatePowerButtonOnSlave {
+    option (s2c_id) = 9; 
+}
+
+message StatePowerButton {
+    option (c2s_id) = 6; 
+
+    bool isPressed = 1;
+}
+
+message StateCapacitiveSensor {
+    option (c2s_id) = 7;
+
+    bool isPressedButton = 1;
+}
+
+enum VestLanguageType{
+	VL_UNKNOWN 			= 0;
+	VL_RUSSIAN 			= 1;
+	VL_ENGLISH 			= 2;
+	VL_SPANISH 			= 3;
+	VL_FRENCH 			= 4;
+	VL_GERMAN 			= 5;
+	VL_ITALIAN 			= 6;
+	VL_UKRAINIAN 		= 7;
+	VL_KOREAN			= 8;
+	SIZE_VEST_LANG_ENUM	= 9;
+}
+
+message SetLanguageOnSlave {
+	 option (s2c_id) = 10;
+	 
+	 VestLanguageType language = 1;
+}
+
+message ServerConnectionStatus {
+	 option (s2c_id) = 11;
+	 
+	 bool serverConnected = 1; //есть ли подключение к серверу
+}
+
+enum VestErrType{
+	VE_NO_ERR = 0;
+	VE_ERR_FLASH = 1; // 1 << 0
+	VE_ERR_SLAVE = 2; // 1 << 1
+}
+
+message DeviceErrorInformation {
+	 option (c2s_id) = 8;
+	 
+	 VestErrType err = 1; //битовое поле с типами ошибки устройства
+}
+

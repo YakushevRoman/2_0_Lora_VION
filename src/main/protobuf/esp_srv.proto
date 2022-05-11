@@ -1,0 +1,256 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+option optimize_for = LITE_RUNTIME;
+option go_package = "forpost_server";
+
+// Reserve [2000-3000) range for ESP <--> SERVER io operations
+option (c2s_base) = 2000;
+option (s2c_base) = 2000;
+
+
+// -------------------------------------------------------
+// Server -> ESP messages
+// -------------------------------------------------------
+
+message ESP_Reboot {
+  option (s2c_id)  = 1;
+  option (txt_cmd) = "erbt";
+}
+
+
+message ESP_VersionRequest {
+  option (s2c_id)  = 2;
+  option (txt_cmd) = "ever";
+}
+
+
+message ESP_FirmwareTask {
+  option (s2c_id)  = 3;
+  option (txt_cmd) = "ifup";
+	uint32 task_id = 1;
+	uint32 dev_id  = 2;
+}
+
+
+message ESP_BeginUpdateResources {
+	option (s2c_id)  = 7;
+	option (txt_cmd) = "burs";
+}
+
+
+message ESP_FinishUpdateResources {
+	option (s2c_id)  = 8;
+	option (txt_cmd) = "furs";
+}
+
+
+// -------------------------------------------------------
+// ESP -> Server messages
+// -------------------------------------------------------
+
+message ESP_WiFiRSSI {
+	option (c2s_id) = 1;
+	
+	int32 rssi = 1;
+}
+
+// Проверка в коде
+message ESP_Assert{
+	option (c2s_id) = 2;
+	
+	uint32 id = 1;
+}
+
+
+message ESP_VersionReply {
+  option (c2s_id)  = 3;
+  option (txt_cmd) = "ever";
+
+  bytes firmware_ver = 1; 
+}
+
+
+message ESP_FirmwareTaskReply {
+  option (c2s_id)  = 4;
+  option (txt_cmd) = "ifup";
+	uint32 task_id = 1;
+	int32 status   = 2;
+	uint32 dev_id  = 3;
+}
+
+
+message ESP_UpdateResourcesReply {
+	option (c2s_id)  = 5;
+	option (txt_cmd) = "stup";
+	
+	int32 status = 1;
+}
+
+
+// -------------------------------------------------------
+// Bidirectional messages
+// -------------------------------------------------------
+
+message ESP_SomeData {
+	option (c2s_id) = 6;
+	option (s2c_id) = 5;
+	
+	uint32 value   = 1;
+	bytes  data    = 2;
+	bool   is_echo = 3;
+}
+
+message ESP_RuntimeError {
+	option (c2s_id) = 7;
+	option (s2c_id) = 6;
+	
+	uint32 err_flags = 2;
+}
+
+
+// -------------------------------------------------------
+// Filesystem
+// -------------------------------------------------------
+
+// Server -> Client  command
+// Client -> Server  responce
+/*
+message ESP_FSInfo {
+  option (s2c_id)  = 21;
+  option (txt_cmd) = "fsif";
+}
+
+message ESP_FSInfoReply {
+  option (c2s_id)  = 21;
+  option (txt_cmd) = "fsir";
+	
+	int32  status        = 1;
+	uint32 totalBytes    = 2;
+	uint32 usedBytes     = 3;
+	uint32 blockSize     = 4;
+	uint32 pageSize      = 5;
+	uint32 maxOpenFiles  = 6;
+	uint32 maxPathLength = 7;
+	string fsname        = 8;
+}
+
+
+message ESP_FormatFS {
+  option (s2c_id)  = 22;
+  option (txt_cmd) = "form";
+}
+
+message ESP_FormatFSReply {
+  option (c2s_id)  = 22;
+  option (txt_cmd) = "forr";
+	
+	int32 status = 1;
+}
+
+
+message ESP_LsDir {
+  option (s2c_id)  = 23;
+  option (txt_cmd) = "lsdi";
+	
+	string path = 1;
+}
+
+message EspDirReply {
+	string filename = 1;
+	uint32 size     = 2;
+	uint32 page_ix  = 3;
+}
+
+message ESP_LsDirReply {
+  option (c2s_id)  = 23;
+  option (txt_cmd) = "lsdr";
+	
+	int32    status            = 1;
+	repeated EspDirReply files = 2;
+}
+
+
+message ESP_FileInfo {
+  option (s2c_id)  = 24;
+  option (txt_cmd) = "finf";
+	
+	string filename  = 1;
+}
+
+message ESP_FileInfoReply {
+  option (c2s_id)  = 24;
+  option (txt_cmd) = "finr";
+	
+	int32  status   = 1;
+	uint32 size     = 2;
+	uint32 page_ix  = 3;
+}
+
+
+message ESP_DelFile {
+  option (s2c_id)  = 25;
+  option (txt_cmd) = "fdel";
+	
+	uint32 page_ix = 1;
+}
+
+message ESP_DelFileReply {
+  option (c2s_id)  = 25;
+  option (txt_cmd) = "fder";
+	
+	int32 status = 1;
+}
+
+
+message ESP_ReadFile {
+  option (s2c_id)  = 26;
+  option (txt_cmd) = "read";
+	
+	uint32 page_ix  = 1;
+	uint32 offset   = 2;
+	uint32 lenght   = 3;
+}
+
+message ESP_ReadFileReply {
+  option (c2s_id)  = 26;
+  option (txt_cmd) = "read";
+	
+	int32 status = 1;
+	bytes data   = 2;
+}
+
+
+message ESP_WriteFile {
+  option (s2c_id)  = 27;
+  option (txt_cmd) = "wrte";
+	
+	string filename = 1;
+	uint32 offset   = 2;
+	bytes  data     = 3;
+	uint32 flags    = 4;
+}
+
+message ESP_WriteFileReply {
+  option (c2s_id)  = 27;
+  option (txt_cmd) = "wrte";
+	
+	int32  status  = 1;
+	uint32 written = 2;
+	uint32 offset  = 3;
+}
+
+
+message ESP_CalcMD5 {
+	option (s2c_id)  = 28;
+  option (txt_cmd) = "md5c";
+	
+	uint32 page_ix = 1;
+}
+
+message ESP_CalcMD5Reply {
+	option (c2s_id)  = 28;
+  option (txt_cmd) = "md5c";
+	
+	bytes checksum = 1;
+}*/

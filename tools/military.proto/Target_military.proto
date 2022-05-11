@@ -1,0 +1,106 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+option go_package = "Common_military";
+
+// Reserve (600-650) range
+option (c2s_base) = 600;
+option (s2c_base) = 600;
+
+// Сообщение клиенту принять настройки от сервера
+message SettingsTarget{
+	option (c2s_id) = 1;
+	option (s2c_id) = 1;
+	
+	int32 time_show_target = 1;   // Время в течении которого цель будет показана (в секундах)
+	int32 receive_hit_number = 2; // Номер от которого будет принято попадание
+	int32 quantityShotsToDefeat = 3; // Количесвто принятых попаданий после которых цель будет поражена 
+}
+
+// Сообщение клиенту показать(поднять) мишень
+message ShowTarget{
+	option (s2c_id) = 2;
+}
+
+// Сообщение клиенту спрятать(опусить) мишень
+message HideTarget{
+	option (s2c_id) = 3;
+}
+
+// Тип с которого было произведенно попадание
+enum TypeGun_e{
+	PKT = 0;     // Пулемет калашникова танковый
+	CANNON = 1;  // Танковое орудие
+}
+enum StateOfTarget_e{
+	TARGET_IS_MOVING = 0; // Цель в движении (в процесе опускания или поднимания)
+	TARGET_IS_SHOWN = 1; // Цель поднята (показана)
+	TARGET_IS_HIDDEN = 2; // Цель опущена (скрыта)
+	TARGET_IS_UNDEFINED = 3; // Цель не определена (находиться в промежуточном состоянии)
+}
+
+enum ErrorOfTarget_e{
+	E_NO_ERRORS = 0; // ошибок нет
+	E_CYCLIC_BUFFER_OVERFLOW = 1; // переполнение циклического буфера
+	E_FDBK_SENSORS_ERROR = 2; // ошибка датчиков обратной связи двигателя
+	E_ENGINE_ERROR = 3; // ошибка пуска двигателя
+	E_I2C_SENSORS_ERROR = 4; // ошибка в массиве адресов датчиков (повторение определяющий адресов, отсутсвтие адресов)
+}
+
+// Сообщение серверу о текущей статистике клиента
+message StatisticsTarget{
+	option (c2s_id) = 2;
+	option (s2c_id) = 4;
+	
+	TypeGun_e TypeGun = 1;
+	int32 quantity_of_hits = 2;
+	bool isKilled = 3;
+}
+
+// Сообщение серверу о положения мишени(поднята, опущена, в движении)
+message PositionOfTarget{
+	option (c2s_id) = 3;
+	
+	StateOfTarget_e StateOfTarget = 1;
+}
+
+//  Сообщение серверу о произошедшей ошибке
+message ErrorsOfTarget{
+	
+	option (c2s_id) = 4;
+	
+	ErrorOfTarget_e errorCode = 1;
+	int32 numberOfRepetitions = 2;
+}
+message ResetError{
+	
+	option (s2c_id) = 5;
+	
+	ErrorOfTarget_e errorCode = 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

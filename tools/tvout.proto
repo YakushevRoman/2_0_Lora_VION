@@ -1,0 +1,331 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+
+option go_package = "forpost_server";
+
+enum TVOutEnumStateGame {
+  sgUNKNOWN            = 0;
+  sgStart              = 1;
+  sgStop               = 2;
+  sgPause              = 3;
+  sgStartWithChatClear = 4;
+}
+
+enum TVOutEnumCommandType {
+  ctUNKNOWN = 0;
+  ctRed     = 1;
+  ctBlue    = 2;
+  ctYellow  = 3;
+  ctGreen   = 4;
+}
+
+enum TVOutEnumPlayerState {
+  psUNKNOWN = 0;
+  pcEnabled = 1;
+  pcDisable = 2;
+}
+
+enum TVOutEnumStatisticView {
+  stUNKNOWN = 0;
+  stTile    = 1;
+  stTable   = 2;
+}
+
+enum TVOutEnumLanguageType {
+  lgLANG_UNKNOWN = 0;
+  lgRUSSIAN = 1;
+  lgENGLISH = 2;
+  lgSPANISH = 3;
+  lgFRENCH  = 4;
+  lgGERMAN  = 5;
+  lgITALY   = 6;
+}
+
+enum TVOutEnumDopType {
+  dtUNKNOWN    = 0;
+  dtDopKTSmart = 1;  
+  dtDopMS      = 2;
+  dtDopSirius  = 3;
+}
+
+enum TVOutEnumKTSmartType
+{
+    ktstUNKNOWN       = 0;
+    ktstTimeCapture   = 1;
+    ktstCaptureByShot = 2;
+    ktstTugOfWar      = 3;
+    ktstThreePerson   = 4;
+    ktstCaptureFlag   = 5;
+}
+
+enum TVOutEnumSiriusType
+{
+    sirtUNKNOWN = 0;
+    sirtBase    = 1;
+}
+
+enum TVOutEnumMSType
+{
+    mstUNKNOWN      = 0;
+    mstControlPoint = 1;
+    mstBase         = 2;
+}
+
+enum TVOutEnumChatEvent
+{
+    cheUNKNOWN            = 0;
+    cheShot               = 1;
+    cheKill               = 2;
+    cheShotInBase_Red     = 3;
+    cheShotInBase_Blue    = 4;
+    cheShotInBase_Yellow  = 5;
+    cheShotInBase_Green   = 6;
+    cheCaptureCP          = 7;
+    cheTakeRadiation      = 8;
+    cheKillRadiation      = 9;
+}
+
+// Сообщение пинга
+message TVOutPing {
+  option (s2c_id) = 1;
+  option (c2s_id) = 1;	
+}
+
+// Сообщение приходит c устройста на катором установлен TV-out при подключении
+message TVOutHello {
+  option (c2s_id) = 26;
+  
+  int32 serial_number                     = 1; // Уникальный номер подключенного устройства
+  int32 major_ver                         = 2; // Версия приложения TV-Out
+  int32 minor_ver                         = 3; // Версия приложения TV-Out
+  int32 release_ver                       = 4; // Версия приложения TV-Out
+  string device_model                     = 5; // Модель подключенного устройства
+}
+
+
+// Сообщение состояние игры
+message TVOutStateGame {
+  option (s2c_id) =	2;
+ 
+  TVOutEnumStateGame current_state_game  = 1; // Состояние игры
+}
+
+// Сообщение текущего времени игры
+message TVOutTimer {
+  option (s2c_id) =	3;
+  
+  int32 current_second = 1; // Секунды
+}
+
+// Сообщение об игроке для чата событий
+message TVOutPlayerInfoForChat{
+  string player_name                   = 1; // Имя игрока
+  TVOutEnumCommandType player_command  = 2; // Команда игрока
+} 
+
+// Сообщение события для вывода в лог чата
+message TVOutEventForChat{
+  option (s2c_id) = 4;
+  
+  TVOutPlayerInfoForChat tvout_player_1_info_for_chat  = 1; // Игрок оказавший действие кому то или получивший действие
+  TVOutEnumChatEvent chat_event                        = 2; // Произошедшее событие
+  TVOutPlayerInfoForChat tvout_player_2_info_for_chat  = 3; // Игрок получивший действие
+}
+
+// Добавить игрока
+message TVOutAddPlayer {
+  option (s2c_id) = 5;
+  
+  int32 player_id                    = 1; // Уникальный ИД игрока
+  string player_name                 = 2; // Имя игрока
+  TVOutEnumCommandType command_type  = 3; // Команда игрока
+}
+
+// Удалить игрока
+message TVOutDeletePlayer {
+  option (s2c_id) = 6;
+  
+  int32 player_id = 1; // Уникальный ИД игрока
+}
+
+// Изменить команду у игрока
+message TVOutChangePlayerCommand {
+  option (s2c_id) = 7;
+  
+  int32 player_id                    = 1; // Уникальный ИД игрока
+  TVOutEnumCommandType command_type  = 2; // Команда игрока
+}
+
+// Изменить имя у игрока
+message TVOutChangePlayerName {
+  option (s2c_id) = 25;
+  
+  int32 player_id        = 1; // Уникальный ИД игрока
+  string player_name     = 2; // Имя игрока
+}
+
+// Изменить состояние игрока
+message TVOutChangePlayerState {
+  option (s2c_id) = 8;
+  
+  int32 player_id                     = 1; // Уникальный ИД игрока
+  TVOutEnumPlayerState player_state   = 2; // Состояние игрока
+}
+
+// Статистика игрока
+message TVOutPlayerStatistic {
+  option (s2c_id) = 9;
+  
+  int32 player_id         = 1; // Уникальный ИД игрока
+  int32 score             = 2; // Очки игрока
+  int32 give_damage       = 3; // Нанесенный урон игрокам 
+  int32 receive_damage    = 4; // Полученный урон игроком
+  int32 shots             = 5; // Кол-во выстрелов игрока
+  int32 efficiency        = 6; // Эффективность игрока
+  int32 accuracy          = 7; // Точность стрельбы игрока
+  int32 life              = 8; // Жизни игрока
+  int32 deaths            = 9; // Кол-во смертей игрока
+  int32 respawns          = 10; // Кол-во возрождений игрока
+  int32 captures_cp        = 11; // Кол-во захватов Контрольных точек игроком
+  int32 hit_in_base       = 12; // Кол-во поподаний в базу игроком
+  int32 fragov            = 13; // Кол-во фрагов у игрока
+}
+
+//Место игрока
+message TVOutPlayerPlace {
+  option (s2c_id) = 24;
+  
+  int32 player_id     = 1; // Уникальный ИД игрока
+  int32 place         = 2; // Место игрока
+}
+
+// Сброс статистики
+message TVOutResetPlayerStatistic {
+  option (s2c_id) = 15;
+}
+
+// Информация об игре
+message TVOutGameInfo {
+  option (s2c_id) = 10;
+  
+  string scenariy_name       = 1; // Название сценария
+  string command_red_name    = 2; // Название команды красных
+  string command_blue_name   = 3; // Название команды синих
+  string command_yellow_name = 4; // Название команды желтых
+  string command_green_name  = 5; // Название команды зеленых
+}
+
+// Статистика команды
+message TVOutCommandStatistic {
+  option (s2c_id) = 11;
+  
+  TVOutEnumCommandType command_type  = 1; // Тип команды
+  int32 score                        = 2; // Очки команды
+  int32 count_win_team               = 3; // Время КТ
+  int32 count_destroy_base           = 4; // Точность
+}
+
+// Место команды в рейтинге
+message TVOutCommandPlace {
+  option (s2c_id) = 23;
+  
+  TVOutEnumCommandType command_type   = 1; // Тип команды
+  int32 place                         = 2; // Место команды
+}
+
+// Настройки TVOut
+message TVOutSettings {
+  option (s2c_id) = 12;
+  
+  TVOutEnumLanguageType current_language  = 1; // Текущий язык
+  int32 major_ver                         = 2; // Версия приложения Арена
+  int32 minor_ver                         = 3; // Версия приложения Арена
+  int32 release_ver                       = 4; // Версия приложения Арена
+  bool show_timer                         = 5; // Отображения таймера игры
+  int32 time_auto_change_players          = 6; // Время смены слоев с игроками (сек)
+}
+
+// Вид статистики
+message TVOutStatisticView {
+  option (s2c_id) = 13;
+  
+  TVOutEnumStatisticView statistic_view = 1; //Отображаемое окно статистики (Плитки игроков/Таблица)
+}
+
+// Отображение статистики последней игры
+message TVOutShowLastStatistic {
+  option (s2c_id) = 14;
+  
+  bool showing = 1; // Отображение статистики
+}
+
+// Сообщение об играющем дополнительном устройсве (КТС, МС, Сириус)
+message TVOutDopInfo {
+  int32 dop_id                    = 1; // ID устройства
+  TVOutEnumDopType dop_type       = 2; // Вид устройства (КТС, МС, Сириус)
+}
+
+// Сообщение KTSmart устройства
+message TVOutAddKTSmartDop {
+  option (s2c_id) = 16;
+  
+  TVOutDopInfo dop_info              = 1; // Информация об устройстве
+  TVOutEnumKTSmartType ktsmart_type  = 2; // Режим КТСмарт (Захват на время, Захват выстрелами, Перетягивание каната, Тройной захват, Поднятие флага)
+}
+
+// Сообщение Sirius устройства
+message TVOutAddSiriusDop {
+  option (s2c_id) = 17;
+  
+  TVOutDopInfo dop_info               = 1; // Информация об устройстве
+  TVOutEnumSiriusType sirius_type     = 2; // Режим Сириус (База)
+  TVOutEnumCommandType base_command   = 3; // Команда базы
+}
+
+// Сообщение MS устройства
+message TVOutAddMSDop {
+  option (s2c_id) = 18;
+  
+  TVOutDopInfo dop_info              = 1; // Информация об устройстве
+  TVOutEnumMSType ms_type            = 2; // Режим МС (Контрольная точка, База)
+  TVOutEnumCommandType base_command  = 3; // Команда базы
+}
+
+// Сообщение статистики с МС, Сириус, КТСмарт
+message TVOutDopStatistic{
+  option (s2c_id) = 19;
+  
+  TVOutDopInfo dop_info    = 1; // Информация об устройстве
+  int32 red_value          = 2; // Очки красной команды (жизни базы в режиме "База")
+  int32 blue_value         = 3; // Очки синей команды
+  int32 yellow_value       = 4; // Очки жолтой команды
+  int32 green_value        = 5; // Очки зеленой команды
+}
+
+// Сообщение состояния доп. устройства
+message TVOutDopState{
+  option (s2c_id) = 20;
+  
+  TVOutDopInfo dop_info      = 1; // Информация об устройстве
+  bool crash_state           = 2; // Состояние устройства (разрушено/не разрушено)
+}
+
+// Сообщение о захвате командой доп. устройства
+message TVOutDopCaptureColorTeam{
+  option (s2c_id) = 21;
+  
+  TVOutDopInfo dop_info      = 1; // Информация об устройстве
+  int32 color_team           = 2; // Команда захватившая доп. устройство (0 - Red; Blue - 1; Yellow  - 2; Green - 3; Nobody - 4)   
+}
+
+// Сообщение о победе команды над доп. устройством
+message TVOutDopTeamWinner{
+  option (s2c_id) = 22;
+  
+  TVOutDopInfo dop_info      = 1; // Информация об устройстве
+  int32 color_team           = 2; // Команда победившая над доп. устройством (0 - Red; Blue - 1; Yellow  - 2; Green - 3; Nobody - 4)
+}

@@ -1,0 +1,23 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+option optimize_for = LITE_RUNTIME;
+option go_package = "forpost_server";
+
+enum gameStatus_t { 
+	UNKNOWN_GAME_STATUS = 0;
+	NO_GAME             = 1; 
+	IN_GAME             = 2;
+	PAUSE_GAME          = 3;
+}
+
+//Команда от устройства - ответ на запрос статуса игры
+message DevGameStatResponse{
+	option (c2s_id) = 9;
+	gameStatus_t gameStatus = 1;	
+}
+
+//Команда от сервера - запрос статуса игры
+message DevGameStatRequest{
+	option (s2c_id) = 33;	
+}

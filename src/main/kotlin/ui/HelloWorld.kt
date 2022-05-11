@@ -1,11 +1,16 @@
-import generation.KotlinServerApi
+//import generation.KotlinServerApi
 
 public class HelloWorld{
 
-  val api = KotlinServerApi()
+  //val api = KotlinServerApi()
   var value : Int? = null
 
-  fun testapi(): Boolean  = true
+  fun testapi(): Boolean{
+
+
+    val bombPro = BombPro.ActionsTypeEnum.ACTIVATED
+    return true
+  }
 
 }
 

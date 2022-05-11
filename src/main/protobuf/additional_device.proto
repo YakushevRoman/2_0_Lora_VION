@@ -1,0 +1,354 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+
+option go_package = "forpost_server";
+
+option (s2c_base) = 50;
+option (c2s_base) = 50;
+//------------Sirius--------------------
+//Настройка режимов Радиации или Аптечки для Сириус и МС
+message SettingsRadiationOrMedicineMode{
+	option (s2c_id) = 1;
+	
+	int32 mode = 1;//радиация(2), Аптечка(3)
+	
+	int32 cp_health = 2;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов)
+	int32 number_health_RAD_take_code = 3; //кол-во отнимаемых жизней "радиацией" (0 - 15)передавать в стиле MILLES
+	int32 send_radiation_time = 4;//время раздачи команды радиации в сек (1 - 255)
+	
+	int32 number_health_add_code = 5;//кол-во добавляемых жизней "аптечкой" (0 - 15)
+	int32 send_medicine_time = 6;//время раздачи команды аптечки в сек (1 - 255)
+	
+	int32 team_color_operate = 7;//на какой цвет команды будет воздействовать(operate) устройство (цвет передавать в стиле MILLES)
+	int32 inactivity_period = 8;//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+}
+//Настройка режима Возрождения для Сириус и МС
+message SettingsRespawnMode{
+	option (s2c_id) = 2;
+
+	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов) (1 - 999)
+	int32 send_respawn_time = 2;//время раздачи команды возрождения в сек (1 - 255)
+	int32 give_commadns_on_color = 3;//Установка параметра разрешающего(1)/запрещяющего(2) раздавать Miles команды для поражения по цвету
+	int32 team_color_operate = 4;//на какой цвет команды будет воздействовать(operate) устройство (цвет передавать в стиле MILLES) 
+	int32 inactivity_period = 5;//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+}
+//Настройка режима Арсенал для Сириус и МС
+message SettingsAmmoMode{
+	option (s2c_id) = 3;
+
+	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов)
+	int32 ammo_add_number_code = 2;//кол-во добавляемых патронов (1 - 254) передавать в стиле MILLES
+	int32 clips_add_number_code = 3;//кол-во добавляемых обойм (1 - 254) передавать в стиле MILLES
+	int32 send_ammo_time = 4;//время раздачи команды патронов/обойм в сек (1 - 255)
+	int32 give_command_auto = 5;//Установка параметра разрешающего(1)/запрещяющего(2) для раздачи ИК пакетов в автоматическом режиме
+	int32 give_ammo_or_clips = 6;//Выбор что пополнять патроны(1)/обоймы(2)
+	//int32 team_color_operate = 7;//на какой цвет команды будет воздействовать(operate) устройство (цвет передавать в стиле MILLES) 
+	int32 inactivity_period = 8;//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+}
+//Настройка режима Контрольной для МС
+message SettingsControlPoint{
+	option (s2c_id) = 4;
+
+	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов)
+	int32 radiation_mode = 2;//Установка параметра разрешающего(1)/запрещяющего(2) раздавать радиацию
+	int32 number_health_RAD_take_code = 3; //кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+	int32 send_radiation_time = 4;//время раздачи команды радиации в сек
+	int32 inactivity_period = 5;//Установить время неактивности(самовостановление) после уничтожения в сек
+}
+//Настройка режима Базы для Сириус и МС
+message SettingsBazeMode{
+	option (s2c_id) = 5;
+
+	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов) (1 - 999)
+	int32 inactivity_period = 2;//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+	int32 send_baze_activation_time = 3;//время раздачи команды радиации и возрождения в сек (1 - 255)
+	int32 team_color_operate = 4;//устанавливается цвет базы
+	int32 number_health_RAD_take_code = 5;//кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+	bool can_to_reactive = 6; //использовать один раз за игру (0 - выкл., 1 - вкл.)
+}
+//Настройка режима Случайный
+
+//message SettingsRandomMode{
+//	option (s2c_id) = 6;
+
+//	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов) (1 - 999)
+//	int32 inactivity_period = 2;//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+//	int32 send_random_time = 3;//время раздачи рандомной команды в сек (1 - 255)
+//	int32 number_health_RAD_take_code = 4;//кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+//}
+
+message CommonSettings {
+	bool ignore = 1;					// Ignore settings
+	uint32 health = 2;					// Device health. (Shot quantity for device destroy) (1 - 999)
+	uint32 inactivity_time = 3;			// Device inactivity time after destroy (1 - 255) sec
+	uint32 min_activate_interval = 4;	// Min activate interval (in random time)
+	uint32 max_activate_interval = 5;	// Max activate interval (in random time) or activate period (in constant time)
+	bool random_active_interval = 6;	// (bool) Enable random activate interval (between min_activate_interval & max_activate_interval)
+	uint32 team_color_operate = 7;		// 
+}
+
+message MedecineModeSet {
+	bool ignore = 1;					// Ignore settings
+    bool disable = 2; 			 	// Disable medicine in RANDOM mode  
+	uint32 add_health_code  = 3; 		// Add health quantity (in MILLES code)
+}
+
+message RadiationModeSet {
+	bool ignore = 1;					// Ignore settings
+	bool disable = 2; 			 	// Disable radiation in RANDOM mode
+	uint32 sub_health_code  = 3;		// Subtract health quantity (in MILLES code)
+}
+
+message AmmoModeSet {
+	bool ignore = 1;					// Ignore settings
+	bool disable = 2; 			 	// Disable radiation in RANDOM mode
+	uint32 add_bullets_or_clips	= 3;	// Select clips or cartridges add (0 = bullets, 1 = clips)??
+	uint32 add_bullets_code  = 4;		// Add charge quantity (in MILLES code)
+	uint32 add_clips_code = 5;			// Add clips quantity (in MILLES code)
+}
+
+message MagnumModeSet {
+	bool ignore = 1;					// Ignore settings
+	bool disable = 2; 			 	// Disable radiation in RANDOM mode
+	uint32 set_shot_power  = 3;			// Set shot power (in MILLES code)
+}
+
+message SettingsRandomMode{
+	option (s2c_id) = 6;
+	
+//	int32 cp_health = 1;							//Установка кол-ва жизней устройства(кол-во необходимых выстрелов) (1 - 999)
+//	int32 inactivity_period = 2;					//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+//	int32 send_random_time = 3;						//время раздачи рандомной команды в сек (1 - 255)
+//	uint32 max_activate_interval = 3;					// Max activate period (in random time) or activate period (in constant time)
+//	int32 number_health_RAD_take_code = 4 [deprecated=true];			//кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+	
+	CommonSettings	common_settings = 5;
+	MedecineModeSet	med_settings = 6;
+	RadiationModeSet rad_settings = 7;
+	AmmoModeSet ammo_settings = 8;
+	MagnumModeSet mag_settings = 9;
+}
+
+
+
+//Настройка режима Бонусный
+message SettingsBonusMode{
+	option (s2c_id) = 7;
+
+	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов) (1 - 999)
+	int32 inactivity_period = 2;//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+	int32 send_bonus_time = 3;//время раздачи рандомной команды в сек (1 - 255)
+}
+//
+message SettingsCTFMode{
+	option (s2c_id) = 18;
+
+	int32 flags_count = 1;//Установка кол-ва флагов в игре (1 - 255)
+	int32 cooldown_time = 2;//Установить время следуещей выдачи флага в сек (1 - 255)
+	int32 owner_team_color = 3;//устанавливается цвет базы
+	int32 send_respawn_time = 4;//время раздачи команды возрождения в сек (1 - 255) 
+}
+message SettingsBombMode{
+	option (s2c_id) = 21;
+	
+	int32 activate_team_color = 1;//Цвет команды "Минёров"
+	int32 deactivate_team_color = 2;//Цвет команды "Саперов"
+	int32 inactivity_period = 3;//Установить время неактивности(самовостановление) после уничтожения в сек (1 - 255)
+	int32 activate_team_health = 4;//Установка кол-ва жизней для активации бомбы(кол-во необходимых выстрелов) (1 - 999)
+	int32 deactivate_team_health = 5;//Установка кол-ва жизней для разминирования бомбы(кол-во необходимых выстрелов) (1 - 999)
+	int32 capture_time = 6;//Время до взрыва бомбы в сек (1 - 999)
+	int32 delayed_timer = 7;//Время до начала отсчета в автоматическом режиме, в сек (1 - 999)(0 выкл.)
+}
+//------------КТС--------------------
+//Настройка режима Захват на время
+message SettingsTimeCapture{
+	option (s2c_id) = 8;
+
+	int32 capture_time = 1;//Установка кол-ва времени для захвата устройства(1 - 30 мин)
+	int32 number_health_RAD_take_code = 2; //кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+	int32 send_radiation_time = 3;//время раздачи команды радиации
+	bool can_to_reactive = 4;//использовать один раз за игру (0 - выкл., 1 - вкл.)
+	int32 inactivity_period = 5;//Установить время неактивности(самовостановление) после уничтожения в сек
+}
+//Настройка режима Захват выстрелами
+message SettingsCaptureByShot{
+	option (s2c_id) = 9;
+
+	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов) (1 - 999)
+	int32 number_health_RAD_take_code = 2; //кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+	int32 send_radiation_time = 3;//время раздачи команды радиации
+	bool can_to_reactive = 4;//использовать один раз за игру (0 - выкл., 1 - вкл.)
+	int32 inactivity_period = 5;//Установить время неактивности(самовостановление) после уничтожения в сек
+}
+//Настройка режима Перетягивание каната
+message SettingsTugOfWar{
+	option (s2c_id) = 10;
+
+	int32 capture_time = 1;//Установка кол-ва времени для захвата устройства(1 - 30 мин)
+	int32 number_health_RAD_take_code = 2; //кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES	
+	int32 send_radiation_time = 3;//время раздачи команды радиации
+	bool can_to_reactive = 4;//использовать один раз за игру (0 - выкл., 1 - вкл.)
+	int32 inactivity_period = 5;//Установить время неактивности(самовостановление) после уничтожения в сек
+}
+//Настройка режима Тройной захват
+message SettingsThreePerson{
+	option (s2c_id) = 11;
+
+	int32 capture_time = 1;//Установка кол-ва времени для захвата устройства(1 - 30 мин)
+	int32 number_health_RAD_take_code = 2; //кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+	int32 send_radiation_time = 3;//время раздачи команды радиации
+	bool can_to_reactive = 4;//использовать один раз за игру (0 - выкл., 1 - вкл.)
+	int32 inactivity_period = 5;//Установить время неактивности(самовостановление) после уничтожения в сек
+}
+//Настройка режима Поднятие флага
+message SettingsCaptureFlag{
+	option (s2c_id) = 12;
+
+	int32 cp_health = 1;//Установка кол-ва жизней устройства(кол-во необходимых выстрелов) (1 - 999)
+	int32 number_health_RAD_take_code = 2; //кол-во отнимаемых жизней "радиацией" (0 - 15) передавать в стиле MILLES
+	int32 send_radiation_time = 3;//время раздачи команды радиации
+	bool can_to_reactive = 4;//использовать один раз за игру (0 - выкл., 1 - вкл.)
+	int32 inactivity_period = 5;//Установить время неактивности(самовостановление) после уничтожения в сек
+}
+
+//--------------ЗАПРОС - ОТВЕТ-------------------\\
+//Цвет команды, по MILLES, в случае победы(начальное значение - 4, если никто не победил значение тоже - 4)
+message WinTeamColor{
+	option (c2s_id) = 2;
+	
+	int32 win_team = 1;
+	int32 lastId     =  2; //последний стрелявший id в устройство
+}
+//Начальное значение - 4, если никто не победил значение тоже - 4 
+ 
+//Цвет команды, по MILLES, которая в данный момент захватила устройство
+message CurrentCaptureColorTeam{
+	option (c2s_id) = 3;
+	option (s2c_id) = 13;
+
+	int32 capture_team_color = 1;
+	int32 color_one			 = 2;		// Для восстановления цвета полосы 1 КТС после выкл/вкл тумблером
+	int32 color_two			 = 3;		// Для восстановления цвета полосы 2 КТС после выкл/вкл тумблером
+	int32 color_three		 = 4;		// Для восстановления цвета полосы 3 КТС после выкл/вкл тумблером	
+}
+
+//Степень захвата устройства в процентах (режим "Перетягивания каната"), может начинаться с 50 %
+message CaptureRateInPercent{
+	option (c2s_id) = 4;
+	option (s2c_id) = 14;
+
+	int32 capture_percent_red_team = 1;
+	int32 capture_percent_blue_team = 2;
+	int32 capture_percent_yellow_team = 3;
+	int32 capture_percent_green_team = 4;
+}
+
+//Сколько времени удерживает устройство определенная команда в сек (тройной захват)
+message TimeHoldByTeam{
+	option (c2s_id) = 5;
+	option (s2c_id) = 15;
+
+	int32 hold_time_red_team = 1;
+	int32 hold_time_blue_team = 2;
+	int32 hold_time_yelow_team = 3;
+	int32 hold_time_green_team = 4;
+}
+
+//Сколько времени  осталось до победы определенному цвету команды(захват на время)
+message RemainTimeToWin{
+	option (c2s_id) = 6;
+	option (s2c_id) = 16;
+
+	int32 remain_time_red_team = 1;
+	int32 remain_time_blue_team = 2;
+	int32 remain_time_yellow_team = 3;
+	int32 remain_time_green_team = 4;
+}
+
+//Текущее кол-во жизней устройства (захват выстрелами) для Сириус и МС
+message CurrentHealth{
+	option (c2s_id) = 7;
+	option (s2c_id) = 17;
+
+	//Если выставлены режимы БАЗА, Бонусный, Случайнйый, Поднятие флага(КТС) то значения приходят в health_red_team
+	int32 current_health_red_team = 1;//значение оставшихся жизней станции у красной команды
+	int32 current_health_blue_team = 2;//значение оставшихся жизней станции у синей команды
+	int32 current_health_yellow_team = 3;//значение оставшихся жизней станции у желтой команды
+	int32 current_health_green_team = 4;//значение оставшихся жизней станции у зеленой команды
+}
+//Текущий режим уст-ва и ссостояние
+message GameStatusDev{
+	option (c2s_id) = 8;
+
+	int32 mode = 1;
+	/*********8 режимов для Sirius*********/
+	/*
+	1 - Возрождение - красный цвет
+	2 - Радиация - желтый цвет
+	3 - Аптечка - зеленый цвет
+	4 - Случайный - оранжевый цвет
+	5 - БАЗА - белый цвет
+	6 - Арсенал - голубой цвет
+	7 - Флаг - синий цвет (требует согласования, не реализован) 
+	8 - Бонусный - розовый цвет
+	*/
+	/********* 7 режимов для МС *********/
+	/*
+	1 - Контрольная точка
+	2 - Бомба
+	3 - Аптечка
+	4 - Арсенал
+	5 - Возрождение
+	6 - Радиация
+	7 - БАЗА 	
+	*/
+	/*********5 режимов для CPS(КТС)*********/
+	/*
+	1 - Захват на время - белый цвет
+	2 - Захват выстрелами - желтый цвет
+	3 - Перетягивание каната - красный цвет
+	4 - Тройной захват - зеленый цвет
+	5 - Поднятие флага - синий цвет
+	*/
+	
+	int32 game_status = 2;// Игровое состояние: 0-не в игре, 1-в игре, 2-на паузе
+	bool crashed_in_mode = 3;//Состояние уничтожена(1)/активна(0) станция
+}
+//Флаг захвачен комплектом
+message FlagTaken{
+	option (c2s_id) = 9;
+
+	int32 ID_flag = 1;//Increment
+	int32 ID_tag = 2;
+}
+//Флаг сдан комплектом
+message FlagReceived{
+	option (c2s_id) = 10;
+
+	int32 ID_flag = 1;//
+	int32 ID_tag = 2;
+}
+//Команда на формирование флага с определенным ID
+message GenerateFlag{
+	option (s2c_id) = 19;
+
+	int32 ID_flag = 1;
+}
+//
+message FlagStat{
+	option (s2c_id) = 20;
+	option (c2s_id) = 11;
+
+	bool flag_available = 1;
+	int32 current_flag_number = 2;
+	int32 remaining_cooldown_time = 3;
+}
+ message BombStatus{
+	 option (c2s_id) = 12;
+
+	 int32 bomb_status = 1; // 1 - бомба взорвана, 2 - бомба разминирована, 3 -  бомба заложена. 
+ }

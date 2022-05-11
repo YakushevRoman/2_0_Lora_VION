@@ -1,3 +1,5 @@
+include(":proto_files")
+
 pluginManagement {
     repositories {
         google()
@@ -6,6 +8,6 @@ pluginManagement {
     }
     
 }
-include("protobuf")
 rootProject.name = "2_0_Lora_VION"
+
 

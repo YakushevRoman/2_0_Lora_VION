@@ -1,0 +1,346 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for   = LITE_RUNTIME;
+option go_package     = "forpost_server";
+option (stm_filename) = "common";
+
+enum ErrorType {
+	e_UNKNOWN         = 0;
+	e_IR_strength     = 1;
+	e_volume_level    = 2;
+	e_next_id         = 3;
+	e_command         = 4;
+	e_activation_time = 5;
+	e_inactivity_time = 6;
+	e_rad_health_take = 7;
+	e_med_health_add  = 8;
+	e_cp_health       = 9; 
+	e_brightnes       = 10;
+	e_mode            = 11;
+}
+
+enum DevType {
+	UNKNOWN        = 0;
+	TAGER_NETRONIC = 1;
+	KTS            = 2;
+	MS             = 3;
+	miniMS         = 4;
+	MillitaryKit   = 5;
+	MillitaryDome  = 6;
+	MP_4           = 7;
+	GLOCK          = 8;
+	PKM            = 9;
+	TAGER_ECLIPSE  = 10;
+	TAGER_PULSE    = 11;
+	TAGER_VR	   = 12;
+	BOMB_PRO       = 13;
+	TAGER_F05 	   = 14;
+
+}
+
+enum LangugeType {
+	LANG_UNKNOWN = 0;
+	RUSSIAN      = 1;
+	ENGLISH      = 2;
+	SPANISH      = 3;
+	FRENCH       = 4;
+	GERMAN       = 5;
+	ITALIAN      = 6;
+	UKRAINIAN    = 7;
+	maxLangNum   = 8;
+}
+
+enum SlaveState {
+	DELETED		 = 0;
+	ADDED	     = 1;
+}
+
+enum DisplayType {
+	UNDEFINE		= 0;
+	OLED        	= 1;
+	LCD				= 2;
+	TFT				= 3;
+	IPS				= 4;
+	NO_DISPLAY		= 5;
+	AUTODETECTION 	= 6;
+}
+
+enum HandSensorType {
+	NON_HAND_SENS = 0; // датчика нет
+	TTP223_ORIGINAL		= 1;
+	TTP223_COPY			= 2;
+	AT42QT1011			= 3;
+}
+
+// this is hello message, must be first message after connection
+message HelloFromDev {
+  option (c2s_id) = 1;
+
+	int32 device_id           		= 1;  // Игровой ID устройства
+	int32 kit_tick            		= 2;  // msec from start kit (internal clock)
+	bool was_early_connected  		= 3;  // Eказатель на реконект к серверу значение (1) - повторное подключение, значение (0) - первое подключение
+	int32 firmware_version    		= 4 [deprecated=true];  // DEPRECATED! Текущая версия прошивки 
+	int32 global_changes      		= 5 [deprecated=true];  // DEPRECATED! Глобальные изменения в тек.версии
+	int32 minor_changes       		= 6 [deprecated=true];  // DEPRECATED! Мелкие изменения в тек.версии
+	DevType devtype           		= 7;
+	int32 SerialNumber        		= 8;  // Физический номер флэш памяти
+	uint32 diodes_brightness  		= 9;  // Яркость светодиодов, (0 - 100, в %)
+	uint32 display_brightness 		= 10; // Яркость дисплея, (0 - 100, в %)
+	uint32 sound_volume       		= 11; // Громкость устройства, (0 - 100, в %)
+	LangugeType lang          		= 12; // Locale that currently used
+	bytes firmware_ver        		= 13;
+	DisplayType type_display  	  	= 14 [deprecated=true]; // DEPRECATED! type of use display	
+	bytes bios_ver					= 15; // версия бута устройства
+	bytes boot_ver					= 16; // версия биоса устройства
+}
+
+//Запрос статистики кол-ва попаданий в устройство от сервера
+//Ответ устройства на запрос статистики кол-ва попаданий в устройство
+message StatById {
+	option (c2s_id) = 6;
+	option (s2c_id) = 19;
+	
+	int32 id           					= 1; 	// Идентификационный номер комплекта
+	int32 damage       					= 2; 	// Кол-во полученного урона
+	int32 shots_number 					= 3; 	// Кол-во попаданий
+	int32 kills        					= 4; 	// Кол-во смертей
+	int32 kit_tick						= 5; 	// msec from start kit (internal clock)
+	int32 damage_zone  					= 6; 	// 0-no specifed, 1- body front, 2 - body back, 3 - left arm, 4 - right arm, 5 - head
+	uint32 shots_not_specified 			= 7; 	// number of shots no specefed zone
+	uint32 shots_by_body_front_zone 	= 8;	// number of shots by body front zone 
+	uint32 shots_by_body_back_zone  	= 9;	// number of shots by body back zone
+	uint32 shots_by_left_arm_zone		= 10;	// number of shots by left arm zone
+	uint32 shots_by_right_arm_zone		= 11; 	// number of shots by right arm zone
+	uint32 shots_by_head_zone			= 12;	// number of shots by head zone	
+	uint32 damage_not_specified  	 	= 13;	// damage by zone
+	uint32 damage_by_body_front_zone 	= 14;
+	uint32 damage_by_body_back_zone  	= 15;
+	uint32 damage_by_left_arm_zone   	= 16;
+	uint32 damage_by_right_arm_zone  	= 17;
+	uint32 damage_by_head_zone 		 	= 18;
+	uint32 damage_by_tager_zone 		= 19;
+	uint32 shots_by_tager_zone 		  = 20;
+}
+
+// Команда запуска в игру
+message StartGame{
+	option (s2c_id) = 3;
+	
+	bool silent = 1; // Запуск устройства в беззвучном режиме
+	uint32 game_id = 2; // id current game
+}
+
+// Команда остановки игры
+message StopGame{
+	option (s2c_id) = 4;
+}
+
+// Постановка игры на паузу. Применится, если устройство в игровом состоянии
+message PauseGame{
+	option (s2c_id) = 10;
+}
+
+//Смена мощности ИК-луча в % 0 -100
+message SetIRstrength{
+	option (s2c_id) = 22;
+	
+	int32 IR_strength = 1;
+}
+
+message DeviceVolumeLevel {
+	int32 volume_level = 1; // Уровень громкости от 0 до 100%
+	uint32 uid		 	= 2; // уникальный идентификатор устройства
+};
+
+// Установить уровень громкости в % 0 -100
+message SetVolume{
+	option (s2c_id) = 14;
+	
+	int32 volume_level = 1 [deprecated=true]; // Уровень громкости от 0 до 100%. Другие будут проигнорированы
+	repeated DeviceVolumeLevel devices_volume_level = 2; //Уровень громкости устройств
+}
+
+message PlaySound {
+  option (s2c_id) = 30;
+	
+	uint32 id         = 1;
+	uint32 priority   = 2;
+	bool   is_looped  = 3;
+	string filename   = 4;
+};
+
+
+message StopSound {
+  option (s2c_id) = 31;
+	
+	uint32 id = 1;
+};
+
+
+message GetSoundsInfo {
+	option (s2c_id) = 32;
+};
+
+message SoundInfo {
+	string name     = 1;
+	string filename = 3;
+};
+
+message SoundsInfoResponce {
+	option (c2s_id) = 8;
+	
+	repeated SoundInfo info = 1;
+	
+	int32 status = 2;
+};
+
+enum SlaveType {
+	SlaveType_Unknow		= 0;
+	SlaveType_Hb_5_0		= 1;
+	SlaveType_Hb_4_4		= 2;
+	SlaveType_Vest_12		= 3;
+	SlaveType_Vest_10		= 4;
+	SlaveType_StressBelt	= 5;
+	SlaveType_Vest_3_0   	= 6;
+}
+
+message SlaveInfo{
+	option (c2s_id) = 35;
+
+	SlaveType type          = 1;
+	int32 dev_id		 	= 2;
+	bytes firmware_ver  	= 3;
+	bytes bios_ver  		= 4;
+	bytes boot_ver  		= 5;
+};
+
+message SlavesInfoResponce{
+	option (c2s_id) = 33;
+	
+	repeated SlaveInfo info = 1;
+	
+	int32 status = 2;
+};
+
+message SlaveDisconnected {
+	option (c2s_id) = 34;	
+	int32 dev_id 	= 1;
+}
+
+message KitBatteryLevel{
+	int32 battery_level = 1; // уровень заряда батареи
+	uint32 id		 	= 2; // уникальный идентификатор устройства
+};
+
+// От сервера к устройству - команда смены ИД устройства.
+message ChangeId{
+	option (s2c_id) = 12;
+	option (c2s_id) = 5;
+	int32 next_id = 1; // ID на который нужно перейти или уже перешли
+}
+
+// Регулярное сообщение присылать каждую секунду
+message Ping{
+	option (s2c_id) = 17;
+	option (c2s_id) = 7;
+}
+
+// Команда сброса статистики
+message ResetStat{
+	option (s2c_id) = 15;
+}
+
+// Miles команда
+message MilesCommand{
+	option (s2c_id) = 16;
+	
+	int32 command = 1; // Miles команда, которую комплекту необходимо применить
+}
+
+// Установка настроек по умолчанию
+message ReturnToDefSettings{
+	option (s2c_id) = 6;
+}
+//Запрос на получение заряда аккумулятора в % 0 -100
+message GetBatteryLevel{
+	option (s2c_id) = 23;
+}
+
+//Ответ на запрос заряда аккумулятора
+message ResponseBatteryLevel{
+	option (c2s_id) = 22;
+	
+	int32 battery_level = 1[deprecated=true];//Основное устройство(тагер или доп.оборудование)
+	int32 battery_level_bandage = 2 [deprecated=true];//заряд повязки
+	repeated KitBatteryLevel massBatLevl = 3; //уровни заряда слейвов
+}
+//Установка яркости светодиодов в % 0 -100
+message SetBrightnes{
+	option (s2c_id) = 24;
+
+	int32 set_diodes_brightnes = 1;
+	int32 set_display_brightness = 2;
+	int32 dev_id = 3;						// Уникальное UUID устройства. Посылается серверу в сообщении SendSlavesInfoResponce (структура SlaveInfo поле dev_id)
+}
+//Сообщение ошибки
+message Error{
+	option (c2s_id) = 23;
+
+	ErrorType errMessage = 1;
+}
+//Команда устройству для перехода в режим обновления
+message UpdateDev{
+	option (s2c_id) = 25;
+
+	//int32 upadate = 1;// для обновления значение = 50
+}
+//Команда которая устанавливает языковую схему устр-ва, зависит от локализации программы
+message setLanguage{
+	option (s2c_id) = 26;
+	option (c2s_id) = 24;
+
+	LangugeType language = 1;
+}
+
+//Команда которая устанавливает языковую схему устр-ва, зависит от локализации программы
+message SendDevType{
+	option (s2c_id) = 34;
+	option (c2s_id) = 25;
+
+	DevType devType = 1;
+}
+
+
+//Выключение комплекта
+message TurnOffDevice{
+	option (s2c_id) = 36;	
+}
+
+message GetInfoSlaves{
+	option (s2c_id) = 37;
+}
+
+// Установка ид игры
+message SetGameId{
+	option (s2c_id) = 38;
+
+	uint32 game_id = 1; // id current game
+}
+
+message LowLevelDeviceConfig{
+	option (s2c_id) = 72;
+	option (c2s_id) = 26;
+	
+	HandSensorType handSensType = 1;
+	DisplayType displayType = 2;
+	
+}
+
+message InformationMsg{
+	option (c2s_id) = 27;
+	bytes text = 1; //string
+	
+}

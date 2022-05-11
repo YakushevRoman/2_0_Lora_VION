@@ -1,0 +1,181 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+
+option go_package = "military_rs485";
+
+
+option (c2s_base) = 3300;
+option (s2c_base) = 3300;
+
+enum DeviceType {
+    Control_panel = 0;
+    Fuse = 1;
+    IrEmiter = 2;
+}
+
+// this is hello message, must be first message after connection
+message HelloFromMaster {
+    option (s2c_id) = 1;
+
+	DeviceType devtype          = 1;
+	bytes serial_number        	= 2;  // Физический номер флэш памяти
+	bytes firmware_ver_main     = 3;
+    bytes firmware_ver_boot     = 4;
+    bytes firmware_ver_fboot    = 5;
+    uint32 addr_rs              = 6;
+}
+
+message HelloFromSlave {
+    option (c2s_id) = 1;
+
+    DeviceType devtype          = 1;
+	bytes serial_number        	= 2;  // Физический номер флэш памяти
+	bytes firmware_ver_main     = 3;
+    bytes firmware_ver_boot     = 4;
+    bytes firmware_ver_fboot    = 5;
+}
+
+message SendIr {
+    option (s2c_id) = 2; 
+
+    uint32 packet      = 1;
+    uint32 bits         = 2;                 
+    uint32 power        = 3;
+    uint32 dest         = 4;
+}
+
+message ReciveIr {
+    option (c2s_id) = 2;
+
+    uint32 packet      = 1;
+    uint32 bits         = 2;
+    uint32 source       = 3;
+}
+
+message SystemCommand {
+    option (s2c_id) = 3;
+
+    uint32 command      = 1;
+}
+
+enum ButtonType {
+    BUT_CANNON = 0;
+    BUT_GUN = 1;
+    BUT_ARMOUR_PIERCING = 2;
+    BUT_HIGH_EXPLOSIVE = 3;
+    BUT_SUBCALIBER = 4;
+    BUT_CUMULATIVE = 5;
+}
+
+enum ButtonEvent {
+    PRESS   = 0;
+    RELEASE = 1;
+}
+
+message ButState {
+    option (c2s_id) = 4;
+
+    ButtonType button   = 1;
+    uint32 timeEvent    = 2;   // time event to HAL tick, ms
+    ButtonEvent event   = 3;  //on or off
+}
+
+message PowerOn {
+    option(s2c_id) = 8;
+}
+
+message PowerOff {
+    option(s2c_id) = 9;
+}
+
+enum SchIndication  {
+    IND_CP_NONE = 0;
+    IND_CP_NOT_GAME = 1;
+    IND_CP_GAME = 2;
+    IND_CP_HITTING = 3; // попадание
+    IND_CP_STRUCK = 4;  // поражен
+    IND_CP_HIT_CANNON = 5; // выстрел пушка
+    IND_CP_HIT_GUN = 6;  // выстрел пулемет
+    IND_CP_AP = 7; // заряжен бронебойный
+    IND_CP_HE = 8; // заряжен фугасный
+    IND_CP_SC = 9; // заряжен подкалиберный
+    IND_CP_CT = 10; // заряжен кумулятивный
+    IND_CP_HAVE_NO_AP = 11; // нет бронебойных снарядов
+    IND_CP_HAVE_NO_HE = 12; // нет фугасных снарядов
+    IND_CP_HAVE_NO_SC = 13; // нет подкалиберных
+    IND_CP_HAVE_NO_CT = 14; // нет кумулятивных снарядов
+    INDICATION_CP_CUR_PRJ_IS_OVER = 15; // текущий снаряд закончился
+}
+
+message ChangeID {
+    option(s2c_id) = 6;
+
+    uint32 newId = 1;
+}
+
+message SetIndication {
+    option(s2c_id) = 7;
+
+    SchIndication sch = 1;
+    uint32 durationInd  = 2;
+}
+
+enum StressBeltDamageMode {
+	RESERVED = 0; // зарезервировано
+	VIBRO  = 1; //  урон индицируется вибро мотором
+	EASY_ELECTRIC_SHOCK = 2; // легкий удар током
+	MEDIUM_ELECTRIC_SHOCK = 3; // средний удар током
+	HARD_ELECTRIC_SHOCK = 4; // сильный удар током
+	DEATH_ELECTRIC_SHOCK = 5; // смертельный удар током
+}
+
+// Сообщение клиенту об установке настроек подключенному устройству "Шокер"
+message StressBeltSettings {
+    option (c2s_id) = 5;
+    option (s2c_id) = 10;
+
+    bool manual_mode_change = 1; // разрешено ли менять режим с устройства   
+    StressBeltDamageMode mode = 2; 
+    uint32 vibro_time_ms = 3; // 1 = 100 ms
+}
+
+message StressBeltCheangeDamageMode {
+    option (c2s_id) = 6;
+     
+    StressBeltDamageMode mode = 1; 
+}
+
+enum SlaveType{
+	m_UNKNOWN = 0;
+	AK = 1;         // Автомат
+	PISTOL = 2;     // Пистолет 
+	RPG = 3;        // РПГ
+	SVD = 4;        // СВД
+	HB = 5;         // Навесной блок
+	SENSOR = 6;     // Сенсор
+	STRESSBELT = 7; // Шокер
+}
+
+message SlaveConnected {
+	option (c2s_id) = 7;
+
+	bytes slave_sn = 1;        // Серийный номер устройства
+	SlaveType slave_type = 2; // Тип подключенного устройста
+	bytes soft_version = 3;      // Версия программы устройства
+}
+
+message SlaveDisconnected { 
+	option (c2s_id) = 8;
+	bytes slave_sn = 1; //Серийный номер устройства
+}
+
+message SlaveBatteryLevel {
+	option (c2s_id) = 9;
+
+	bytes slave_sn = 1; // Серийный номер устройства
+	int32 battery_level_slave = 2;
+}

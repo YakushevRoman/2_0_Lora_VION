@@ -1,0 +1,214 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+option go_package = "Common_military";
+
+// Reserve (200-500) range
+option (c2s_base) = 200;
+option (s2c_base) = 200;
+
+
+// Статистика от клиента к серверу (какой id, сколько раз попал и какой урон нанес)
+message StatById {
+	option (c2s_id) = 1;
+	
+	int32 id = 1;           // Идентификационный номер(id) комплекта который нанес урон
+	int32 damage_value = 2; // Количествово полученного урона от id
+	int32 shots_number = 3; // Количествово попаданий от id
+}
+
+// Тип устройства подключаемого к клиенту
+enum DevSlaveType{
+	m_UNKNOWN = 0;
+	AK = 1;         // Автомат
+	PISTOL = 2;     // Пистолет 
+	RPG = 3;        // РПГ
+	SVD = 4;        // СВД
+	HB = 5;         // Навесной блок
+	SENSOR = 6;     // Сенсор
+	STRESSBELT = 7; // Шокер
+}
+
+// Тип устройста на котором установлен навесной блок
+enum TypeWeaponHB{
+	UNKNOWN = 0;
+	AK_x = 1;
+	M16 = 2;
+	DRAGUNOVA = 3;
+	MP = 4;
+	AUG = 5;
+	MMG = 6;
+	PK = 7;
+	M4A1 = 8;
+	RESERVED = 9;
+}
+
+//  Сообщение серверу о том что к клиенту подключилось подчиненное устройство
+message SlaveConnected {
+	option (c2s_id) = 2;
+
+	fixed32 slave_sn = 1;        // Серийный номер устройства
+	DevSlaveType slave_type = 2; // Тип подключенного устройста
+	int32 soft_version = 3;      // Версия программы устройства
+	TypeWeaponHB type = 4;       // Тип оружия на котором установлен навесной блок(передается только от типа слайва "НАВЕСНОЙ БЛОК")!!!
+	bool typeFire = 5;           // Тип сработки навесного блока (под холостой - 0, под выносную кнопку и динамики - 1)(передается только от типа слайва "НАВЕСНОЙ БЛОК")!!!
+}
+
+//  Сообщение серверу о том что от клиента отключилось подчиненное устройство
+message SlaveDisconnected { 
+	option (c2s_id) = 3;
+	fixed32 slave_sn = 1; //Серийный номер устройства
+}
+
+// Запрос сервера информации о всех подключенных устройствах к клиенту
+message GetAllSlaves {
+	option (s2c_id) = 1;
+}
+
+// Сообщение к серверу о подключенных устройствах к клиенту
+message AllSlavesReply { 
+	option (c2s_id) = 4;
+	repeated SlaveConnected slaves = 1;
+}
+
+// Сообщение серверу о заряде батареи подключенного устройства
+message SlaveBatteryLevel {
+	option (c2s_id) = 5;
+
+	fixed32 slave_sn = 1; // Серийный номер устройства
+	int32 battery_level_slave = 2;
+}
+
+// Сообщение серверу о текущей статистике клиента
+// Сообщение клиенту об установке текущей статистики
+message StatFromKit {
+	option (c2s_id) = 6;
+	option (s2c_id) = 2;
+		
+	int32 current_health = 1;   // Текущее здоровье игрока
+	int32 game_status = 2;      // Игровое состояние: 0-не в игре, 1-в игре, 2-на паузе, в старом протоколе 72й байт
+	int32 wasKilledBy = 3;      // Кем был поражен комплект (мина, граната, пистолет, автомат и т.д.)
+}
+
+// Сообщение серверу о текущей статистике оружия подключенного к клиенту
+// Сообщение клиенту об установке статистики оружию подключенного к клиенту
+message WeaponStat {
+	option (c2s_id) = 7;
+	option (s2c_id) = 3;
+
+	fixed32 weapon_sn = 1;       // Серийный номер оружия
+	int32 curr_clips_number = 2; // Текущее кол-во магазинов
+	int32 curr_ammo_number = 3;  // Текущее кол-во патронов
+	int32 shots_number = 4; 	 // Количество произведенных выстрелов			
+}
+ 
+// Сообщение клиенту об установке настроек
+message KitSettings {
+	option (c2s_id) = 8;
+	option (s2c_id) = 4;
+
+	int32 default_health = 1;  // Стандартное количество жизней 
+	int32 team_color = 2;      // Цвет подразделения
+}
+
+// Сообщение клиенту об установке настроек подключенному устройству "Шокер"
+message StressBeltSettings {
+	option (c2s_id) = 9;
+	option (s2c_id) = 5;
+
+	bool manual_mode_change = 1;	
+	uint32 mode = 2;	  // 1- mode vibro,  2- mode easy,  3- mode_medium, 4- mode hard, 5- mode death 
+	uint32 vibro_time_ms = 3;
+	uint32 stress_sn = 4;
+}
+
+// Сообщение клиенту об установке настроек подключенному устройству "Автомат, Пистолет, СВД, РПГ, Навесной блок"
+message WeaponSettings{
+
+	option (c2s_id) = 10;
+	option (s2c_id) = 6;
+	
+	fixed32 weapon_sn = 1;
+	bool  fire_mode = 2; 		// Режим стрельбы (одиночными(1) или автоматический(0))
+	int32 damage_code = 3;      // Miles код урона наносимого автоматом (от 0 до 15)
+	int32 fire_rate = 4;        // Скорострельность (от 1 до 999) 
+	int32 max_clips_number = 5; // Стандартное кол-во магазинов (от 1 до 255)
+	int32 max_ammo_number = 6; 	// Стандартное кол-во патронов (от 1 до 100)
+	int32 reload_time = 7;      // Время перезарядки (от 1 до 100) в десятых долях секунды
+	int32 IR_Strenght = 8;      // Мощность ИК-излучения
+}
+
+
+// Запрос сервера о получении всей статистики от клиента (оружия и основной блок)
+message GetAllStat{
+	option (s2c_id) = 7;
+}
+
+// Сообщение клиенту о установке специального режима тренировки
+message SilentMode{
+	option (s2c_id) = 8;
+	
+	bool without_indication_mode = 1; // Режим работы комплекта без световой индикации (жилет и сенсора)
+	bool without_sound_mode = 2;      // Режим работы комплекта без звука(только жилет)
+}
+
+
+// Сообщение серверу о том что клиент передал всю статистику
+message StatisticIsOver{
+	option (c2s_id) = 11;
+}
+
+// Сообщение от клиента к серверу о том что ТМ62 была активирована
+message TankMineActivated{
+	option (c2s_id) = 12;
+	
+	float latitude = 1;
+	float longtude = 2;
+	int32 TMsUniqueId = 3;
+}
+
+// Сообщение от клиента к серверу о том что ТМ62 была деактивирована
+message TankMineDeactivated{
+	option (c2s_id) = 13;
+	
+	int32 TMsUniqueId = 1;
+}
+
+// Сообщение об окончании потока информации о активированных минах
+message InfoActivatedMinesIsOver{
+	option (c2s_id) = 14;
+}
+
+// Сообщение об окончании потока информации о деактивированных минах
+message InfoDeactivatedMinesIsOver{
+	option (c2s_id) = 15;
+}
+
+// Запрос сервера на активированные мины
+message GetActivatedMines{
+	option (s2c_id) = 9;
+}
+
+// Запрос сервера на деактивированные мины
+message GetDeactivatedMines{
+	option (s2c_id) = 10;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

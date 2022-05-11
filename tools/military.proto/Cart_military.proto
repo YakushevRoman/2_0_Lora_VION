@@ -1,0 +1,24 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+option go_package = "military";
+
+// Reserve (700-750) range
+option (c2s_base) = 700;
+option (s2c_base) = 700;
+
+message MovingCartForwardDirection{
+	option (s2c_id) = 1;
+}
+
+message MovingCartReverseDirection{
+	option (s2c_id) = 2;
+}
+
+message StopMovingCart{
+	option (c2s_id) = 1;
+	option (s2c_id) = 3;
+}

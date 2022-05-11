@@ -1,0 +1,154 @@
+syntax="proto3";
+
+import weak "forpost.proto";
+
+// this is for java
+option optimize_for = LITE_RUNTIME;
+option go_package = "Common_military";
+
+// Reserve (1-200) range
+option (c2s_base) = 1;
+option (s2c_base) = 1;
+
+// Тип подключаемого устройства
+enum DevMasterType{
+	SOILDER = 0;     // Комплект "Солдат"
+	VEHICLES = 1;    // Комплект "Техника"
+	PTRK = 2;        // ПТРК
+	PANZER = 3;      // Танк
+	TARGET_12 = 4;   // Цель "Танк"
+	TARGET_12b = 5;  // Цель "Танк в окопе"
+	TARGET_14 = 6;   // Цель "Броневая машина пехоты"
+	TARGET_17a = 7;  // Цель "Безоткатная пушка"
+	TARGET_8 = 8;    // Цель "Ростовая фигура"
+	TARGET_9 = 9;    // Цель "Ручной противотанковый гранатомёт"
+	TARGET_10a = 10; // Цель "Пулеметная точка"
+}
+
+// Первое сообщение от клиента к серверу(основная информация об подключаемом устройстве)
+message HelloFromDev {
+	option (c2s_id) = 1;
+	
+ 	int32 device_id = 1;            // Игровой ID устройства
+	int32 kit_tick = 2;             // Системное время устройства
+	int32 soft_version = 3;         // Текущая версия прошивки
+	int32 serial_number = 4;        // Физический номер флэш памяти
+	DevMasterType Master_type = 5;  // Тип подключаемого устройства
+	bool was_early_connected  = 6;  // Указатель на реконект к серверу (значение (1) - повторное подключение, значение (0) - первое подключение)
+	bytes uuid   			  = 7;  // Полный уникальный индификатор устройства 
+}
+
+// Команда запуска в игру
+message StartGame{
+	option (s2c_id) = 1;
+	bool silent = 1;   // Запуск устройства в беззвучном режиме
+}
+
+// Команда остановки игры
+message StopGame{
+	option (s2c_id) = 2;
+}
+
+// Установить уровень громкости в % 0 -100
+message SoundVolume{
+	option (s2c_id) = 3;
+	option (c2s_id) = 2;
+	
+	int32 volume_level = 1; // Уровень громкости от 0 до 100%. Другие будут проигнорированы
+}
+
+//Установить ID номер
+message ChangeId{
+	option (s2c_id) = 4;
+	
+	int32 next_id = 1; // ID на который нужно перейти или уже перешли
+}
+
+//Регулярное сообщение присылать каждую секунду
+message Ping{
+	option (s2c_id) = 5;
+	option (c2s_id) = 3;
+}
+
+//Запрос на получение заряда аккумулятора в % 0 -100
+message GetBatteryLevel{
+	option (s2c_id) = 6;
+}
+
+//Ответ на запрос заряда аккумулятора
+message BatteryLevel{
+	option (c2s_id) = 4;
+	
+	int32 battery_level = 1;//Основное устройство(тагер или доп.оборудование)
+}
+
+//Установить статус игры (тренировки)
+message GameStatusDev{
+	option(c2s_id) = 5;
+	
+	int32 game_status = 1;
+}
+
+// Запрос на получение настроек устройства
+message GetSettings{
+	option (s2c_id) = 7;
+}
+
+// Команда на выключение всех подлюченных устройств 
+message TurnOffAllConnectedKits{
+	option(s2c_id) = 8;
+}
+
+// Тип устройства который передает координаты на сервер
+enum DevTypeDevice{
+	USUAL_KIT_dev = 0; // Комплект
+	PTRK_dev = 1;      // ПТРК
+	AVDS_m_dev = 2;    // Иммитатор поражения бронетехники модифицированный(цель ПТРК)
+}
+
+// Сообщение серверу о текущих координатах клиента(или поключенных к нему)
+message GPSCoordinate{
+	option (c2s_id) = 6;
+
+	float latitude = 1;
+	float longtude = 2;
+	DevTypeDevice Type_device = 3;
+}
+
+// Сообщение клиенту о смене цвета подраздиления на указанный
+message ChangeTeam{
+	option (s2c_id) = 9;
+	
+	int32 team_color = 1; // Цвет который нужно применить
+}
+
+// Сообщение клиенту добавить указаное количество единиц здоровья
+message AddHealth{
+	option (s2c_id) = 10;
+	
+	int32 health_number = 1; // Количество единиц здоровья
+}
+
+// Сообщение клиенту о переводе клиента в состояние "Убит"
+message KillPlayer{
+	option (s2c_id) = 11;
+}
+
+message ResetAllErrors{
+	option (s2c_id) = 12;
+}
+
+enum TypeExercise{
+	EXERCISE_TSG = 0;
+	EXERCISE_TANK_BATTLE = 1;
+	EXERCISE_GENERAL = 2;
+	EXERCISE_PTRK = 3;
+	EXERCISE_RESERVED = 4;
+}
+
+message SetTypeExercise{
+	option (s2c_id) = 13;
+	option (c2s_id) = 7;
+	
+	TypeExercise exercise = 1;
+}

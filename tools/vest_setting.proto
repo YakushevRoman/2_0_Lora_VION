@@ -1,0 +1,27 @@
+syntax="proto3";
+
+
+enum LoadingType{
+    NORMAL = 0;
+    REBOOT = 1;
+}
+
+enum LanguageType{
+	L_UNKNOWN 		= 0;
+	L_RUSSIAN 		= 1;
+	L_ENGLISH 		= 2;
+	L_SPANISH 		= 3;
+	L_FRENCH 		= 4;
+	L_GERMAN 		= 5;
+	L_ITALIAN 		= 6;
+	L_UKRAINIAN 	= 7;
+	L_KOREAN		= 8;
+}
+
+message MainSetting {
+    uint32 volume = 1;
+    uint32 brightness = 2;
+    uint32 adc_shift = 3;
+    LoadingType loading = 4;
+	LanguageType language = 5;
+}
