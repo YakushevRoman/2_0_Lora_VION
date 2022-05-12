@@ -53,52 +53,17 @@ compose.desktop {
     }
 }
 
-sourceSets {
-    main {
-        proto {
-            srcDir("src/main/protobuf")
-        }
-    }
-}
-
-protobuf {
-    // do not set generatedFilesBaseDir. You will have problems with duplicate files in build and source directories
-    //generatedFilesBaseDir = "$projectDir/src/main/kotlin/proto"
-
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.20.1"
-    }
-
-    plugins {
-        id("javaapi") {
-            path = "tools/protoc-gen-javaapi.exe"
-        }
-    }
-
-    // start task : gradle for project -> other -> generateProto
-    generateProtoTasks {
-        all().forEach {
-            it.plugins {
-                id("javaapi")
-            }
-            it.builtins {
-                id("kotlin")
-            }
-        }
-    }
-}
-
-// If you need to change directories for generating and coping files
-val pathAutoGenerationFiles = "generated/source/proto/main"
-val pathSrcFiles = "src/main/kotlin/generation_files"
 val pathProtoFiles = "proto_files"
 val pathProtoFilesCommon = "$pathProtoFiles/Proto_files_common"
 val pathProtoFilesCommercial = "$pathProtoFiles/Proto_files_commerc"
 val pathProtoFilesMilitary = "$pathProtoFiles/Proto_files_military"
 
-//copy proto files from the submodule
-// start task : gradle for project -> other -> copyProtoFilesFromSubmodule
+/**
+ * The Task copies proto files from the submodule
+ * start task : gradle for project -> other -> copyProtoFilesFromSubmodule
+ */
 val copyProtoFilesFromSubmodule = tasks.register<Copy>("copyProtoFilesFromSubmodule") {
+
     println("Start coping proto files from a submodule")
 
     // setting paths to proto files what you need to copy from proto_files submodule for generating
@@ -130,7 +95,7 @@ val copyProtoFilesFromSubmodule = tasks.register<Copy>("copyProtoFilesFromSubmod
     )
 
     // setting out directory
-    val pathOut = "$projectDir/src/main/protobuf"
+    val pathOut = "$buildDir/protobuf_source_files"
     into(pathOut)
 
     if (inputs.sourceFiles.isEmpty) {
@@ -139,6 +104,61 @@ val copyProtoFilesFromSubmodule = tasks.register<Copy>("copyProtoFilesFromSubmod
 
     println("Proto files from a submodule copied")
 }
+
+sourceSets {
+    main {
+        proto {
+            srcDir("$buildDir/protobuf_source_files")
+        }
+    }
+}
+
+tasks.check {
+    doFirst {
+        dependsOn("copyJavaServerClientApiFile")
+    }
+    doLast {
+        dependsOn("generateProto")
+    }
+}
+
+/**
+ * Main Task for Protobuf generation
+ * Do not set generatedFilesBaseDir. You will have problems with duplicate files in build and source directories
+ * generatedFilesBaseDir = "$projectDir/src/main/kotlin/proto"
+ */
+protobuf {
+
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.20.1"
+    }
+
+    plugins {
+        id("javaapi") {
+            path = "tools/protoc-gen-javaapi.exe"
+        }
+    }
+
+    /**
+     * The Task generates java / kotlin files
+     * Before starting task : check "$buildDir/protobuf_source_files" a directory
+     * start task : gradle for project -> other -> copyProtoFilesFromSubmodule
+     */
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                id("javaapi")
+            }
+            it.builtins {
+                id("kotlin")
+            }
+        }
+    }
+}
+
+// If you need to change directories for generating and coping files
+val pathAutoGenerationFiles = "generated/source/proto/main"
+val pathSrcFiles = "src/main/kotlin/generation_files"
 
 // a task for coping java server/client api files
 // start task : gradle for project -> other -> copyJavaServerClientApiFile
