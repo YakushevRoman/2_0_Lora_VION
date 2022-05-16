@@ -7,6 +7,7 @@ import com.google.protobuf.MessageLite;
 
 import server_backend.proto_loggers.LogType;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.SocketAddress;
 
@@ -64,7 +65,7 @@ public abstract class ProtoServer{
 
 
     public interface ProtocolDispatcher {
-        Message parseMessage(int commandId, CodedInputStream inputStream) throws IOException;
+        @Nullable Message parseMessage(int commandId, CodedInputStream inputStream) throws IOException;
 
         boolean dispatchMessage(Connection connection, int commandId, Message message);
 
@@ -230,7 +231,6 @@ public abstract class ProtoServer{
     }
 
     public void setNetworkThread(NetworkThread thread) {
-        assert mNetworkThread == null;
         mNetworkThread = thread;
     }
 

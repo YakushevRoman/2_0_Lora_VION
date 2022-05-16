@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm") version "1.5.31"
     id("org.jetbrains.compose") version "1.0.0"
     id("com.google.protobuf") version "0.8.18"
+    java
 }
 
 group = "me.pegas"
@@ -31,6 +32,9 @@ dependencies {
     api("com.google.protobuf:protobuf-kotlin:3.20.1")
     // https://mvnrepository.com/artifact/com.googlecode.protobuf-java-format/protobuf-java-format
     implementation("com.googlecode.protobuf-java-format:protobuf-java-format:1.4")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
 
 }
 
@@ -68,30 +72,30 @@ val copyProtoFilesFromSubmodule = tasks.register<Copy>("copyProtoFilesFromSubmod
 
     // setting paths to proto files what you need to copy from proto_files submodule for generating
     val sourcePathsFile1 = "$pathProtoFilesCommon/esp.proto"
-    val sourcePathsFile2 = "$pathProtoFilesCommon/esp_srv.proto"
-    val sourcePathsFile3 = "$pathProtoFilesCommon/filesystem.proto"
-    val sourcePathsFile4 = "$pathProtoFilesCommon/firmware.proto"
+    //val sourcePathsFile2 = "$pathProtoFilesCommon/esp_srv.proto"
+    // val sourcePathsFile3 = "$pathProtoFilesCommon/filesystem.proto"
+    // val sourcePathsFile4 = "$pathProtoFilesCommon/firmware.proto"
     val sourcePathsFile5 = "$pathProtoFilesCommon/forpost.proto"
-    val sourcePathsFile6 = "$pathProtoFilesCommon/runtime_dbg.proto"
-    val sourcePathsFile7 = "$pathProtoFilesCommercial/additional_device.proto"
-    val sourcePathsFile8 = "$pathProtoFilesCommercial/BombPro.proto"
-    val sourcePathsFile9 = "$pathProtoFilesCommercial/forpost_server.proto"
-    val sourcePathsFile10 = "$pathProtoFilesCommercial/stress_belt.proto"
-    val sourcePathsFile11 = "$pathProtoFilesCommercial/tagger.proto"
+    // val sourcePathsFile6 = "$pathProtoFilesCommon/runtime_dbg.proto"
+    // val sourcePathsFile7 = "$pathProtoFilesCommercial/additional_device.proto"
+    //      val sourcePathsFile8 = "$pathProtoFilesCommercial/BombPro.proto"
+    // val sourcePathsFile9 = "$pathProtoFilesCommercial/forpost_server.proto"
+    //  val sourcePathsFile10 = "$pathProtoFilesCommercial/stress_belt.proto"
+    // val sourcePathsFile11 = "$pathProtoFilesCommercial/tagger.proto"
 
     // loading paths
     from(
         sourcePathsFile1,
-        sourcePathsFile2,
-        sourcePathsFile3,
-        sourcePathsFile4,
-        sourcePathsFile5,
-        sourcePathsFile6,
-        sourcePathsFile7,
-        sourcePathsFile8,
-        sourcePathsFile9,
-        sourcePathsFile10,
-        sourcePathsFile11
+        // sourcePathsFile2
+        // sourcePathsFile3,
+        // sourcePathsFile4,
+        sourcePathsFile5
+        // sourcePathsFile6,
+        // sourcePathsFile7,
+        // sourcePathsFile8,
+        // sourcePathsFile9
+        // sourcePathsFile10,
+        // sourcePathsFile11
     )
 
     // setting out directory
@@ -99,26 +103,25 @@ val copyProtoFilesFromSubmodule = tasks.register<Copy>("copyProtoFilesFromSubmod
     into(pathOut)
 
     if (inputs.sourceFiles.isEmpty) {
-        throw GradleException("File not found: $sourcePathsFile1 check init a submodule and the path to files.")
+        throw GradleException("File not found: sourcePathsFile check init a submodule and the path to files.")
     }
 
     println("Proto files from a submodule copied")
 }
 
+
 sourceSets {
+
     main {
         proto {
             srcDir("$buildDir/protobuf_source_files")
         }
-    }
-}
 
-tasks.check {
-    doFirst {
-        dependsOn("copyJavaServerClientApiFile")
+        java.srcDirs("src/main/java")
     }
-    doLast {
-        dependsOn("generateProto")
+
+    test {
+        java.srcDirs("src/test/java")
     }
 }
 
@@ -128,6 +131,9 @@ tasks.check {
  * generatedFilesBaseDir = "$projectDir/src/main/kotlin/proto"
  */
 protobuf {
+
+    //mkdir("$projectDir/src/main/java/proto_files")
+    //generatedFilesBaseDir = "$projectDir/src/main/java/proto_files"
 
     protoc {
         artifact = "com.google.protobuf:protoc:3.20.1"
@@ -146,11 +152,12 @@ protobuf {
      */
     generateProtoTasks {
         all().forEach {
-            it.plugins {
-                id("javaapi")
-            }
+            //it.plugins {
+            //   id("javaapi"){
+            //   }
+            //}
             it.builtins {
-                id("kotlin")
+                id("kotlin") {}
             }
         }
     }
@@ -158,7 +165,8 @@ protobuf {
 
 // If you need to change directories for generating and coping files
 val pathAutoGenerationFiles = "generated/source/proto/main"
-val pathSrcFiles = "src/main/kotlin/generation_files"
+val pathSrcKotlinFiles = "src/main/kotlin/generation_java_files"
+val pathSrcJavaFiles = "src/main/java/generation_kotlin_files"
 
 // a task for coping java server/client api files
 // start task : gradle for project -> other -> copyJavaServerClientApiFile
@@ -170,15 +178,15 @@ val copyJavaServerClientApiFile = tasks.register<Copy>("copyJavaServerClientApiF
     from(sourcePaths)
 
     // setting out directory
-    val pathOut = "$projectDir/$pathSrcFiles/java_server_client"
+    val pathOut = "$projectDir/$pathSrcJavaFiles"
     into(pathOut)
 
-    if (inputs.sourceFiles.isEmpty) {
-        throw GradleException("File not found: $sourcePaths , you need to generate proto files." +
-                "For generating files you need to start generationProto task in gradle." +
-                "The path is gradle for project -> other -> copyJavaServerClientApiFile"
-        )
-    }
+    //if (inputs.sourceFiles.isEmpty) {
+    //    throw GradleException("File not found: $sourcePaths , you need to generate proto files." +
+    //            "For generating files you need to start generationProto task in gradle." +
+    //            "The path is gradle for project -> other -> copyJavaServerClientApiFile"
+    //    )
+    //}
 
     println("Java server/client api files copied")
 }
@@ -193,15 +201,15 @@ val copyKotlinServerClientApiFile = tasks.register<Copy>("copyKotlinServerClient
     from(sourcePaths)
 
     // setting out directory
-    val pathOut = "$projectDir/$pathSrcFiles/kotlin_server_client"
+    val pathOut = "$projectDir/$pathSrcKotlinFiles"
     into(pathOut)
 
-    if (inputs.sourceFiles.isEmpty) {
-        throw GradleException("File not found: $sourcePaths , you need to generate proto files." +
-                "For generating files you need to start generationProto task in gradle." +
-                "The path is gradle for project -> other -> copyKotlinServerClientApiFile"
-        )
-    }
+    //if (inputs.sourceFiles.isEmpty) {
+    //    throw GradleException("File not found: $sourcePaths , you need to generate proto files." +
+    //            "For generating files you need to start generationProto task in gradle." +
+    //            "The path is gradle for project -> other -> copyKotlinServerClientApiFile"
+    //    )
+    //}
 
     println("Kotlin server/client api files copied")
 }

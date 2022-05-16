@@ -2,15 +2,17 @@ package server_backend.servers;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.charset.StandardCharsets;
 
-public class ServerAutoDiscovery extends BaseServer {
+public class ServerAutoDiscovery {
+
     // This request tag is used on tagger side. On server side is used
     private static final long REQUEST_TAG = Long.reverseBytes(0xC9_42_22_11_5f_c9_42_d3L);
     private static final long RESPONSE_TAG = Long.reverseBytes(0xad_e7_e9_7f_3f_51_47_7bL);
@@ -21,31 +23,29 @@ public class ServerAutoDiscovery extends BaseServer {
     private DatagramChannel mChannel;
     private ByteBuffer mRecvBuffer;
     private ByteBuffer mSendBuffer;
+    private NetworkThread mNetworkThread;
 
     byte mPriority = 0x40;
     int mServerId;
     int mServerPort;
     byte[] mServerName;
 
-    public ServerAutoDiscovery(int serverId) {
+    public ServerAutoDiscovery(NetworkThread thread, int serverId, int portId) {
         mServerId = serverId;
         setServerName("Android Server");
+        mServerPort = portId;
+        mNetworkThread = thread;
         mRecvBuffer = ByteBuffer.allocate(128);
         mSendBuffer = ByteBuffer.allocate(128);
     }
 
-    public ServerAutoDiscovery(int serverId, int port) {
-        this(serverId);
-        mServerPort = port;
-    }
-
-    public void startServer() {
+    public void start() {
+        mNetworkThread.start();
         mNetworkThread.startProtoHandler(mProtocolHandler);
     }
 
-    public void stopServer() {
+    public void stop() {
         mNetworkThread.stopProtoHandler(mProtocolHandler);
-        writeToLog(null, this.getClass() + " : server stop");
     }
 
     public synchronized void setServerPort(int port) {
@@ -53,12 +53,16 @@ public class ServerAutoDiscovery extends BaseServer {
     }
 
     public synchronized void setServerName(String name) {
-        mServerName = name.getBytes(StandardCharsets.UTF_8);
+        try {
+            mServerName = name.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            mServerName = new byte[0];
+        }
     }
 
     NetworkThread.ProtocolHandler mProtocolHandler = new NetworkThread.ProtocolHandler() {
         @Override
-        public void onStart(Selector selector) throws IOException {
+        public void onStart(Selector selector) {
             try {
                 mSelector = selector;
                 mChannel = DatagramChannel.open();
@@ -67,9 +71,7 @@ public class ServerAutoDiscovery extends BaseServer {
                 mChannel.register(mSelector, SelectionKey.OP_READ, mSelectionHandler);
 
             } catch (IOException e) {
-                System.err.println("AutoDiscovery failed to start. ERROR: " + e.getMessage());
-                writeToLog(null, this.getClass()
-                        + "AutoDiscovery failed to start. ERROR: " + e.toString());
+                System.err.println("ServerAutoDiscovery failed to start. ERROR: " + e.getMessage());
             }
         }
 
@@ -95,11 +97,12 @@ public class ServerAutoDiscovery extends BaseServer {
             if (!key.isReadable())
                 return;
             try {
-
                 mRecvBuffer.clear();
                 SocketAddress address = mChannel.receive(mRecvBuffer);
                 mRecvBuffer.flip();
+
                 long requestTag = mRecvBuffer.getLong();
+
                 if (requestTag != REQUEST_TAG)
                     return;
 
@@ -111,22 +114,22 @@ public class ServerAutoDiscovery extends BaseServer {
                     port = mServerPort;
                 }
 
+                System.out.println("Server");
+
                 mSendBuffer.clear();
                 mSendBuffer.putLong(RESPONSE_TAG);
-                mSendBuffer.putInt(0); // ip address 192.168.31.30
+                mSendBuffer.putInt(0); // ip address
                 mSendBuffer.putShort(Short.reverseBytes((short) port));// port;
                 mSendBuffer.putInt(Integer.reverseBytes(mServerId));
                 mSendBuffer.put(mPriority); // priority
                 mSendBuffer.putShort(Short.reverseBytes((short) name.length));
                 mSendBuffer.put(name);
                 mSendBuffer.flip();
-                writeToLog(null, String.format("AutoDiscovery: keySelected. Data = %s length = %d", ProtoServer.bytesToHex(mSendBuffer.array(), mSendBuffer.arrayOffset() + mSendBuffer.position(), mSendBuffer.arrayOffset()+ mSendBuffer.limit()), mSendBuffer.limit()));
                 mChannel.send(mSendBuffer, address);
             } catch (IOException e) {
                 System.err.println("ERROR: " + e.getMessage());
-                writeToLog(null, this.getClass()
-                        + "keySelected ERROR: " + e.toString());
             }
         }
     };
+
 }
