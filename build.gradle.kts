@@ -62,59 +62,12 @@ val pathProtoFilesCommon = "$pathProtoFiles/Proto_files_common"
 val pathProtoFilesCommercial = "$pathProtoFiles/Proto_files_commerc"
 val pathProtoFilesMilitary = "$pathProtoFiles/Proto_files_military"
 
-/**
- * The Task copies proto files from the submodule
- * start task : gradle for project -> other -> copyProtoFilesFromSubmodule
- */
-val copyProtoFilesFromSubmodule = tasks.register<Copy>("copyProtoFilesFromSubmodule") {
-
-    println("Start coping proto files from a submodule")
-
-    // setting paths to proto files what you need to copy from proto_files submodule for generating
-    val sourcePathsFile1 = "$pathProtoFilesCommon/esp.proto"
-    //val sourcePathsFile2 = "$pathProtoFilesCommon/esp_srv.proto"
-    // val sourcePathsFile3 = "$pathProtoFilesCommon/filesystem.proto"
-    // val sourcePathsFile4 = "$pathProtoFilesCommon/firmware.proto"
-    val sourcePathsFile5 = "$pathProtoFilesCommon/forpost.proto"
-    // val sourcePathsFile6 = "$pathProtoFilesCommon/runtime_dbg.proto"
-    // val sourcePathsFile7 = "$pathProtoFilesCommercial/additional_device.proto"
-    //      val sourcePathsFile8 = "$pathProtoFilesCommercial/BombPro.proto"
-    // val sourcePathsFile9 = "$pathProtoFilesCommercial/forpost_server.proto"
-    //  val sourcePathsFile10 = "$pathProtoFilesCommercial/stress_belt.proto"
-    // val sourcePathsFile11 = "$pathProtoFilesCommercial/tagger.proto"
-
-    // loading paths
-    from(
-        sourcePathsFile1,
-        // sourcePathsFile2
-        // sourcePathsFile3,
-        // sourcePathsFile4,
-        sourcePathsFile5
-        // sourcePathsFile6,
-        // sourcePathsFile7,
-        // sourcePathsFile8,
-        // sourcePathsFile9
-        // sourcePathsFile10,
-        // sourcePathsFile11
-    )
-
-    // setting out directory
-    val pathOut = "$buildDir/protobuf_source_files"
-    into(pathOut)
-
-    if (inputs.sourceFiles.isEmpty) {
-        throw GradleException("File not found: sourcePathsFile check init a submodule and the path to files.")
-    }
-
-    println("Proto files from a submodule copied")
-}
-
-
 sourceSets {
 
     main {
         proto {
-            srcDir("$buildDir/protobuf_source_files")
+            srcDir(pathProtoFilesCommon)
+            srcDir(pathProtoFilesCommercial)
         }
 
         java.srcDirs("src/main/java")
@@ -131,9 +84,6 @@ sourceSets {
  * generatedFilesBaseDir = "$projectDir/src/main/kotlin/proto"
  */
 protobuf {
-
-    //mkdir("$projectDir/src/main/java/proto_files")
-    //generatedFilesBaseDir = "$projectDir/src/main/java/proto_files"
 
     protoc {
         artifact = "com.google.protobuf:protoc:3.20.1"
@@ -152,10 +102,10 @@ protobuf {
      */
     generateProtoTasks {
         all().forEach {
-            //it.plugins {
-            //   id("javaapi"){
-            //   }
-            //}
+            it.plugins {
+                // update with import classes
+               //id("javaapi"){}
+            }
             it.builtins {
                 id("kotlin") {}
             }
