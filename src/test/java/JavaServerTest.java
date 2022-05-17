@@ -6,7 +6,7 @@ public class JavaServerTest {
 
     @Test
     public void startLogger (){
-        FastServerLogger logger = new FastServerLogger("");
+        FastServerLogger logger = new FastServerLogger("", null);
         EspServerApi api = new EspServerApi();
 
 

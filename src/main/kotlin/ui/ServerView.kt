@@ -76,17 +76,11 @@ fun appServer(messages: MutableList<String>, sendMessage: () -> Unit) {
 }
 
 fun main() = application {
-    var messageList = mutableStateListOf<String>()
-    val server = ServerImpl(object : ServerImpl.OnNewMessageListener {
-        override fun newMessage(message: String) {
-            messageList.add(message)
-        }
-    }
-    )
+    val server = ServerImpl()
     server.startWork()
 
     Window(onCloseRequest = ::exitApplication) {
-        appServer(messageList){
+        appServer(server.messages){
             server.sendListOfMessages()
         }
     }

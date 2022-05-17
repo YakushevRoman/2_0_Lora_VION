@@ -1,5 +1,6 @@
 package server_client
 
+import androidx.compose.runtime.mutableStateListOf
 import build.generated.source.proto.main.java.Esp
 import generation_java_files.EspServerApi
 import server_backend.HandlerWrapper
@@ -8,13 +9,15 @@ import server_backend.servers.*
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
-class ServerImpl(private val listener: OnNewMessageListener) :
+class ServerImpl:
+    FastServerLogger.MessagesHandler,
     EspServerApi.OnConnectedListener,
     EspServerApi.OnDisconnectedListener,
     EspServerApi.OnEspSendByUdpListener,
-    EspServerApi.OnEspKillWifiAccessPointListener{
+    EspServerApi.OnEspKillWifiAccessPointListener {
 
     var localConnection: EspServerApi.Connection? = null
+    var messages = mutableStateListOf<String>()
 
     @Suppress("PrivatePropertyName")
     private val UDP_PORT_SERVER_PROTO = 4011
@@ -22,7 +25,7 @@ class ServerImpl(private val listener: OnNewMessageListener) :
     @Suppress("PrivatePropertyName")
     private val TCP_PORT_SERVER_PROTO = 4000
 
-    val logger = FastServerLogger("src/kotlin_api_examples")
+    val logger = FastServerLogger("src/kotlin_api_examples", this)
     private val networkThread = NetworkThread(logger)
 
     private val tcpServer = ProtoTCPServer(TCP_PORT_SERVER_PROTO)
@@ -39,6 +42,9 @@ class ServerImpl(private val listener: OnNewMessageListener) :
 
         tcpServer.setNetworkThread(networkThread)
         udpServer.setNetworkThread(networkThread)
+
+        tcpServer.setServerLogger(logger)
+        udpServer.setServerLogger(logger)
 
         tcpServer.setProtocolDispatcher(uiThreadDispatcher)
         udpServer.setProtocolDispatcher(uiThreadDispatcher)
@@ -60,37 +66,34 @@ class ServerImpl(private val listener: OnNewMessageListener) :
         udpServer.stopServer()
     }
 
-    interface OnNewMessageListener {
-        fun newMessage(message: String)
-    }
-
     override fun onConnected(connection: EspServerApi.Connection?) {
         connection?.let {
             localConnection = it
-            listener.newMessage("onConnected")
+            messages.add("NEW CLIENT CONNECTED")
+
         }
     }
 
     override fun onDisconnected(connection: EspServerApi.Connection?) {
         connection?.let {
-            listener.newMessage("onDisconnected")
+            messages.add("CLIENT DISCONNECTED")
         }
     }
 
 
     override fun onEspSendByUdpReceived(connection: EspServerApi.Connection?, message: Esp.ESPSendByUDP?) {
         connection?.let {
-            listener.newMessage("onEspSendByUdpReceived")
+            // dododo
         }
     }
 
     override fun onEspKillWifiAccessPointReceived(connection: EspServerApi.Connection?) {
         connection?.let {
-            listener.newMessage("onEspKillWifiAccessPointReceived")
+            // dododo
         }
     }
 
-    fun sendListOfMessages (){
+    fun sendListOfMessages() {
         localConnection?.apply {
             sendEspConectionState(
                 Esp.ESPConectionState
@@ -100,6 +103,13 @@ class ServerImpl(private val listener: OnNewMessageListener) :
             )
         }
     }
+
+    override fun onNewMessage(message: String?) {
+        message?.let {
+            messages.add(it)
+        }
+    }
+
 
 }
 

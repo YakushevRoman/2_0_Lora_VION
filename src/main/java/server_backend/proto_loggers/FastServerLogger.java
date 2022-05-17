@@ -227,46 +227,21 @@ public class FastServerLogger implements ProtoServer.LogFactory {
         }
     }
 
-    private ServerLoggerCallback callback;
-
-    public void setCallback(ServerLoggerCallback callback) {
-        this.callback = callback;
-    }
-
-    public interface ServerLoggerCallback {
-        void postMsg(String masterIP, String msg);
-
-        void postLogObj(int id, String ip_port, String log);
-    }
-
-    private void processWriteMessageRequest(WriteMessageRequest request, LogFormatter<Message> formatter) {
-
+    private String processWriteMessageRequest(WriteMessageRequest request, LogFormatter<Message> formatter) {
+        String msg = "none";
         LogFile file = request.file;
         try {
-            String msg;
             if (request.message == null) {
                 msg = formatter.generateLog() + request.commandId;
             } else {
                 msg = formatter.generateLog(request.message) + request.commandId;
             }
-            if (request.commandId != 7)
-                if (request.commandId != 17)
-                    if (request.commandId != 2001)
-
-
             file.writeLineToFile(msg);
-            callback.postMsg(file.fileName, msg);
-            if (request.commandId == 1) {
-                String device_id = (request.message.toString().split("device_id:")[1].split("kit_tick")[0]).trim();
-                String ip_port = file.fileName.split("-")[1].split("\\.")[0];
-                System.out.println("Device id: [" + device_id + "]  ip_port: [" + ip_port + "]");
-                callback.postLogObj(Integer.parseInt(device_id), ip_port, msg);
-            }
-
         } catch (IOException e) {
             mainLog.internalWrite("ERROR: write to log " + file.getFileName() + " failed. " + e.getMessage());
             closeLog(file);
         }
+        return msg;
     }
 
     private void cleanOldFiles() {
@@ -310,7 +285,9 @@ public class FastServerLogger implements ProtoServer.LogFactory {
         }
     }
 
-    public FastServerLogger(String path) {
+    private final MessagesHandler messagesHandler;
+    public FastServerLogger(String path, MessagesHandler messagesHandler) {
+        this.messagesHandler = messagesHandler;
         rootPath = path;
         running = false;
         mainLog = new LogFile("MainLog.txt");
@@ -342,9 +319,11 @@ public class FastServerLogger implements ProtoServer.LogFactory {
                     request = reverse(request);
                     while (request != null) {
                         if (request instanceof WriteLineRequest) {
-                            processWriteLineRequest((WriteLineRequest) request);
+                            WriteLineRequest local = (WriteLineRequest) request;
+                            processWriteLineRequest(local);
                         } else if (request instanceof WriteMessageRequest) {
-                            processWriteMessageRequest((WriteMessageRequest) request, new ProtoBuffFormatter<>(((WriteMessageRequest) request).type));
+                            String message = processWriteMessageRequest((WriteMessageRequest) request, new ProtoBuffFormatter<>(((WriteMessageRequest) request).type));
+                            messagesHandler.onNewMessage(message);
                         } else if (request instanceof OpenLogRequest) {
                             processOpenRequest((OpenLogRequest) request);
                         } else if (request instanceof CloseLogRequest) {
@@ -352,6 +331,7 @@ public class FastServerLogger implements ProtoServer.LogFactory {
                         } else
                             break;
                         request = request.next;
+
                     }
                     mainLog.flush();
                 }
@@ -392,6 +372,10 @@ public class FastServerLogger implements ProtoServer.LogFactory {
     @Override
     public ProtoServer.LogWriter getMainLog() {
         return mainLog;
+    }
+
+    public interface MessagesHandler {
+        void onNewMessage(String message);
     }
 }
 

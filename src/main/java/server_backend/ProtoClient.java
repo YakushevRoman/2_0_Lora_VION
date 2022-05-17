@@ -5,6 +5,8 @@ import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageLite;
+import server_backend.proto_loggers.LogType;
+import server_backend.servers.ProtoServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

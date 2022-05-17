@@ -14,6 +14,7 @@ import java.util.concurrent.Executors
 
 
 class ClientImpl :
+    FastServerLogger.MessagesHandler,
     EspClientApi.OnConnectedListener,
     EspClientApi.OnDisconnectedListener,
     EspClientApi.OnEspConectionStateListener {
@@ -22,7 +23,7 @@ class ClientImpl :
     @Suppress("PrivatePropertyName")
     private val UDP_PORT_SERVER_PROTO = 4011
 
-    val logger = FastServerLogger("")
+    val logger = FastServerLogger("src/kotlin_api_examples", this)
     private val networkThread = NetworkThread(logger)
 
     var autoDiscoveryServer = ServerAutoDiscovery(
@@ -31,6 +32,7 @@ class ClientImpl :
         UDP_PORT_SERVER_PROTO
     )
 
+    // need to add logger for client a path
     val client = ProtoClient()
 
     private val clientApi = EspClientApi(
@@ -58,11 +60,11 @@ class ClientImpl :
     }
 
     override fun onConnected() {
-        messages.add("onConnected")
+        messages.add("CONNECTED TO SERVER")
     }
 
     override fun onDisconnected() {
-        messages.add("onDisconnected")
+        messages.add("DISCONNECTED FROM SERVER")
 
         client.isConnected = false
     }
@@ -77,6 +79,12 @@ class ClientImpl :
 
     override fun onEspConectionStateReceived(message: Esp.ESPConectionState?) {
         messages.add(message.toString())
+    }
+
+    override fun onNewMessage(message: String?) {
+        message?.let {
+            messages.add(it)
+        }
     }
 
 }
