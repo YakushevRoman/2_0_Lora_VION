@@ -57,19 +57,27 @@ compose.desktop {
     }
 }
 
-val pathProtoFiles = "proto_files"
-val pathProtoFilesCommon = "$pathProtoFiles/Proto_files_common"
-val pathProtoFilesCommercial = "$pathProtoFiles/Proto_files_commerc"
-val pathProtoFilesMilitary = "$pathProtoFiles/Proto_files_military"
+val pathSubmodule = "proto_files"
+
+val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
+val pathProtoFilesCommercial = "$pathSubmodule/Proto_files_commerc"
+val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_military"
+
+val protoDirectories = listOfNotNull(
+    pathProtoFilesCommon,
+    pathProtoFilesCommercial
+)
+
+// If you need to change directories for generating and coping files
+val pathAutoGenerationFiles = "generated/source/proto/main"
+val pathSrcKotlinFiles = "src/main/kotlin/generation_java_files"
+val pathSrcJavaFiles = "src/main/java/generation_kotlin_files"
 
 sourceSets {
-
     main {
         proto {
-            srcDir(pathProtoFilesCommon)
-            srcDir(pathProtoFilesCommercial)
+            srcDirs(protoDirectories)
         }
-
         java.srcDirs("src/main/java")
     }
 
@@ -78,12 +86,19 @@ sourceSets {
     }
 }
 
-/**
- * Main Task for Protobuf generation
- * Do not set generatedFilesBaseDir. You will have problems with duplicate files in build and source directories
- * generatedFilesBaseDir = "$projectDir/src/main/kotlin/proto"
- */
 protobuf {
+
+    for (directory in protoDirectories) {
+        val files = file(directory).list() ?: throw GradleException(
+            "Directory - $directory was not found. " +
+                    "Check init submodule for $pathSubmodule"
+        )
+
+        if (files.isEmpty()) throw GradleException(
+            "Directory - $directory does not have files for generating. " +
+                    "Check files in the $directory"
+        )
+    }
 
     protoc {
         artifact = "com.google.protobuf:protoc:3.20.1"
@@ -95,16 +110,11 @@ protobuf {
         }
     }
 
-    /**
-     * The Task generates java / kotlin files
-     * Before starting task : check "$buildDir/protobuf_source_files" a directory
-     * start task : gradle for project -> other -> copyProtoFilesFromSubmodule
-     */
     generateProtoTasks {
         all().forEach {
             it.plugins {
                 // update with import classes
-               //id("javaapi"){}
+                //id("javaapi"){}
             }
             it.builtins {
                 id("kotlin") {}
@@ -113,54 +123,21 @@ protobuf {
     }
 }
 
-// If you need to change directories for generating and coping files
-val pathAutoGenerationFiles = "generated/source/proto/main"
-val pathSrcKotlinFiles = "src/main/kotlin/generation_java_files"
-val pathSrcJavaFiles = "src/main/java/generation_kotlin_files"
-
-// a task for coping java server/client api files
 // start task : gradle for project -> other -> copyJavaServerClientApiFile
 val copyJavaServerClientApiFile = tasks.register<Copy>("copyJavaServerClientApiFile") {
-    println("Start coping java server/client api files")
+    val srcPath = "$buildDir/$pathAutoGenerationFiles/javaapi"
+    from(srcPath)
 
-    // setting source directory
-    val sourcePaths = "$buildDir/$pathAutoGenerationFiles/javaapi"
-    from(sourcePaths)
-
-    // setting out directory
-    val pathOut = "$projectDir/$pathSrcJavaFiles"
-    into(pathOut)
-
-    //if (inputs.sourceFiles.isEmpty) {
-    //    throw GradleException("File not found: $sourcePaths , you need to generate proto files." +
-    //            "For generating files you need to start generationProto task in gradle." +
-    //            "The path is gradle for project -> other -> copyJavaServerClientApiFile"
-    //    )
-    //}
-
-    println("Java server/client api files copied")
+    val outPath = "$projectDir/$pathSrcJavaFiles"
+    into(outPath)
 }
 
-// a task for coping kotlin server/client api files
 // start task : gradle for project -> other -> copyKotlinServerClientApiFile
 val copyKotlinServerClientApiFile = tasks.register<Copy>("copyKotlinServerClientApiFile") {
-    println("Start coping kotlin server/client api files")
+    val srcPath = "$buildDir/$pathAutoGenerationFiles/javaapi"
+    from(srcPath)
 
-    // setting source directory
-    val sourcePaths = "$buildDir/$pathAutoGenerationFiles/javaapi"
-    from(sourcePaths)
-
-    // setting out directory
-    val pathOut = "$projectDir/$pathSrcKotlinFiles"
-    into(pathOut)
-
-    //if (inputs.sourceFiles.isEmpty) {
-    //    throw GradleException("File not found: $sourcePaths , you need to generate proto files." +
-    //            "For generating files you need to start generationProto task in gradle." +
-    //            "The path is gradle for project -> other -> copyKotlinServerClientApiFile"
-    //    )
-    //}
-
-    println("Kotlin server/client api files copied")
+    val outPath = "$projectDir/$pathSrcKotlinFiles"
+    into(outPath)
 }
 
