@@ -112,7 +112,6 @@ protobuf {
     generateProtoTasks {
         all().forEach {
             it.plugins {
-                // update with import classes
                 //id("javaapi"){}
             }
             it.builtins {

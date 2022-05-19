@@ -1,4 +1,4 @@
-package server_backend.servers;
+package proto_server_client.servers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 

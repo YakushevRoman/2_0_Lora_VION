@@ -1,9 +1,9 @@
-package server_backend;
+package proto_server_client.client;
 
 
 import com.google.protobuf.*;
-import server_backend.proto_loggers.LogType;
-import server_backend.servers.ProtoServer;
+import proto_server_client.logger.LogType;
+import proto_server_client.servers.ProtoServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,7 +15,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static server_backend.servers.ProtoServer.bytesToHex;
+import static proto_server_client.servers.ProtoServer.bytesToHex;
 
 /**
  * @apiNote

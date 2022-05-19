@@ -1,9 +1,9 @@
-package server_backend.proto_loggers;
+package proto_server_client.logger;
 
 
 import com.google.protobuf.Message;
 
-import server_backend.servers.ProtoServer;
+import proto_server_client.servers.ProtoServer;
 
 import java.io.BufferedWriter;
 import java.io.File;

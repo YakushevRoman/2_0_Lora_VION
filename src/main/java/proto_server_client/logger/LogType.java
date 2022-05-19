@@ -1,4 +1,4 @@
-package server_backend.proto_loggers;
+package proto_server_client.logger;
 
 public enum LogType {
     SENDER("send message "),

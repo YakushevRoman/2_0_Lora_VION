@@ -1,4 +1,6 @@
-package server_backend.servers;
+package proto_server_client.utils;
+
+import proto_server_client.servers.ProtoServer;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;

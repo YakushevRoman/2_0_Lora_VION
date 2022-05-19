@@ -1,6 +1,6 @@
-package server_backend;
+package proto_server_client.utils;
 
-import server_backend.servers.UIThreadServerCommandDispatcher;
+import proto_server_client.servers.UIThreadServerCommandDispatcher;
 
 import java.util.concurrent.ExecutorService;
 

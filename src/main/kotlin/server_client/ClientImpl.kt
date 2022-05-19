@@ -5,11 +5,11 @@ import build.generated.source.proto.main.java.Esp
 import build.generated.source.proto.main.java.eSPSendByUDP
 import generation_java_files.EspClientApi
 import kotlinx.coroutines.*
-import server_backend.HandlerWrapper
-import server_backend.ProtoClient
-import server_backend.proto_loggers.FastServerLogger
-import server_backend.servers.NetworkThread
-import server_backend.servers.ServerAutoDiscovery
+import proto_server_client.utils.HandlerWrapper
+import proto_server_client.client.ProtoClient
+import proto_server_client.logger.FastServerLogger
+import proto_server_client.utils.NetworkThread
+import proto_server_client.utils.ServerAutoDiscovery
 import java.net.InetAddress
 import java.util.concurrent.Executors
 
@@ -25,7 +25,7 @@ class ClientImpl :
     @Suppress("PrivatePropertyName")
     private val UDP_PORT_SERVER_PROTO = 4011
 
-    val logger = FastServerLogger("src/kotlin_api_examples/client_logs", this)
+    val logger = FastServerLogger("src/logs/client_logs", this)
     private val networkThread = NetworkThread(logger)
 
     var autoDiscoveryServer = ServerAutoDiscovery(

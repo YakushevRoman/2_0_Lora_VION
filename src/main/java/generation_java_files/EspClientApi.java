@@ -6,9 +6,9 @@ import build.generated.source.proto.main.java.Esp;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
-import server_backend.HandlerWrapper;
-import server_backend.ProtoClient;
-import server_backend.servers.UIThreadClientCommandDispatcher;
+import proto_server_client.utils.HandlerWrapper;
+import proto_server_client.client.ProtoClient;
+import proto_server_client.client.UIThreadClientCommandDispatcher;
 
 import java.io.IOException;
 

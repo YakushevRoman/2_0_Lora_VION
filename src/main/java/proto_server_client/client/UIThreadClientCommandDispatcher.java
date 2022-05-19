@@ -1,9 +1,8 @@
-package server_backend.servers;
+package proto_server_client.client;
 
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.MessageLite;
-import server_backend.HandlerWrapper;
-import server_backend.ProtoClient;
+import proto_server_client.utils.HandlerWrapper;
 
 import java.io.IOException;
 

@@ -1,11 +1,12 @@
-package server_backend.servers;
+package proto_server_client.servers;
 
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
 
-import server_backend.proto_loggers.LogType;
+import proto_server_client.logger.LogType;
+import proto_server_client.utils.NetworkThread;
 
 import javax.annotation.Nullable;
 import java.io.IOException;

@@ -4,9 +4,10 @@ import androidx.compose.runtime.mutableStateListOf
 import build.generated.source.proto.main.java.Esp
 import generation_java_files.EspServerApi
 import kotlinx.coroutines.*
-import server_backend.HandlerWrapper
-import server_backend.proto_loggers.FastServerLogger
-import server_backend.servers.*
+import proto_server_client.utils.HandlerWrapper
+import proto_server_client.logger.FastServerLogger
+import proto_server_client.servers.*
+import proto_server_client.utils.NetworkThread
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
@@ -26,7 +27,7 @@ class ServerImpl:
     @Suppress("PrivatePropertyName")
     private val TCP_PORT_SERVER_PROTO = 4000
 
-    val logger = FastServerLogger("src/kotlin_api_examples/server_logs", this)
+    val logger = FastServerLogger("src/logs/server_logs", this)
     private val networkThread = NetworkThread(logger)
 
 

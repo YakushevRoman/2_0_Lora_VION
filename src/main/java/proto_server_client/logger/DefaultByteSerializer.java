@@ -1,4 +1,4 @@
-package server_backend.proto_loggers;
+package proto_server_client.logger;
 
 import com.google.protobuf.ByteString;
 

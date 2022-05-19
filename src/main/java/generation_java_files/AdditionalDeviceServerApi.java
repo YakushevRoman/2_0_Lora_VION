@@ -5,7 +5,7 @@ package generation_java_files;
 import build.generated.source.proto.main.java.*;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
-import server_backend.servers.ProtoServer;
+import proto_server_client.servers.ProtoServer;
 
 import java.io.IOException;
 

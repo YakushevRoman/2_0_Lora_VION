@@ -1,9 +1,8 @@
-package server_backend.servers;
+package proto_server_client.utils;
 
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
