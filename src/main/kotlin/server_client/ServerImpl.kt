@@ -3,6 +3,7 @@ package server_client
 import androidx.compose.runtime.mutableStateListOf
 import build.generated.source.proto.main.java.Esp
 import generation_java_files.EspServerApi
+import kotlinx.coroutines.*
 import server_backend.HandlerWrapper
 import server_backend.proto_loggers.FastServerLogger
 import server_backend.servers.*
@@ -25,8 +26,9 @@ class ServerImpl:
     @Suppress("PrivatePropertyName")
     private val TCP_PORT_SERVER_PROTO = 4000
 
-    val logger = FastServerLogger("src/kotlin_api_examples", this)
+    val logger = FastServerLogger("src/kotlin_api_examples/server_logs", this)
     private val networkThread = NetworkThread(logger)
+
 
     private val tcpServer = ProtoTCPServer(TCP_PORT_SERVER_PROTO)
     private val udpServer = ProtoUDPServer(UDP_PORT_SERVER_PROTO)
@@ -38,8 +40,6 @@ class ServerImpl:
     )
 
     init {
-        networkThread.start()
-
         tcpServer.setNetworkThread(networkThread)
         udpServer.setNetworkThread(networkThread)
 
@@ -53,6 +53,7 @@ class ServerImpl:
         serverApi.setOnDisconnectedListener(this)
         serverApi.setOnEspSendByUdpListener(this)
         serverApi.setOnEspKillWifiAccessPointListener(this)
+        networkThread.start()
     }
 
 
@@ -69,14 +70,12 @@ class ServerImpl:
     override fun onConnected(connection: EspServerApi.Connection?) {
         connection?.let {
             localConnection = it
-            messages.add("NEW CLIENT CONNECTED")
-
         }
     }
 
     override fun onDisconnected(connection: EspServerApi.Connection?) {
         connection?.let {
-            messages.add("CLIENT DISCONNECTED")
+            // dododo
         }
     }
 
@@ -106,7 +105,9 @@ class ServerImpl:
 
     override fun onNewMessage(message: String?) {
         message?.let {
-            messages.add(it)
+            CoroutineScope(Dispatchers.Main).launch {
+                messages.add(it)
+            }
         }
     }
 

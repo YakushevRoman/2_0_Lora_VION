@@ -286,6 +286,7 @@ public class FastServerLogger implements ProtoServer.LogFactory {
     }
 
     private final MessagesHandler messagesHandler;
+
     public FastServerLogger(String path, MessagesHandler messagesHandler) {
         this.messagesHandler = messagesHandler;
         rootPath = path;
@@ -321,6 +322,7 @@ public class FastServerLogger implements ProtoServer.LogFactory {
                         if (request instanceof WriteLineRequest) {
                             WriteLineRequest local = (WriteLineRequest) request;
                             processWriteLineRequest(local);
+                            messagesHandler.onNewMessage(local.text);
                         } else if (request instanceof WriteMessageRequest) {
                             String message = processWriteMessageRequest((WriteMessageRequest) request, new ProtoBuffFormatter<>(((WriteMessageRequest) request).type));
                             messagesHandler.onNewMessage(message);

@@ -1,10 +1,7 @@
 package server_backend;
 
 
-import com.google.protobuf.CodedInputStream;
-import com.google.protobuf.CodedOutputStream;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.MessageLite;
+import com.google.protobuf.*;
 import server_backend.proto_loggers.LogType;
 import server_backend.servers.ProtoServer;
 
@@ -18,15 +15,24 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static server_backend.servers.ProtoServer.bytesToHex;
+
+/**
+ * @apiNote
+ * NOTE tagger internally uses 512 byte buffer for commands
+ * so it cannot process command larger than 512 bytes.
+ * if you communicate with tagger directly, make sure that this value is 512 or less.
+ * you can use bigger value if other side is not a tagger (and not a low resource device).
+ *
+ * RECEIVE_BUFFER_SIZE_DEF - recv buffer size must be > 10
+ * RECEIVE_BUFFER_SIZE_MAX - buffer can grow up to max (if max > def)
+ * MAX_SEND_COMMAND_SIZE -  must be 512 or less for communication with tagger
+ */
 public class ProtoClient {
-    // recv buffer size must be > 10
     private static final int RECEIVE_BUFFER_SIZE_DEF = 1024;
-    private static final int RECEIVE_BUFFER_SIZE_MAX = 16384; // buffer can grow up to max (if max > def)
-    // NOTE tagger internally uses 512 byte buffer for commands
-    // so it cannot process command larger than 512 bytes.
-    // if you communicate with tagger directly, make sure that this value is 512 or less.
-    // you can use bigger value if other side is not a tagger (and not a low resource device).
-    private static final int MAX_SEND_COMMAND_SIZE = 16384; // must be 512 or less for communication with tagger
+    private static final int RECEIVE_BUFFER_SIZE_MAX = 16384;
+    private static final int MAX_SEND_COMMAND_SIZE = 16384;
+
     private Selector selector;
     private ByteBuffer receiveBuffer = ByteBuffer.allocate(RECEIVE_BUFFER_SIZE_DEF);
     private final ConcurrentLinkedQueue<ByteBuffer> sendQueue = new ConcurrentLinkedQueue<>();
@@ -37,6 +43,16 @@ public class ProtoClient {
     private boolean running = false;
     private boolean connected = false;
     private ProtocolDispatcher protocolDispatcher = null;
+    private ProtoServer.LogFactory logger;
+    private ProtoServer.LogWriter clientLogger;
+    private boolean logging = false;
+
+    public ProtoClient(ProtoServer.LogFactory logger, boolean logging) {
+        this.logger = logger;
+        this.logging = logging;
+    }
+
+    public ProtoClient() {}
 
     private void clearBuffers() {
         isHeaderReceived = false;
@@ -57,14 +73,34 @@ public class ProtoClient {
 
     private void notifyOnConnected() {
         protocolDispatcher.notifyOnConnected();
+        loggerWriteLine("CONNECTED TO THE SERVER");
     }
 
     private void notifyOnError(Throwable error) {
         protocolDispatcher.notifyOnError(error);
+        loggerWriteLine("ERROR:" + exceptionStackTrace(error));
     }
+
 
     private void notifyOnDisconnected() {
         protocolDispatcher.notifyOnDisconnected();
+        loggerWriteLine("DISCONNECTED FROM THE SERVER");
+    }
+
+    private void loggerWriteLine(String log) {
+        if (logging) {
+            if (clientLogger != null) {
+                clientLogger.writeLine(log);
+            }
+        }
+    }
+
+    private void loggerWriteMessage(LogType logType, Message msg, int commandID) {
+        if (logging) {
+            if (clientLogger != null) {
+                clientLogger.writeMessage(logType, msg, commandID);
+            }
+        }
     }
 
     private void growReceiveBuffer(int newCapacity) throws InvalidProtocolBufferException {
@@ -134,8 +170,9 @@ public class ProtoClient {
         try {
             channel.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            notifyOnError(e);
         }
+
         if (wasConnected) {
             notifyOnDisconnected();
         }
@@ -147,6 +184,7 @@ public class ProtoClient {
             running = false;
             return;
         }
+
         if (isHeaderReceived || parseReceivedHeader(0)) {
 
             int startPos = 0;
@@ -161,11 +199,15 @@ public class ProtoClient {
                     CodedInputStream stream = CodedInputStream.newInstance(data, offset + startPos + receivedHeaderSize, endPos - startPos - receivedHeaderSize);
                     MessageLite msg = protocolDispatcher.parseMessage(receivedCommandId, stream);
                     protocolDispatcher.dispatchMessage(receivedCommandId, msg);
+
+                    loggerWriteMessage(LogType.RECEIVER, (Message) msg, receivedCommandId);
+                    loggerWriteLine("Received msg: " + bytesToHex(data, (offset + startPos), (offset + endPos)));
                 }
                 isHeaderReceived = false;
                 startPos = endPos;
                 if (!parseReceivedHeader(startPos))
                     break;
+
                 endPos = startPos + receivedHeaderSize + receivedCommandSize;
             }
             if (startPos > 0) {
@@ -190,8 +232,11 @@ public class ProtoClient {
                 return;
             }
 
-            if (buffer.remaining() > 0)
-                channel.write(buffer);
+            if (buffer.remaining() > 0) {
+                loggerWriteLine("CLIENT: Send queued data " + bytesToHex(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit()));
+                int res = channel.write(buffer);
+                loggerWriteLine("CLIENT: " + res + " bytes sent");
+            }
 
             if (buffer.remaining() == 0)
                 sendQueue.poll();
@@ -218,6 +263,10 @@ public class ProtoClient {
                 channel.configureBlocking(false);
                 channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
                 SelectionKey key = channel.register(selector, SelectionKey.OP_CONNECT);
+
+                if (logging) {
+                    clientLogger = logger.openConnectionLog(address);
+                }
 
                 channel.connect(address);
 
@@ -294,14 +343,20 @@ public class ProtoClient {
             int msgSize = CodedOutputStream.computeMessageSizeNoTag(message);
             int totalSize = cmdSize + msgSize;
             if (totalSize > MAX_SEND_COMMAND_SIZE) {
+                loggerWriteLine("ERROR: CLIENT command size exceed MAX_SEND_COMMAND_SIZE limit. " +
+                        "Tagger cannot handle big commands cmdId = " + commandId + " commandSize = " + totalSize);
                 return null;
             }
+
             byte[] res = new byte[totalSize];
             CodedOutputStream stream = CodedOutputStream.newInstance(res);
             stream.writeUInt32NoTag(commandId);
             stream.writeMessageNoTag(message);
             return res;
         } catch (IOException e) {
+            loggerWriteLine("ERROR CLIENT: serializeMessage failed. " +
+                    "Make sure that message is not modified from another threads during serialization cmdId = " + commandId);
+            notifyOnError(e);
             return null;
         }
     }
@@ -313,15 +368,36 @@ public class ProtoClient {
     }
 
     public boolean sendCommand(int commandId, MessageLite message) {
-        byte[] command = serializeMessage(commandId, message);
-        if (command == null)
+        loggerWriteMessage(LogType.SENDER, (Message) message, commandId);
+
+        byte[] data = serializeMessage(commandId, message);
+        if (data == null)
             return false;
 
-        sendQueue.add(ByteBuffer.wrap(command));
+        loggerWriteLine("Send msg: " + bytesToHex(data, 0, data.length));
+
+        sendQueue.add(ByteBuffer.wrap(data));
 
         if (selector != null)
             selector.wakeup();
 
         return true;
+    }
+
+    public String threadCurrentStackTrace() {
+        StringBuilder builder = new StringBuilder();
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
+            builder.append(ste).append("\n");
+
+        return builder.toString();
+    }
+
+    public String exceptionStackTrace(Throwable throwable) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(throwable.toString()).append("\n");
+        for (StackTraceElement ste : throwable.getStackTrace())
+            builder.append(ste).append("\n");
+
+        return builder.toString();
     }
 }

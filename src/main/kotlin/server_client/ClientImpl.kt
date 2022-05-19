@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import build.generated.source.proto.main.java.Esp
 import build.generated.source.proto.main.java.eSPSendByUDP
 import generation_java_files.EspClientApi
+import kotlinx.coroutines.*
 import server_backend.HandlerWrapper
 import server_backend.ProtoClient
 import server_backend.proto_loggers.FastServerLogger
@@ -20,10 +21,11 @@ class ClientImpl :
     EspClientApi.OnEspConectionStateListener {
 
     var messages = mutableStateListOf<String>()
+
     @Suppress("PrivatePropertyName")
     private val UDP_PORT_SERVER_PROTO = 4011
 
-    val logger = FastServerLogger("src/kotlin_api_examples", this)
+    val logger = FastServerLogger("src/kotlin_api_examples/client_logs", this)
     private val networkThread = NetworkThread(logger)
 
     var autoDiscoveryServer = ServerAutoDiscovery(
@@ -33,7 +35,7 @@ class ClientImpl :
     )
 
     // need to add logger for client a path
-    val client = ProtoClient()
+    val client = ProtoClient(logger, true)
 
     private val clientApi = EspClientApi(
         client,
@@ -60,12 +62,9 @@ class ClientImpl :
     }
 
     override fun onConnected() {
-        messages.add("CONNECTED TO SERVER")
     }
 
     override fun onDisconnected() {
-        messages.add("DISCONNECTED FROM SERVER")
-
         client.isConnected = false
     }
 
@@ -78,12 +77,13 @@ class ClientImpl :
     }
 
     override fun onEspConectionStateReceived(message: Esp.ESPConectionState?) {
-        messages.add(message.toString())
     }
 
     override fun onNewMessage(message: String?) {
         message?.let {
-            messages.add(it)
+            CoroutineScope(Dispatchers.Main).launch {
+                messages.add(it)
+            }
         }
     }
 

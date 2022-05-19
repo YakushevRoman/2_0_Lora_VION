@@ -61,7 +61,6 @@ val pathSubmodule = "proto_files"
 
 val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
 val pathProtoFilesCommercial = "$pathSubmodule/Proto_files_commerc"
-val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_military"
 
 val protoDirectories = listOfNotNull(
     pathProtoFilesCommon,
@@ -106,7 +105,7 @@ protobuf {
 
     plugins {
         id("javaapi") {
-            path = "tools/protoc-gen-javaapi.exe"
+            path = "tools/protoc"
         }
     }
 
