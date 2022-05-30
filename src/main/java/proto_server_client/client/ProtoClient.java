@@ -4,6 +4,7 @@ package proto_server_client.client;
 import com.google.protobuf.*;
 import proto_server_client.logger.LogType;
 import proto_server_client.servers.ProtoServer;
+import proto_server_client.utils.MessageInterceptor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,12 +19,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static proto_server_client.servers.ProtoServer.bytesToHex;
 
 /**
- * @apiNote
- * NOTE tagger internally uses 512 byte buffer for commands
+ * @apiNote NOTE tagger internally uses 512 byte buffer for commands
  * so it cannot process command larger than 512 bytes.
  * if you communicate with tagger directly, make sure that this value is 512 or less.
  * you can use bigger value if other side is not a tagger (and not a low resource device).
- *
+ * <p>
  * RECEIVE_BUFFER_SIZE_DEF - recv buffer size must be > 10
  * RECEIVE_BUFFER_SIZE_MAX - buffer can grow up to max (if max > def)
  * MAX_SEND_COMMAND_SIZE -  must be 512 or less for communication with tagger
@@ -46,13 +46,19 @@ public class ProtoClient {
     private ProtoServer.LogFactory logger;
     private ProtoServer.LogWriter clientLogger;
     private boolean logging = false;
+    private MessageInterceptor messageInterceptor = null;
 
     public ProtoClient(ProtoServer.LogFactory logger, boolean logging) {
         this.logger = logger;
         this.logging = logging;
     }
 
-    public ProtoClient() {}
+    public ProtoClient() {
+    }
+
+    public void setMessageInterceptor(MessageInterceptor messageInterceptor) {
+        this.messageInterceptor = messageInterceptor;
+    }
 
     private void clearBuffers() {
         isHeaderReceived = false;
@@ -82,7 +88,7 @@ public class ProtoClient {
     }
 
 
-    private void notifyOnDisconnected() {
+    public void notifyOnDisconnected() {
         protocolDispatcher.notifyOnDisconnected();
         loggerWriteLine("DISCONNECTED FROM THE SERVER");
     }
@@ -199,6 +205,9 @@ public class ProtoClient {
                     CodedInputStream stream = CodedInputStream.newInstance(data, offset + startPos + receivedHeaderSize, endPos - startPos - receivedHeaderSize);
                     MessageLite msg = protocolDispatcher.parseMessage(receivedCommandId, stream);
                     protocolDispatcher.dispatchMessage(receivedCommandId, msg);
+
+                    if (messageInterceptor != null)
+                        messageInterceptor.onMessageCatch(receivedCommandId, msg);
 
                     loggerWriteMessage(LogType.RECEIVER, (Message) msg, receivedCommandId);
                     loggerWriteLine("Received msg: " + bytesToHex(data, (offset + startPos), (offset + endPos)));

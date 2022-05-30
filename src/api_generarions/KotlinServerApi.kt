@@ -52,8 +52,7 @@ class KotlinServerApi {
     var onDisconnectedListener: OnDisconnectedListener? = null
 
     private fun notifyHelloFromDevReceived(connection: ProtoServer.Connection, message: HelloFromDev) {
-        val localCopy = onHelloFromDevListener
-        localCopy?.apply {
+        onHelloFromDevListener?.apply {
             onHelloFromDevReceived(connection.getApi(), message)
         }
     }

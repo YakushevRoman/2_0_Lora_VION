@@ -33,9 +33,13 @@ dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.protobuf-java-format/protobuf-java-format
     implementation("com.googlecode.protobuf-java-format:protobuf-java-format:1.4")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
+
+    testImplementation ("junit:junit:4.13.2")
+    testImplementation ("org.junit.vintage:junit-vintage-engine:5.8.0")
 }
 
 tasks.test {
@@ -120,6 +124,8 @@ protobuf {
         }
     }
 }
+
+
 
 // start task : gradle for project -> other -> copyJavaServerClientApiFile
 val copyJavaServerClientApiFile = tasks.register<Copy>("copyJavaServerClientApiFile") {

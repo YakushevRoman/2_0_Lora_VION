@@ -16,7 +16,7 @@ import server_client.ClientImpl
 
 @Composable
 @Preview
-fun appClient( messages : MutableList<String>, sendMessage: () -> Unit) {
+fun appClient( messages : MutableList<String>, sendMessage: () -> Unit, reconnect: () -> Unit) {
 
     MaterialTheme {
         Column {
@@ -43,6 +43,12 @@ fun appClient( messages : MutableList<String>, sendMessage: () -> Unit) {
                 )
                 {
                     Text("Clear messages")
+                }
+                Button(onClick = reconnect,
+                    colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
+                )
+                {
+                    Text("Reconnect")
                 }
             }
 
@@ -78,11 +84,16 @@ fun main() = application {
     client.startWork()
 
     Window(onCloseRequest = ::exitApplication) {
-        appClient(client.messages){
-            client.sendMessages()
-        }
+        appClient(
+            client.messages,
+            {
+                client.sendMessages()
+            },
+            {
+                client.reconect()
+            }
+        )
     }
-
 
 }
 

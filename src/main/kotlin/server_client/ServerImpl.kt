@@ -1,17 +1,26 @@
 package server_client
 
+import MessagesState
+import ServerClientState
 import androidx.compose.runtime.mutableStateListOf
 import build.generated.source.proto.main.java.Esp
+import com.google.protobuf.GeneratedMessageV3
+import com.google.protobuf.MessageLite
 import generation_java_files.EspServerApi
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import proto_server_client.utils.HandlerWrapper
 import proto_server_client.logger.FastServerLogger
 import proto_server_client.servers.*
+import proto_server_client.utils.MessageInterceptor
 import proto_server_client.utils.NetworkThread
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
-class ServerImpl:
+class ServerImpl :
+    MessageInterceptor,
     FastServerLogger.MessagesHandler,
     EspServerApi.OnConnectedListener,
     EspServerApi.OnDisconnectedListener,
@@ -20,6 +29,14 @@ class ServerImpl:
 
     var localConnection: EspServerApi.Connection? = null
     var messages = mutableStateListOf<String>()
+    var msgs = mutableStateListOf<GeneratedMessageV3>()
+
+    private val _serverMessagesState = MutableSharedFlow<MessagesState>()
+    val serverMessagesState = _serverMessagesState.asSharedFlow()
+    var caughtMessages = mutableStateListOf<MessageLite>()
+
+
+    val serverMessageState = MutableStateFlow<ServerClientState>(ServerClientState.NotClient)
 
     @Suppress("PrivatePropertyName")
     private val UDP_PORT_SERVER_PROTO = 4011
@@ -34,7 +51,7 @@ class ServerImpl:
     private val tcpServer = ProtoTCPServer(TCP_PORT_SERVER_PROTO)
     private val udpServer = ProtoUDPServer(UDP_PORT_SERVER_PROTO)
 
-    private val serverApi = EspServerApi()
+    val serverApi = EspServerApi()
     private val uiThreadDispatcher = UIThreadServerCommandDispatcher(
         serverApi.protocolDispatcher,
         HandlerWrapper(Executors.newFixedThreadPool(1))
@@ -43,6 +60,9 @@ class ServerImpl:
     init {
         tcpServer.setNetworkThread(networkThread)
         udpServer.setNetworkThread(networkThread)
+
+        tcpServer.setMessageInterceptor(this)
+        udpServer.setMessageInterceptor(this)
 
         tcpServer.setServerLogger(logger)
         udpServer.setServerLogger(logger)
@@ -63,7 +83,7 @@ class ServerImpl:
         udpServer.startServer()
     }
 
-    fun after() {
+    fun stopWork() {
         tcpServer.stopServer()
         udpServer.stopServer()
     }
@@ -71,26 +91,21 @@ class ServerImpl:
     override fun onConnected(connection: EspServerApi.Connection?) {
         connection?.let {
             localConnection = it
+            serverMessageState.value = ServerClientState.ConnectedClient
         }
     }
 
     override fun onDisconnected(connection: EspServerApi.Connection?) {
         connection?.let {
-            // dododo
+            serverMessageState.value = ServerClientState.DisconnectedClient
         }
+        localConnection = null
     }
 
-
     override fun onEspSendByUdpReceived(connection: EspServerApi.Connection?, message: Esp.ESPSendByUDP?) {
-        connection?.let {
-            // dododo
-        }
     }
 
     override fun onEspKillWifiAccessPointReceived(connection: EspServerApi.Connection?) {
-        connection?.let {
-            // dododo
-        }
     }
 
     fun sendListOfMessages() {
@@ -109,6 +124,16 @@ class ServerImpl:
             CoroutineScope(Dispatchers.Main).launch {
                 messages.add(it)
             }
+        }
+    }
+
+    override fun onMessageCatch(commandId: Int, message: MessageLite?) {
+        message?.let {
+            caughtMessages.add(it)
+        }
+
+        runBlocking{
+            _serverMessagesState.emit(MessagesState.Messages(caughtMessages))
         }
     }
 

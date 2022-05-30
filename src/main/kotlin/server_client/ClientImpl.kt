@@ -1,13 +1,17 @@
 package server_client
 
+import MessagesState
 import androidx.compose.runtime.mutableStateListOf
 import build.generated.source.proto.main.java.Esp
 import build.generated.source.proto.main.java.eSPSendByUDP
+import com.google.protobuf.MessageLite
 import generation_java_files.EspClientApi
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import proto_server_client.utils.HandlerWrapper
 import proto_server_client.client.ProtoClient
 import proto_server_client.logger.FastServerLogger
+import proto_server_client.utils.MessageInterceptor
 import proto_server_client.utils.NetworkThread
 import proto_server_client.utils.ServerAutoDiscovery
 import java.net.InetAddress
@@ -18,9 +22,15 @@ class ClientImpl :
     FastServerLogger.MessagesHandler,
     EspClientApi.OnConnectedListener,
     EspClientApi.OnDisconnectedListener,
-    EspClientApi.OnEspConectionStateListener {
+    EspClientApi.OnEspConectionStateListener,
+    MessageInterceptor {
 
     var messages = mutableStateListOf<String>()
+
+    private val _clientMessagesState = MutableSharedFlow<MessagesState>()
+    val clientMessagesState = _clientMessagesState.asSharedFlow()
+
+    var caughtMessages = mutableStateListOf<MessageLite>()
 
     @Suppress("PrivatePropertyName")
     private val UDP_PORT_SERVER_PROTO = 4011
@@ -37,7 +47,7 @@ class ClientImpl :
     // need to add logger for client a path
     val client = ProtoClient(logger, true)
 
-    private val clientApi = EspClientApi(
+    val clientApi = EspClientApi(
         client,
         true,
         HandlerWrapper(Executors.newFixedThreadPool(1))
@@ -49,19 +59,24 @@ class ClientImpl :
         clientApi.setOnEspConectionStateListener(this)
 
         client.setProtocolDispatcher(clientApi)
+        client.setMessageInterceptor(this)
     }
 
     fun startWork() {
-        autoDiscoveryServer.start()
+        //autoDiscoveryServer.start()
 
         client.connect(InetAddress.getByName("localhost").hostAddress, 4000)
     }
 
-    fun after() {
+    fun stopWork() {
         client.stopClient()
     }
 
     override fun onConnected() {
+
+        CoroutineScope(Dispatchers.Default).launch {
+            _clientMessagesState.emit(MessagesState.Empty)
+        }
     }
 
     override fun onDisconnected() {
@@ -86,5 +101,20 @@ class ClientImpl :
             }
         }
     }
+
+    fun reconect() {
+        client.connect(InetAddress.getByName("localhost").hostAddress, 4000)
+    }
+
+    override fun onMessageCatch(commandId: Int, message: MessageLite?) {
+        message?.let {
+            caughtMessages.add(it)
+        }
+
+        runBlocking{
+            _clientMessagesState.emit(MessagesState.Messages(caughtMessages))
+        }
+    }
+
 
 }

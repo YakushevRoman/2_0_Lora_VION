@@ -3,6 +3,7 @@ package proto_server_client.servers;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
 import proto_server_client.logger.LogType;
+import proto_server_client.utils.MessageInterceptor;
 import proto_server_client.utils.NetworkThread;
 
 import java.io.IOException;
@@ -50,11 +51,16 @@ public class ProtoUDPServer extends ProtoServer {
     int mLastConnectionId;
 
     private final HashMap<SocketAddress, ProtoConnection> connections = new HashMap<>();
+    private MessageInterceptor messageInterceptor = null;
 
     public ProtoUDPServer(int port) {
         this.mPort = port;
         this.mRecvBuffer = ByteBuffer.allocate(MAX_RECV_DADAGRAM_SIZE);
         this.mEmptyPacketBuffer = ByteBuffer.allocate(5);
+    }
+
+    public void setMessageInterceptor(MessageInterceptor messageInterceptor) {
+        this.messageInterceptor = messageInterceptor;
     }
 
     private class ProtoConnection implements ProtoServer.Connection, ProtoCmdParser.CommandReceiver {
@@ -133,6 +139,9 @@ public class ProtoUDPServer extends ProtoServer {
                     CodedInputStream stream = CodedInputStream.newInstance(data, offset, len);
                     message = mProtocolDispatcher.parseMessage(commandId, stream);
                     mLogWriter.writeMessage(LogType.RECEIVER, message, commandId);
+
+                    if (messageInterceptor != null)
+                        messageInterceptor.onMessageCatch(commandId, message);
                 } catch (Exception e) {
                     writeToLog("ERROR: parse incoming message failed. cmdId = " + commandId + ". len = " + len + ". " + exceptionStackTrace(e));
                     throw e;

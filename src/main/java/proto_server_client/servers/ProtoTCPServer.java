@@ -3,6 +3,7 @@ import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import proto_server_client.logger.LogType;
+import proto_server_client.utils.MessageInterceptor;
 import proto_server_client.utils.NetworkThread;
 
 
@@ -40,6 +41,15 @@ public class ProtoTCPServer extends ProtoServer {
     private Selector mSelector;
     private ServerSocketChannel mServerChannel;
     private int lastClientId = -3;
+    private MessageInterceptor messageInterceptor = null;
+
+    public ProtoTCPServer(int port) {
+        this.mPort = port;
+    }
+
+    public void setMessageInterceptor(MessageInterceptor messageInterceptor) {
+        this.messageInterceptor = messageInterceptor;
+    }
 
     private class ProtoConnection implements ProtoServer.Connection, ProtoCmdParser.CommandReceiver, NetworkThread.SelectionHandler {
         SocketChannel channel;
@@ -145,6 +155,9 @@ public class ProtoTCPServer extends ProtoServer {
                 Message msg = mProtocolDispatcher.parseMessage(commandId, stream);
                 mProtocolDispatcher.dispatchMessage(this, commandId, msg);
                 mLogWriter.writeMessage(LogType.RECEIVER, msg, commandId);
+
+                if (messageInterceptor != null)
+                    messageInterceptor.onMessageCatch(commandId, msg);
             }
         }
 
@@ -215,10 +228,6 @@ public class ProtoTCPServer extends ProtoServer {
         public LogWriter getLogger() {
             return mLogWriter;
         }
-    }
-
-    public ProtoTCPServer(int port) {
-        this.mPort = port;
     }
 
     protected void sendCommand(ProtoServer.Connection connection, byte[] data) {
