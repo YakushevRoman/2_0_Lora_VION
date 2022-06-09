@@ -322,10 +322,12 @@ public class FastServerLogger implements ProtoServer.LogFactory {
                         if (request instanceof WriteLineRequest) {
                             WriteLineRequest local = (WriteLineRequest) request;
                             processWriteLineRequest(local);
-                            messagesHandler.onNewMessage(local.text);
+                            if (messagesHandler != null)
+                                messagesHandler.onNewMessage(local.text);
                         } else if (request instanceof WriteMessageRequest) {
                             String message = processWriteMessageRequest((WriteMessageRequest) request, new ProtoBuffFormatter<>(((WriteMessageRequest) request).type));
-                            messagesHandler.onNewMessage(message);
+                            if (messagesHandler != null)
+                                messagesHandler.onNewMessage(message);
                         } else if (request instanceof OpenLogRequest) {
                             processOpenRequest((OpenLogRequest) request);
                         } else if (request instanceof CloseLogRequest) {

@@ -125,6 +125,7 @@ public class ServerAutoDiscovery {
                 mSendBuffer.put(name);
                 mSendBuffer.flip();
                 mChannel.send(mSendBuffer, address);
+                System.err.println("Server ->" + address );
             } catch (IOException e) {
                 System.err.println("ERROR: " + e.getMessage());
             }

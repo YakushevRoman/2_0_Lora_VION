@@ -147,4 +147,3 @@ val copyKotlinServerClientApiFile = tasks.register<Copy>("copyKotlinServerClient
 
 После этого java/kotlin файлы в java_package = "build.generated.source.proto.main.java" будут помечены как 
 исходные деректории и будут доступны для использование в любом модуле проекта.
-![alt text](http://url/to/img.png)

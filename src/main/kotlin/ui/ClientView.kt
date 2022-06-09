@@ -16,7 +16,7 @@ import server_client.ClientImpl
 
 @Composable
 @Preview
-fun appClient( messages : MutableList<String>, sendMessage: () -> Unit, reconnect: () -> Unit) {
+fun appClient( messages : MutableList<String>, reconnect: () -> Unit) {
 
     MaterialTheme {
         Column {
@@ -32,7 +32,7 @@ fun appClient( messages : MutableList<String>, sendMessage: () -> Unit, reconnec
                     text = "Messages: ",
                     fontSize = 16.sp
                 )
-                Button(onClick = sendMessage,
+                Button(onClick = {},
                     colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
                 )
                 {
@@ -81,18 +81,13 @@ fun appClient( messages : MutableList<String>, sendMessage: () -> Unit, reconnec
 
 fun main() = application {
     val client = ClientImpl()
-    client.startWork()
 
     Window(onCloseRequest = ::exitApplication) {
         appClient(
-            client.messages,
-            {
-                client.sendMessages()
-            },
-            {
-                client.reconect()
-            }
-        )
+            client.messages
+        ) {
+            client.reconect()
+        }
     }
 
 }

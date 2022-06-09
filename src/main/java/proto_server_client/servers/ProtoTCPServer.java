@@ -317,6 +317,7 @@ public class ProtoTCPServer extends ProtoServer {
                 mServerChannel.socket().bind(new InetSocketAddress(mPort));
                 mServerChannel.register(selector, SelectionKey.OP_ACCEPT, mAcceptHandler);
                 writeToMainLog("TCP Listening. port = " + mPort);
+                System.out.println("Connected -> " + new InetSocketAddress(mPort));
             } catch (IOException e) {
                 writeToMainLog("ERROR: TCP onStart failed. " + exceptionStackTrace(e));
                 throw e;

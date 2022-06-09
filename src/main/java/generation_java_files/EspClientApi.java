@@ -2,290 +2,2990 @@
 // if you need to change something in code generator, please contact Alexander Lobas (alexanderlobas@yahoo.com)
 package generation_java_files;
 
-import build.generated.source.proto.main.java.Esp;
+import build.generated.source.proto.main.java.*;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
-import proto_server_client.utils.HandlerWrapper;
 import proto_server_client.client.ProtoClient;
 import proto_server_client.client.UIThreadClientCommandDispatcher;
+import proto_server_client.utils.HandlerWrapper;
 
 import java.io.IOException;
 
 public class EspClientApi implements ProtoClient.ProtocolDispatcher {
 
-    public EspClientApi(ProtoClient client, boolean callListenersInUIThread, HandlerWrapper handlerWrapper) {
-        this.client = client;
-        if (callListenersInUIThread)
-            client.setProtocolDispatcher(new UIThreadClientCommandDispatcher(this, handlerWrapper));
-        else
-            client.setProtocolDispatcher(this);
+  public EspClientApi (ProtoClient client, boolean callListenersInUIThread, HandlerWrapper handlerWrapper) {
+    this.client = client;
+    if (callListenersInUIThread)
+      client.setProtocolDispatcher(new UIThreadClientCommandDispatcher(this, handlerWrapper));
+    else
+      client.setProtocolDispatcher(this);
+  }
+
+  private ProtoClient client;
+
+  public boolean sendHelloFromDev(Base.HelloFromDev message) {
+  	return client.sendCommand(1, message);
+  }
+
+  public boolean sendChangeId(Base.ChangeId message) {
+  	return client.sendCommand(5, message);
+  }
+
+  public boolean sendPing() {
+  	return client.sendCommand(7, null);
+  }
+
+  public boolean sendSoundsInfoResponce(Multimedia.SoundsInfoResponce message) {
+  	return client.sendCommand(8, message);
+  }
+
+  public boolean sendStateVolume(Multimedia.StateVolume message) {
+  	return client.sendCommand(9, message);
+  }
+
+  public boolean sendDisconnectingClient(Base.DisconnectingClient message) {
+  	return client.sendCommand(10, message);
+  }
+
+  public boolean sendSlavesInfoResponce(Slave.SlavesInfoResponce message) {
+  	return client.sendCommand(33, message);
+  }
+
+  public boolean sendSlaveDisconnected(Slave.SlaveDisconnected message) {
+  	return client.sendCommand(34, message);
+  }
+
+  public boolean sendSlaveInfo(Slave.SlaveInfo message) {
+  	return client.sendCommand(35, message);
+  }
+
+  public boolean sendFsInfoReply(Filesystem.FSInfoReply message) {
+  	return client.sendCommand(301, message);
+  }
+
+  public boolean sendFormatFsReply(Filesystem.FormatFSReply message) {
+  	return client.sendCommand(302, message);
+  }
+
+  public boolean sendLsDirReply(Filesystem.LsDirReply message) {
+  	return client.sendCommand(303, message);
+  }
+
+  public boolean sendFileInfoReply(Filesystem.FileInfoReply message) {
+  	return client.sendCommand(304, message);
+  }
+
+  public boolean sendDelFileReply(Filesystem.DelFileReply message) {
+  	return client.sendCommand(305, message);
+  }
+
+  public boolean sendReadFileReply(Filesystem.ReadFileReply message) {
+  	return client.sendCommand(306, message);
+  }
+
+  public boolean sendWriteFileReply(Filesystem.WriteFileReply message) {
+  	return client.sendCommand(307, message);
+  }
+
+  public boolean sendCalcMd5Reply(Filesystem.CalcMD5Reply message) {
+  	return client.sendCommand(308, message);
+  }
+
+  public boolean sendStatFromPtrk(PTRKMilitary.StatFromPTRK message) {
+  	return client.sendCommand(501, message);
+  }
+
+  public boolean sendPtrkSettings(PTRKMilitary.PTRKSettings message) {
+  	return client.sendCommand(502, message);
+  }
+
+  public boolean sendReloadPtrk(PTRKMilitary.ReloadPtrk message) {
+  	return client.sendCommand(503, message);
+  }
+
+  public boolean sendLaunchingRocket() {
+  	return client.sendCommand(504, null);
+  }
+
+  public boolean sendStatusFlightRocket(PTRKMilitary.StatusFlightRocket message) {
+  	return client.sendCommand(505, message);
+  }
+
+  public boolean sendStatusEndFlightRocket(PTRKMilitary.StatusEndFlightRocket message) {
+  	return client.sendCommand(506, message);
+  }
+
+  public boolean sendSettingsTarget(TargetMilitary.SettingsTarget message) {
+  	return client.sendCommand(601, message);
+  }
+
+  public boolean sendStatisticsTarget(TargetMilitary.StatisticsTarget message) {
+  	return client.sendCommand(602, message);
+  }
+
+  public boolean sendPositionOfTarget(TargetMilitary.PositionOfTarget message) {
+  	return client.sendCommand(603, message);
+  }
+
+  public boolean sendErrorsOfTarget(TargetMilitary.ErrorsOfTarget message) {
+  	return client.sendCommand(604, message);
+  }
+
+  public boolean sendSettingsPanzer(PanzerMilitary.SettingsPanzer message) {
+  	return client.sendCommand(651, message);
+  }
+
+  public boolean sendStatisticsPanzerGun(PanzerMilitary.StatisticsPanzerGun message) {
+  	return client.sendCommand(652, message);
+  }
+
+  public boolean sendStatisticsPanzerCannon(PanzerMilitary.StatisticsPanzerCannon message) {
+  	return client.sendCommand(653, message);
+  }
+
+  public boolean sendStopMovingCart() {
+  	return client.sendCommand(701, null);
+  }
+
+  public boolean sendMineThrowerStat(MineThrower.MineThrowerStat message) {
+  	return client.sendCommand(801, message);
+  }
+
+  public boolean sendEspConnectToAp(Esp.ESPConnectToAP message) {
+  	return client.sendCommand(1001, message);
+  }
+
+  public boolean sendEspConnectToTcp(Esp.ESPConnectToTCP message) {
+  	return client.sendCommand(1002, message);
+  }
+
+  public boolean sendEspSendByUdp(Esp.ESPSendByUDP message) {
+  	return client.sendCommand(1003, message);
+  }
+
+  public boolean sendEspDiscoverServers(Esp.ESPDiscoverServers message) {
+  	return client.sendCommand(1004, message);
+  }
+
+  public boolean sendEspSendLogByUdp(Esp.ESPSendLogByUDP message) {
+  	return client.sendCommand(1005, message);
+  }
+
+  public boolean sendEspConnectToTcpReply(Esp.ESPConnectToTCPReply message) {
+  	return client.sendCommand(1006, message);
+  }
+
+  public boolean sendEspTcpConfirmation(Esp.ESPTcpConfirmation message) {
+  	return client.sendCommand(1007, message);
+  }
+
+  public boolean sendEspGetRssiByNetworkName(Esp.ESPGetRssiByNetworkName message) {
+  	return client.sendCommand(1008, message);
+  }
+
+  public boolean sendEspScanWifiByChannel(Esp.ESPScanWifiByChannel message) {
+  	return client.sendCommand(1009, message);
+  }
+
+  public boolean sendEspSetWifiAccessPoint(Esp.ESPSetWifiAccessPoint message) {
+  	return client.sendCommand(1010, message);
+  }
+
+  public boolean sendEspKillWifiAccessPoint() {
+  	return client.sendCommand(1011, null);
+  }
+
+  public boolean sendVersionReply(Firmware.VersionReply message) {
+  	return client.sendCommand(1101, message);
+  }
+
+  public boolean sendUpdateResourcesReply(Firmware.UpdateResourcesReply message) {
+  	return client.sendCommand(1103, message);
+  }
+
+  public boolean sendFirmwareTaskReply(Firmware.FirmwareTaskReply message) {
+  	return client.sendCommand(1104, message);
+  }
+
+  public boolean sendStackState(RuntimeDbg.StackState message) {
+  	return client.sendCommand(1201, message);
+  }
+
+  public boolean sendStackUsage(RuntimeDbg.StackUsage message) {
+  	return client.sendCommand(1202, message);
+  }
+
+  public boolean sendAssert(RuntimeDbg.Assert message) {
+  	return client.sendCommand(1203, message);
+  }
+
+  public boolean sendBuffersState(RuntimeDbg.BuffersState message) {
+  	return client.sendCommand(1204, message);
+  }
+
+  public boolean sendSomeData(RuntimeDbg.SomeData message) {
+  	return client.sendCommand(1205, message);
+  }
+
+  public boolean sendRuntimeError(RuntimeDbg.RuntimeError message) {
+  	return client.sendCommand(1206, message);
+  }
+
+  public boolean sendRuntimeSystemSnapshot(RuntimeDbg.RuntimeSystemSnapshot message) {
+  	return client.sendCommand(1207, message);
+  }
+
+  public boolean sendEspWiFiRssi(EspSrv.ESP_WiFiRSSI message) {
+  	return client.sendCommand(2001, message);
+  }
+
+  public boolean sendEspAssert(EspSrv.ESP_Assert message) {
+  	return client.sendCommand(2002, message);
+  }
+
+  public boolean sendEspVersionReply(EspSrv.ESP_VersionReply message) {
+  	return client.sendCommand(2003, message);
+  }
+
+  public boolean sendEspFirmwareTaskReply(EspSrv.ESP_FirmwareTaskReply message) {
+  	return client.sendCommand(2004, message);
+  }
+
+  public boolean sendEspUpdateResourcesReply(EspSrv.ESP_UpdateResourcesReply message) {
+  	return client.sendCommand(2005, message);
+  }
+
+  public boolean sendEspSomeData(EspSrv.ESP_SomeData message) {
+  	return client.sendCommand(2006, message);
+  }
+
+  public boolean sendEspRuntimeError(EspSrv.ESP_RuntimeError message) {
+  	return client.sendCommand(2007, message);
+  }
+
+  public boolean sendRsHelloFromDevice(RsMilitary.RsHelloFromDevice message) {
+  	return client.sendCommand(4001, message);
+  }
+
+  public boolean sendRsReciveIr(RsMilitary.RsReciveIr message) {
+  	return client.sendCommand(4002, message);
+  }
+
+  public boolean sendRsButState(RsMilitary.RsButState message) {
+  	return client.sendCommand(4004, message);
+  }
+
+  public boolean sendRsStressBeltSettings(RsMilitary.RsStressBeltSettings message) {
+  	return client.sendCommand(4005, message);
+  }
+
+  public boolean sendRsStressBeltCheangeDamageMode(RsMilitary.RsStressBeltCheangeDamageMode message) {
+  	return client.sendCommand(4006, message);
+  }
+
+  public boolean sendRsSlaveConnected(RsMilitary.RsSlaveConnected message) {
+  	return client.sendCommand(4007, message);
+  }
+
+  public boolean sendRsSlaveDisconnected(RsMilitary.RsSlaveDisconnected message) {
+  	return client.sendCommand(4008, message);
+  }
+
+  public boolean sendRsSlaveBatteryLevel(RsMilitary.RsSlaveBatteryLevel message) {
+  	return client.sendCommand(4009, message);
+  }
+
+  public boolean sendRsIlluminationLevel(RsMilitary.RsIlluminationLevel message) {
+  	return client.sendCommand(4010, message);
+  }
+
+  public boolean sendRsSwitchState(RsMilitary.RsSwitchState message) {
+  	return client.sendCommand(4011, message);
+  }
+
+  public boolean sendRsGpsCoordinates(RsMilitary.RsGpsCoordinates message) {
+  	return client.sendCommand(4012, message);
+  }
+
+  public boolean sendRsCompasData(RsMilitary.RsCompasData message) {
+  	return client.sendCommand(4013, message);
+  }
+
+  public boolean sendRsStatusCompasIrEmiter(RsMilitary.RsStatusCompasIrEmiter message) {
+  	return client.sendCommand(4014, message);
+  }
+
+  public boolean sendRsPowerOn() {
+  	return client.sendCommand(4015, null);
+  }
+
+  public boolean sendRsPowerOff() {
+  	return client.sendCommand(4016, null);
+  }
+
+  public boolean sendSetPositionComplited() {
+  	return client.sendCommand(4017, null);
+  }
+
+  public boolean sendRotationComplited() {
+  	return client.sendCommand(4018, null);
+  }
+
+  public boolean sendAzimuth(RsMilitary.Azimuth message) {
+  	return client.sendCommand(4019, message);
+  }
+
+  public boolean sendRsDeviceError(RsMilitary.RsDeviceError message) {
+  	return client.sendCommand(4020, message);
+  }
+
+  public boolean sendWiredHelloFromSlave(WiredConnection.WiredHelloFromSlave message) {
+  	return client.sendCommand(5001, message);
+  }
+
+  public boolean sendWiredStateByDevice(WiredConnection.WiredStateByDevice message) {
+  	return client.sendCommand(5002, message);
+  }
+
+  public boolean sendWiredInfoFromPyrotechny(WiredConnection.WiredInfoFromPyrotechny message) {
+  	return client.sendCommand(5003, message);
+  }
+
+  public boolean sendWiredStateByIr(WiredConnection.WiredStateByIr message) {
+  	return client.sendCommand(5004, message);
+  }
+
+  public boolean sendWiredInfoFromTargetShooter(WiredConnection.WiredInfoFromTargetShooter message) {
+  	return client.sendCommand(5005, message);
+  }
+
+  public boolean sendWiredInfoMovingEvent(WiredConnection.WiredInfoMovingEvent message) {
+  	return client.sendCommand(5006, message);
+  }
+
+  public boolean sendWiredInfoFromGrenadeThrower(WiredConnection.WiredInfoFromGrenadeThrower message) {
+  	return client.sendCommand(5007, message);
+  }
+
+  public boolean sendBatteryLevel(CommonMilitary.BatteryLevel message) {
+  	return client.sendCommand(10001, message);
+  }
+
+  public boolean sendGpsCoordinate(CommonMilitary.GPSCoordinate message) {
+  	return client.sendCommand(10002, message);
+  }
+
+  public boolean sendSetTypeExercise(CommonMilitary.SetTypeExercise message) {
+  	return client.sendCommand(10003, message);
+  }
+
+  public boolean sendSpatialPosition(CommonMilitary.SpatialPosition message) {
+  	return client.sendCommand(10004, message);
+  }
+
+  public boolean sendStatById(KitMilitary.StatById message) {
+  	return client.sendCommand(10201, message);
+  }
+
+  public boolean sendStatByIdRepeated(KitMilitary.StatByIdRepeated message) {
+  	return client.sendCommand(10202, message);
+  }
+
+  public boolean sendSlaveBatteryLevel(KitMilitary.SlaveBatteryLevel message) {
+  	return client.sendCommand(10203, message);
+  }
+
+  public boolean sendStatFromKit(KitMilitary.StatFromKit message) {
+  	return client.sendCommand(10204, message);
+  }
+
+  public boolean sendWeaponStat(KitMilitary.WeaponStat message) {
+  	return client.sendCommand(10205, message);
+  }
+
+  public boolean sendKitSettings(KitMilitary.KitSettings message) {
+  	return client.sendCommand(10206, message);
+  }
+
+  public boolean sendStressBeltSettings(KitMilitary.StressBeltSettings message) {
+  	return client.sendCommand(10207, message);
+  }
+
+  public boolean sendWeaponSettings(KitMilitary.WeaponSettings message) {
+  	return client.sendCommand(10208, message);
+  }
+
+  public boolean sendStatisticIsOver() {
+  	return client.sendCommand(10209, null);
+  }
+
+  public boolean sendTankMineActivated(KitMilitary.TankMineActivated message) {
+  	return client.sendCommand(10210, message);
+  }
+
+  public boolean sendTankMineDeactivated(KitMilitary.TankMineDeactivated message) {
+  	return client.sendCommand(10211, message);
+  }
+
+  public boolean sendInfoActivatedMinesIsOver() {
+  	return client.sendCommand(10212, null);
+  }
+
+  public boolean sendInfoDeactivatedMinesIsOver() {
+  	return client.sendCommand(10213, null);
+  }
+
+  public boolean sendInfoFromHingedBlock(KitMilitary.InfoFromHingedBlock message) {
+  	return client.sendCommand(10214, message);
+  }
+
+  public boolean sendIrEmitterSettings(KitMilitary.IrEmitterSettings message) {
+  	return client.sendCommand(10215, message);
+  }
+
+  public boolean sendIrEmitterStatistic(KitMilitary.IrEmitterStatistic message) {
+  	return client.sendCommand(10216, message);
+  }
+
+  public boolean sendSetTypeVehicle(KitMilitary.SetTypeVehicle message) {
+  	return client.sendCommand(10217, message);
+  }
+
+  public boolean sendMinesActivated(KitMilitary.MinesActivated message) {
+  	return client.sendCommand(10218, message);
+  }
+
+  public boolean sendMinesDeactivated(KitMilitary.MinesDeactivated message) {
+  	return client.sendCommand(10219, message);
+  }
+
+  public boolean sendResponseQuantityBlocksPos(KitMilitary.ResponseQuantityBlocksPos message) {
+  	return client.sendCommand(10220, message);
+  }
+
+  public boolean sendResponseBlockByTimePos(KitMilitary.ResponseBlockByTimePos message) {
+  	return client.sendCommand(10221, message);
+  }
+
+  public boolean sendIrCommutatorId(KitMilitary.IrCommutatorID message) {
+  	return client.sendCommand(10222, message);
+  }
+
+  public boolean sendPzrkEvent(PZRKMilitary.PzrkEvent message) {
+  	return client.sendCommand(10501, message);
+  }
+
+  public boolean sendPzrkEventsIsOver() {
+  	return client.sendCommand(10502, null);
+  }
+
+  public boolean sendPzrkSetting(PZRKMilitary.PzrkSetting message) {
+  	return client.sendCommand(10503, message);
+  }
+
+  public boolean sendGpsInfoOfTargetPzrk(PZRKMilitary.GpsInfoOfTargetPzrk message) {
+  	return client.sendCommand(10504, message);
+  }
+
+  public boolean sendTargetPzrkConnected(PZRKMilitary.TargetPzrkConnected message) {
+  	return client.sendCommand(10505, message);
+  }
+
+  public boolean sendTargetPzrkDisconnected(PZRKMilitary.TargetPzrkDisconnected message) {
+  	return client.sendCommand(10506, message);
+  }
+
+  public boolean sendSettingAntiSniper(AntiSniper.SettingAntiSniper message) {
+  	return client.sendCommand(10601, message);
+  }
+
+  public boolean sendCommand(AntiSniper.Command message) {
+  	return client.sendCommand(10602, message);
+  }
+
+  public boolean sendAntiSniperError(AntiSniper.AntiSniperError message) {
+  	return client.sendCommand(10603, message);
+  }
+
+  public boolean sendDwmTagPosition(IndoorNavigation.DwmTagPosition message) {
+  	return client.sendCommand(10801, message);
+  }
+
+  public boolean sendDwmAnchorCount(IndoorNavigation.DwmAnchorCount message) {
+  	return client.sendCommand(10802, message);
+  }
+
+  public boolean sendDwmAnchorList(IndoorNavigation.DwmAnchorList message) {
+  	return client.sendCommand(10803, message);
+  }
+
+  public boolean sendDwmPositionFull(IndoorNavigation.DwmPositionFull message) {
+  	return client.sendCommand(10804, message);
+  }
+
+  public void diconnect() {
+    client.disconnect();
+  }
+
+  public ProtoClient getClient() {
+    return client;
+  }
+
+  // Listeners interfaces for incoming messages
+
+  public interface OnStartGameListener {
+    void onStartGameReceived(Base.StartGame message);
+  }
+
+  public interface OnStopGameListener {
+    void onStopGameReceived();
+  }
+
+  public interface OnPauseGameListener {
+    void onPauseGameReceived();
+  }
+
+  public interface OnChangeIdListener {
+    void onChangeIdReceived(Base.ChangeId message);
+  }
+
+  public interface OnSetVolumeListener {
+    void onSetVolumeReceived(Multimedia.SetVolume message);
+  }
+
+  public interface OnPingListener {
+    void onPingReceived();
+  }
+
+  public interface OnUpdateDevListener {
+    void onUpdateDevReceived();
+  }
+
+  public interface OnSetLanguageListener {
+    void onSetLanguageReceived(Base.setLanguage message);
+  }
+
+  public interface OnPlaySoundListener {
+    void onPlaySoundReceived(Multimedia.PlaySound message);
+  }
+
+  public interface OnStopSoundListener {
+    void onStopSoundReceived(Multimedia.StopSound message);
+  }
+
+  public interface OnGetSoundsInfoListener {
+    void onGetSoundsInfoReceived();
+  }
+
+  public interface OnSendDevTypeListener {
+    void onSendDevTypeReceived(Base.SendDevType message);
+  }
+
+  public interface OnTurnOffDeviceListener {
+    void onTurnOffDeviceReceived();
+  }
+
+  public interface OnGetInfoSlavesListener {
+    void onGetInfoSlavesReceived();
+  }
+
+  public interface OnFsInfoListener {
+    void onFsInfoReceived();
+  }
+
+  public interface OnFormatFsListener {
+    void onFormatFsReceived();
+  }
+
+  public interface OnLsDirListener {
+    void onLsDirReceived(Filesystem.LsDir message);
+  }
+
+  public interface OnFileInfoListener {
+    void onFileInfoReceived(Filesystem.FileInfo message);
+  }
+
+  public interface OnDelFileListener {
+    void onDelFileReceived(Filesystem.DelFile message);
+  }
+
+  public interface OnReadFileListener {
+    void onReadFileReceived(Filesystem.ReadFile message);
+  }
+
+  public interface OnWriteFileListener {
+    void onWriteFileReceived(Filesystem.WriteFile message);
+  }
+
+  public interface OnCalcMd5Listener {
+    void onCalcMd5Received(Filesystem.CalcMD5 message);
+  }
+
+  public interface OnStatFromPtrkListener {
+    void onStatFromPtrkReceived(PTRKMilitary.StatFromPTRK message);
+  }
+
+  public interface OnPtrkSettingsListener {
+    void onPtrkSettingsReceived(PTRKMilitary.PTRKSettings message);
+  }
+
+  public interface OnReloadPtrkListener {
+    void onReloadPtrkReceived(PTRKMilitary.ReloadPtrk message);
+  }
+
+  public interface OnSettingsTargetListener {
+    void onSettingsTargetReceived(TargetMilitary.SettingsTarget message);
+  }
+
+  public interface OnShowTargetListener {
+    void onShowTargetReceived();
+  }
+
+  public interface OnHideTargetListener {
+    void onHideTargetReceived();
+  }
+
+  public interface OnStatisticsTargetListener {
+    void onStatisticsTargetReceived(TargetMilitary.StatisticsTarget message);
+  }
+
+  public interface OnResetErrorListener {
+    void onResetErrorReceived(TargetMilitary.ResetError message);
+  }
+
+  public interface OnSettingsPanzerListener {
+    void onSettingsPanzerReceived(PanzerMilitary.SettingsPanzer message);
+  }
+
+  public interface OnStatisticsPanzerGunListener {
+    void onStatisticsPanzerGunReceived(PanzerMilitary.StatisticsPanzerGun message);
+  }
+
+  public interface OnStatisticsPanzerCannonListener {
+    void onStatisticsPanzerCannonReceived(PanzerMilitary.StatisticsPanzerCannon message);
+  }
+
+  public interface OnGetStatisticsPanzerGunListener {
+    void onGetStatisticsPanzerGunReceived();
+  }
+
+  public interface OnGetStatisticsPanzerCannonListener {
+    void onGetStatisticsPanzerCannonReceived();
+  }
+
+  public interface OnGetSettingsPanzerListener {
+    void onGetSettingsPanzerReceived();
+  }
+
+  public interface OnMovingCartForwardDirectionListener {
+    void onMovingCartForwardDirectionReceived();
+  }
+
+  public interface OnMovingCartReverseDirectionListener {
+    void onMovingCartReverseDirectionReceived();
+  }
+
+  public interface OnStopMovingCartListener {
+    void onStopMovingCartReceived();
+  }
+
+  public interface OnMineThrowerSettingsListener {
+    void onMineThrowerSettingsReceived(MineThrower.MineThrowerSettings message);
+  }
+
+  public interface OnEspConectionStateListener {
+    void onEspConectionStateReceived(Esp.ESPConectionState message);
+  }
+
+  public interface OnEspConnectToTcpReplyListener {
+    void onEspConnectToTcpReplyReceived(Esp.ESPConnectToTCPReply message);
+  }
+
+  public interface OnEspTcpConfirmationListener {
+    void onEspTcpConfirmationReceived(Esp.ESPTcpConfirmation message);
+  }
+
+  public interface OnEspServerDiscoveredListener {
+    void onEspServerDiscoveredReceived(Esp.ESPServerDiscovered message);
+  }
+
+  public interface OnEspRssiForNetworkNameListener {
+    void onEspRssiForNetworkNameReceived(Esp.ESPRssiForNetworkName message);
+  }
+
+  public interface OnEspWifiAccessPointListener {
+    void onEspWifiAccessPointReceived(Esp.ESPWifiAccessPoint message);
+  }
+
+  public interface OnEspKillWifiAccessPointReplyListener {
+    void onEspKillWifiAccessPointReplyReceived(Esp.ESPKillWifiAccessPointReply message);
+  }
+
+  public interface OnRebootListener {
+    void onRebootReceived();
+  }
+
+  public interface OnVersionRequestListener {
+    void onVersionRequestReceived();
+  }
+
+  public interface OnFirmwareTaskListener {
+    void onFirmwareTaskReceived(Firmware.FirmwareTask message);
+  }
+
+  public interface OnBeginUpdateResourcesListener {
+    void onBeginUpdateResourcesReceived();
+  }
+
+  public interface OnFinishUpdateResourcesListener {
+    void onFinishUpdateResourcesReceived();
+  }
+
+  public interface OnGetStackListener {
+    void onGetStackReceived();
+  }
+
+  public interface OnGetBuffersStateListener {
+    void onGetBuffersStateReceived();
+  }
+
+  public interface OnSomeDataListener {
+    void onSomeDataReceived(RuntimeDbg.SomeData message);
+  }
+
+  public interface OnRuntimeErrorListener {
+    void onRuntimeErrorReceived(RuntimeDbg.RuntimeError message);
+  }
+
+  public interface OnRuntimeGetErrorsListener {
+    void onRuntimeGetErrorsReceived();
+  }
+
+  public interface OnRuntimeClearErrorMessagesListener {
+    void onRuntimeClearErrorMessagesReceived();
+  }
+
+  public interface OnEspRebootListener {
+    void onEspRebootReceived();
+  }
+
+  public interface OnEspVersionRequestListener {
+    void onEspVersionRequestReceived();
+  }
+
+  public interface OnEspFirmwareTaskListener {
+    void onEspFirmwareTaskReceived(EspSrv.ESP_FirmwareTask message);
+  }
+
+  public interface OnEspSomeDataListener {
+    void onEspSomeDataReceived(EspSrv.ESP_SomeData message);
+  }
+
+  public interface OnEspRuntimeErrorListener {
+    void onEspRuntimeErrorReceived(EspSrv.ESP_RuntimeError message);
+  }
+
+  public interface OnEspBeginUpdateResourcesListener {
+    void onEspBeginUpdateResourcesReceived();
+  }
+
+  public interface OnEspFinishUpdateResourcesListener {
+    void onEspFinishUpdateResourcesReceived();
+  }
+
+  public interface OnRsHelloFromMasterListener {
+    void onRsHelloFromMasterReceived(RsMilitary.RsHelloFromMaster message);
+  }
+
+  public interface OnRsSendIrListener {
+    void onRsSendIrReceived(RsMilitary.RsSendIr message);
+  }
+
+  public interface OnRsSystemCommandListener {
+    void onRsSystemCommandReceived(RsMilitary.RsSystemCommand message);
+  }
+
+  public interface OnRsChangeIdListener {
+    void onRsChangeIdReceived(RsMilitary.RsChangeID message);
+  }
+
+  public interface OnRsSetIndicationListener {
+    void onRsSetIndicationReceived(RsMilitary.RsSetIndication message);
+  }
+
+  public interface OnRsPowerOnListener {
+    void onRsPowerOnReceived();
+  }
+
+  public interface OnRsPowerOffListener {
+    void onRsPowerOffReceived();
+  }
+
+  public interface OnRsStressBeltSettingsListener {
+    void onRsStressBeltSettingsReceived(RsMilitary.RsStressBeltSettings message);
+  }
+
+  public interface OnRsSendIrCustomListener {
+    void onRsSendIrCustomReceived(RsMilitary.RsSendIrCustom message);
+  }
+
+  public interface OnRsIlluminationLevelQueryListener {
+    void onRsIlluminationLevelQueryReceived();
+  }
+
+  public interface OnRsButtonsStateQueryListener {
+    void onRsButtonsStateQueryReceived();
+  }
+
+  public interface OnRsVisibleLaserOnListener {
+    void onRsVisibleLaserOnReceived(RsMilitary.RsVisibleLaserOn message);
+  }
+
+  public interface OnRsGetGpsListener {
+    void onRsGetGpsReceived();
+  }
+
+  public interface OnRsGetCompasListener {
+    void onRsGetCompasReceived();
+  }
+
+  public interface OnRsGetStatusListener {
+    void onRsGetStatusReceived();
+  }
+
+  public interface OnPlaySoundToSlaveListener {
+    void onPlaySoundToSlaveReceived(RsMilitary.PlaySoundToSlave message);
+  }
+
+  public interface OnSetPositionListener {
+    void onSetPositionReceived(RsMilitary.SetPosition message);
+  }
+
+  public interface OnBrakeOnListener {
+    void onBrakeOnReceived();
+  }
+
+  public interface OnBrakeOffListener {
+    void onBrakeOffReceived();
+  }
+
+  public interface OnRotationBySectorOnTimeListener {
+    void onRotationBySectorOnTimeReceived(RsMilitary.RotationBySectorOnTime message);
+  }
+
+  public interface OnStopRotationListener {
+    void onStopRotationReceived();
+  }
+
+  public interface OnWiredHelloFromMasterListener {
+    void onWiredHelloFromMasterReceived(WiredConnection.WiredHelloFromMaster message);
+  }
+
+  public interface OnWiredActionPyrotechnyListener {
+    void onWiredActionPyrotechnyReceived(WiredConnection.WiredActionPyrotechny message);
+  }
+
+  public interface OnWiredSettingsIrEmitterListener {
+    void onWiredSettingsIrEmitterReceived(WiredConnection.WiredSettingsIrEmitter message);
+  }
+
+  public interface OnWiredSendSequenceIrPacketsListener {
+    void onWiredSendSequenceIrPacketsReceived(WiredConnection.WiredSendSequenceIrPackets message);
+  }
+
+  public interface OnWiredSendIrPacketListener {
+    void onWiredSendIrPacketReceived(WiredConnection.WiredSendIrPacket message);
+  }
+
+  public interface OnWiredChangeIdListener {
+    void onWiredChangeIdReceived(WiredConnection.WiredChangeID message);
+  }
+
+  public interface OnWiredSettingsTargetShooterListener {
+    void onWiredSettingsTargetShooterReceived(WiredConnection.WiredSettingsTargetShooter message);
+  }
+
+  public interface OnWiredTargetShooterActionListener {
+    void onWiredTargetShooterActionReceived(WiredConnection.WiredTargetShooterAction message);
+  }
+
+  public interface OnWiredActionGrenadeThrowerListener {
+    void onWiredActionGrenadeThrowerReceived();
+  }
+
+  public interface OnWiredSetIndicationListener {
+    void onWiredSetIndicationReceived(WiredConnection.WiredSetIndication message);
+  }
+
+  public interface OnWiredPlaySoundListener {
+    void onWiredPlaySoundReceived(WiredConnection.WiredPlaySound message);
+  }
+
+  public interface OnWiredStopActionsListener {
+    void onWiredStopActionsReceived();
+  }
+
+  public interface OnGetBatteryLevelListener {
+    void onGetBatteryLevelReceived();
+  }
+
+  public interface OnGetSettingsListener {
+    void onGetSettingsReceived();
+  }
+
+  public interface OnChangeTeamListener {
+    void onChangeTeamReceived(CommonMilitary.ChangeTeam message);
+  }
+
+  public interface OnKillPlayerListener {
+    void onKillPlayerReceived(CommonMilitary.KillPlayer message);
+  }
+
+  public interface OnResetAllErrorsListener {
+    void onResetAllErrorsReceived();
+  }
+
+  public interface OnSetTypeExerciseListener {
+    void onSetTypeExerciseReceived(CommonMilitary.SetTypeExercise message);
+  }
+
+  public interface OnStatFromKitListener {
+    void onStatFromKitReceived(KitMilitary.StatFromKit message);
+  }
+
+  public interface OnWeaponStatListener {
+    void onWeaponStatReceived(KitMilitary.WeaponStat message);
+  }
+
+  public interface OnKitSettingsListener {
+    void onKitSettingsReceived(KitMilitary.KitSettings message);
+  }
+
+  public interface OnStressBeltSettingsListener {
+    void onStressBeltSettingsReceived(KitMilitary.StressBeltSettings message);
+  }
+
+  public interface OnWeaponSettingsListener {
+    void onWeaponSettingsReceived(KitMilitary.WeaponSettings message);
+  }
+
+  public interface OnGetAllStatListener {
+    void onGetAllStatReceived();
+  }
+
+  public interface OnSilentModeListener {
+    void onSilentModeReceived(KitMilitary.SilentMode message);
+  }
+
+  public interface OnGetActivatedMinesListener {
+    void onGetActivatedMinesReceived();
+  }
+
+  public interface OnGetDeactivatedMinesListener {
+    void onGetDeactivatedMinesReceived();
+  }
+
+  public interface OnGetInfoFromHingedBlockListener {
+    void onGetInfoFromHingedBlockReceived(KitMilitary.GetInfoFromHingedBlock message);
+  }
+
+  public interface OnIrEmitterSettingsListener {
+    void onIrEmitterSettingsReceived(KitMilitary.IrEmitterSettings message);
+  }
+
+  public interface OnIrEmitterStatisticListener {
+    void onIrEmitterStatisticReceived(KitMilitary.IrEmitterStatistic message);
+  }
+
+  public interface OnSetDamageAppropriateToWeaponListener {
+    void onSetDamageAppropriateToWeaponReceived(KitMilitary.SetDamageAppropriateToWeapon message);
+  }
+
+  public interface OnSaveTableDamageListener {
+    void onSaveTableDamageReceived();
+  }
+
+  public interface OnSetTypeVehicleListener {
+    void onSetTypeVehicleReceived(KitMilitary.SetTypeVehicle message);
+  }
+
+  public interface OnGetQuantityBlocksPosListener {
+    void onGetQuantityBlocksPosReceived(KitMilitary.GetQuantityBlocksPos message);
+  }
+
+  public interface OnGetBlockByTimePosListener {
+    void onGetBlockByTimePosReceived(KitMilitary.GetBlockByTimePos message);
+  }
+
+  public interface OnDeleteBlocksPosListener {
+    void onDeleteBlocksPosReceived(KitMilitary.DeleteBlocksPos message);
+  }
+
+  public interface OnGetAllEventsPzrkListener {
+    void onGetAllEventsPzrkReceived();
+  }
+
+  public interface OnPzrkSettingListener {
+    void onPzrkSettingReceived(PZRKMilitary.PzrkSetting message);
+  }
+
+  public interface OnSettingAntiSniperListener {
+    void onSettingAntiSniperReceived(AntiSniper.SettingAntiSniper message);
+  }
+
+  public interface OnCommandListener {
+    void onCommandReceived(AntiSniper.Command message);
+  }
+
+  public interface OnDefeatTargetListener {
+    void onDefeatTargetReceived();
+  }
+
+  public interface OnSetDwmPanIdListener {
+    void onSetDwmPanIdReceived(IndoorNavigation.SetDwmPanId message);
+  }
+
+  public interface OnConnectedListener {
+    void onConnected();
+  }
+
+  public interface OnErrorListener {
+    void onError(Throwable error);
+  }
+
+  public interface OnDisconnectedListener {
+    void onDisconnected();
+  }
+
+
+  private volatile OnStartGameListener onStartGameListener = null;
+  private volatile OnStopGameListener onStopGameListener = null;
+  private volatile OnPauseGameListener onPauseGameListener = null;
+  private volatile OnChangeIdListener onChangeIdListener = null;
+  private volatile OnSetVolumeListener onSetVolumeListener = null;
+  private volatile OnPingListener onPingListener = null;
+  private volatile OnUpdateDevListener onUpdateDevListener = null;
+  private volatile OnSetLanguageListener onSetLanguageListener = null;
+  private volatile OnPlaySoundListener onPlaySoundListener = null;
+  private volatile OnStopSoundListener onStopSoundListener = null;
+  private volatile OnGetSoundsInfoListener onGetSoundsInfoListener = null;
+  private volatile OnSendDevTypeListener onSendDevTypeListener = null;
+  private volatile OnTurnOffDeviceListener onTurnOffDeviceListener = null;
+  private volatile OnGetInfoSlavesListener onGetInfoSlavesListener = null;
+  private volatile OnFsInfoListener onFsInfoListener = null;
+  private volatile OnFormatFsListener onFormatFsListener = null;
+  private volatile OnLsDirListener onLsDirListener = null;
+  private volatile OnFileInfoListener onFileInfoListener = null;
+  private volatile OnDelFileListener onDelFileListener = null;
+  private volatile OnReadFileListener onReadFileListener = null;
+  private volatile OnWriteFileListener onWriteFileListener = null;
+  private volatile OnCalcMd5Listener onCalcMd5Listener = null;
+  private volatile OnStatFromPtrkListener onStatFromPtrkListener = null;
+  private volatile OnPtrkSettingsListener onPtrkSettingsListener = null;
+  private volatile OnReloadPtrkListener onReloadPtrkListener = null;
+  private volatile OnSettingsTargetListener onSettingsTargetListener = null;
+  private volatile OnShowTargetListener onShowTargetListener = null;
+  private volatile OnHideTargetListener onHideTargetListener = null;
+  private volatile OnStatisticsTargetListener onStatisticsTargetListener = null;
+  private volatile OnResetErrorListener onResetErrorListener = null;
+  private volatile OnSettingsPanzerListener onSettingsPanzerListener = null;
+  private volatile OnStatisticsPanzerGunListener onStatisticsPanzerGunListener = null;
+  private volatile OnStatisticsPanzerCannonListener onStatisticsPanzerCannonListener = null;
+  private volatile OnGetStatisticsPanzerGunListener onGetStatisticsPanzerGunListener = null;
+  private volatile OnGetStatisticsPanzerCannonListener onGetStatisticsPanzerCannonListener = null;
+  private volatile OnGetSettingsPanzerListener onGetSettingsPanzerListener = null;
+  private volatile OnMovingCartForwardDirectionListener onMovingCartForwardDirectionListener = null;
+  private volatile OnMovingCartReverseDirectionListener onMovingCartReverseDirectionListener = null;
+  private volatile OnStopMovingCartListener onStopMovingCartListener = null;
+  private volatile OnMineThrowerSettingsListener onMineThrowerSettingsListener = null;
+  private volatile OnEspConectionStateListener onEspConectionStateListener = null;
+  private volatile OnEspConnectToTcpReplyListener onEspConnectToTcpReplyListener = null;
+  private volatile OnEspTcpConfirmationListener onEspTcpConfirmationListener = null;
+  private volatile OnEspServerDiscoveredListener onEspServerDiscoveredListener = null;
+  private volatile OnEspRssiForNetworkNameListener onEspRssiForNetworkNameListener = null;
+  private volatile OnEspWifiAccessPointListener onEspWifiAccessPointListener = null;
+  private volatile OnEspKillWifiAccessPointReplyListener onEspKillWifiAccessPointReplyListener = null;
+  private volatile OnRebootListener onRebootListener = null;
+  private volatile OnVersionRequestListener onVersionRequestListener = null;
+  private volatile OnFirmwareTaskListener onFirmwareTaskListener = null;
+  private volatile OnBeginUpdateResourcesListener onBeginUpdateResourcesListener = null;
+  private volatile OnFinishUpdateResourcesListener onFinishUpdateResourcesListener = null;
+  private volatile OnGetStackListener onGetStackListener = null;
+  private volatile OnGetBuffersStateListener onGetBuffersStateListener = null;
+  private volatile OnSomeDataListener onSomeDataListener = null;
+  private volatile OnRuntimeErrorListener onRuntimeErrorListener = null;
+  private volatile OnRuntimeGetErrorsListener onRuntimeGetErrorsListener = null;
+  private volatile OnRuntimeClearErrorMessagesListener onRuntimeClearErrorMessagesListener = null;
+  private volatile OnEspRebootListener onEspRebootListener = null;
+  private volatile OnEspVersionRequestListener onEspVersionRequestListener = null;
+  private volatile OnEspFirmwareTaskListener onEspFirmwareTaskListener = null;
+  private volatile OnEspSomeDataListener onEspSomeDataListener = null;
+  private volatile OnEspRuntimeErrorListener onEspRuntimeErrorListener = null;
+  private volatile OnEspBeginUpdateResourcesListener onEspBeginUpdateResourcesListener = null;
+  private volatile OnEspFinishUpdateResourcesListener onEspFinishUpdateResourcesListener = null;
+  private volatile OnRsHelloFromMasterListener onRsHelloFromMasterListener = null;
+  private volatile OnRsSendIrListener onRsSendIrListener = null;
+  private volatile OnRsSystemCommandListener onRsSystemCommandListener = null;
+  private volatile OnRsChangeIdListener onRsChangeIdListener = null;
+  private volatile OnRsSetIndicationListener onRsSetIndicationListener = null;
+  private volatile OnRsPowerOnListener onRsPowerOnListener = null;
+  private volatile OnRsPowerOffListener onRsPowerOffListener = null;
+  private volatile OnRsStressBeltSettingsListener onRsStressBeltSettingsListener = null;
+  private volatile OnRsSendIrCustomListener onRsSendIrCustomListener = null;
+  private volatile OnRsIlluminationLevelQueryListener onRsIlluminationLevelQueryListener = null;
+  private volatile OnRsButtonsStateQueryListener onRsButtonsStateQueryListener = null;
+  private volatile OnRsVisibleLaserOnListener onRsVisibleLaserOnListener = null;
+  private volatile OnRsGetGpsListener onRsGetGpsListener = null;
+  private volatile OnRsGetCompasListener onRsGetCompasListener = null;
+  private volatile OnRsGetStatusListener onRsGetStatusListener = null;
+  private volatile OnPlaySoundToSlaveListener onPlaySoundToSlaveListener = null;
+  private volatile OnSetPositionListener onSetPositionListener = null;
+  private volatile OnBrakeOnListener onBrakeOnListener = null;
+  private volatile OnBrakeOffListener onBrakeOffListener = null;
+  private volatile OnRotationBySectorOnTimeListener onRotationBySectorOnTimeListener = null;
+  private volatile OnStopRotationListener onStopRotationListener = null;
+  private volatile OnWiredHelloFromMasterListener onWiredHelloFromMasterListener = null;
+  private volatile OnWiredActionPyrotechnyListener onWiredActionPyrotechnyListener = null;
+  private volatile OnWiredSettingsIrEmitterListener onWiredSettingsIrEmitterListener = null;
+  private volatile OnWiredSendSequenceIrPacketsListener onWiredSendSequenceIrPacketsListener = null;
+  private volatile OnWiredSendIrPacketListener onWiredSendIrPacketListener = null;
+  private volatile OnWiredChangeIdListener onWiredChangeIdListener = null;
+  private volatile OnWiredSettingsTargetShooterListener onWiredSettingsTargetShooterListener = null;
+  private volatile OnWiredTargetShooterActionListener onWiredTargetShooterActionListener = null;
+  private volatile OnWiredActionGrenadeThrowerListener onWiredActionGrenadeThrowerListener = null;
+  private volatile OnWiredSetIndicationListener onWiredSetIndicationListener = null;
+  private volatile OnWiredPlaySoundListener onWiredPlaySoundListener = null;
+  private volatile OnWiredStopActionsListener onWiredStopActionsListener = null;
+  private volatile OnGetBatteryLevelListener onGetBatteryLevelListener = null;
+  private volatile OnGetSettingsListener onGetSettingsListener = null;
+  private volatile OnChangeTeamListener onChangeTeamListener = null;
+  private volatile OnKillPlayerListener onKillPlayerListener = null;
+  private volatile OnResetAllErrorsListener onResetAllErrorsListener = null;
+  private volatile OnSetTypeExerciseListener onSetTypeExerciseListener = null;
+  private volatile OnStatFromKitListener onStatFromKitListener = null;
+  private volatile OnWeaponStatListener onWeaponStatListener = null;
+  private volatile OnKitSettingsListener onKitSettingsListener = null;
+  private volatile OnStressBeltSettingsListener onStressBeltSettingsListener = null;
+  private volatile OnWeaponSettingsListener onWeaponSettingsListener = null;
+  private volatile OnGetAllStatListener onGetAllStatListener = null;
+  private volatile OnSilentModeListener onSilentModeListener = null;
+  private volatile OnGetActivatedMinesListener onGetActivatedMinesListener = null;
+  private volatile OnGetDeactivatedMinesListener onGetDeactivatedMinesListener = null;
+  private volatile OnGetInfoFromHingedBlockListener onGetInfoFromHingedBlockListener = null;
+  private volatile OnIrEmitterSettingsListener onIrEmitterSettingsListener = null;
+  private volatile OnIrEmitterStatisticListener onIrEmitterStatisticListener = null;
+  private volatile OnSetDamageAppropriateToWeaponListener onSetDamageAppropriateToWeaponListener = null;
+  private volatile OnSaveTableDamageListener onSaveTableDamageListener = null;
+  private volatile OnSetTypeVehicleListener onSetTypeVehicleListener = null;
+  private volatile OnGetQuantityBlocksPosListener onGetQuantityBlocksPosListener = null;
+  private volatile OnGetBlockByTimePosListener onGetBlockByTimePosListener = null;
+  private volatile OnDeleteBlocksPosListener onDeleteBlocksPosListener = null;
+  private volatile OnGetAllEventsPzrkListener onGetAllEventsPzrkListener = null;
+  private volatile OnPzrkSettingListener onPzrkSettingListener = null;
+  private volatile OnSettingAntiSniperListener onSettingAntiSniperListener = null;
+  private volatile OnCommandListener onCommandListener = null;
+  private volatile OnDefeatTargetListener onDefeatTargetListener = null;
+  private volatile OnSetDwmPanIdListener onSetDwmPanIdListener = null;
+  private volatile OnConnectedListener onConnectedListener = null;
+  private volatile OnErrorListener onErrorListener = null;
+  private volatile OnDisconnectedListener onDisconnectedListener = null;
+
+  private void notifyStartGameReceived(Base.StartGame message) {
+    OnStartGameListener localCopy = onStartGameListener;
+    if (localCopy != null)
+      localCopy.onStartGameReceived(message);
+  }
+
+  private void notifyStopGameReceived() {
+    OnStopGameListener localCopy = onStopGameListener;
+    if (localCopy != null)
+      localCopy.onStopGameReceived();
+  }
+
+  private void notifyPauseGameReceived() {
+    OnPauseGameListener localCopy = onPauseGameListener;
+    if (localCopy != null)
+      localCopy.onPauseGameReceived();
+  }
+
+  private void notifyChangeIdReceived(Base.ChangeId message) {
+    OnChangeIdListener localCopy = onChangeIdListener;
+    if (localCopy != null)
+      localCopy.onChangeIdReceived(message);
+  }
+
+  private void notifySetVolumeReceived(Multimedia.SetVolume message) {
+    OnSetVolumeListener localCopy = onSetVolumeListener;
+    if (localCopy != null)
+      localCopy.onSetVolumeReceived(message);
+  }
+
+  private void notifyPingReceived() {
+    OnPingListener localCopy = onPingListener;
+    if (localCopy != null)
+      localCopy.onPingReceived();
+  }
+
+  private void notifyUpdateDevReceived() {
+    OnUpdateDevListener localCopy = onUpdateDevListener;
+    if (localCopy != null)
+      localCopy.onUpdateDevReceived();
+  }
+
+  private void notifySetLanguageReceived(Base.setLanguage message) {
+    OnSetLanguageListener localCopy = onSetLanguageListener;
+    if (localCopy != null)
+      localCopy.onSetLanguageReceived(message);
+  }
+
+  private void notifyPlaySoundReceived(Multimedia.PlaySound message) {
+    OnPlaySoundListener localCopy = onPlaySoundListener;
+    if (localCopy != null)
+      localCopy.onPlaySoundReceived(message);
+  }
+
+  private void notifyStopSoundReceived(Multimedia.StopSound message) {
+    OnStopSoundListener localCopy = onStopSoundListener;
+    if (localCopy != null)
+      localCopy.onStopSoundReceived(message);
+  }
+
+  private void notifyGetSoundsInfoReceived() {
+    OnGetSoundsInfoListener localCopy = onGetSoundsInfoListener;
+    if (localCopy != null)
+      localCopy.onGetSoundsInfoReceived();
+  }
+
+  private void notifySendDevTypeReceived(Base.SendDevType message) {
+    OnSendDevTypeListener localCopy = onSendDevTypeListener;
+    if (localCopy != null)
+      localCopy.onSendDevTypeReceived(message);
+  }
+
+  private void notifyTurnOffDeviceReceived() {
+    OnTurnOffDeviceListener localCopy = onTurnOffDeviceListener;
+    if (localCopy != null)
+      localCopy.onTurnOffDeviceReceived();
+  }
+
+  private void notifyGetInfoSlavesReceived() {
+    OnGetInfoSlavesListener localCopy = onGetInfoSlavesListener;
+    if (localCopy != null)
+      localCopy.onGetInfoSlavesReceived();
+  }
+
+  private void notifyFsInfoReceived() {
+    OnFsInfoListener localCopy = onFsInfoListener;
+    if (localCopy != null)
+      localCopy.onFsInfoReceived();
+  }
+
+  private void notifyFormatFsReceived() {
+    OnFormatFsListener localCopy = onFormatFsListener;
+    if (localCopy != null)
+      localCopy.onFormatFsReceived();
+  }
+
+  private void notifyLsDirReceived(Filesystem.LsDir message) {
+    OnLsDirListener localCopy = onLsDirListener;
+    if (localCopy != null)
+      localCopy.onLsDirReceived(message);
+  }
+
+  private void notifyFileInfoReceived(Filesystem.FileInfo message) {
+    OnFileInfoListener localCopy = onFileInfoListener;
+    if (localCopy != null)
+      localCopy.onFileInfoReceived(message);
+  }
+
+  private void notifyDelFileReceived(Filesystem.DelFile message) {
+    OnDelFileListener localCopy = onDelFileListener;
+    if (localCopy != null)
+      localCopy.onDelFileReceived(message);
+  }
+
+  private void notifyReadFileReceived(Filesystem.ReadFile message) {
+    OnReadFileListener localCopy = onReadFileListener;
+    if (localCopy != null)
+      localCopy.onReadFileReceived(message);
+  }
+
+  private void notifyWriteFileReceived(Filesystem.WriteFile message) {
+    OnWriteFileListener localCopy = onWriteFileListener;
+    if (localCopy != null)
+      localCopy.onWriteFileReceived(message);
+  }
+
+  private void notifyCalcMd5Received(Filesystem.CalcMD5 message) {
+    OnCalcMd5Listener localCopy = onCalcMd5Listener;
+    if (localCopy != null)
+      localCopy.onCalcMd5Received(message);
+  }
+
+  private void notifyStatFromPtrkReceived(PTRKMilitary.StatFromPTRK message) {
+    OnStatFromPtrkListener localCopy = onStatFromPtrkListener;
+    if (localCopy != null)
+      localCopy.onStatFromPtrkReceived(message);
+  }
+
+  private void notifyPtrkSettingsReceived(PTRKMilitary.PTRKSettings message) {
+    OnPtrkSettingsListener localCopy = onPtrkSettingsListener;
+    if (localCopy != null)
+      localCopy.onPtrkSettingsReceived(message);
+  }
+
+  private void notifyReloadPtrkReceived(PTRKMilitary.ReloadPtrk message) {
+    OnReloadPtrkListener localCopy = onReloadPtrkListener;
+    if (localCopy != null)
+      localCopy.onReloadPtrkReceived(message);
+  }
+
+  private void notifySettingsTargetReceived(TargetMilitary.SettingsTarget message) {
+    OnSettingsTargetListener localCopy = onSettingsTargetListener;
+    if (localCopy != null)
+      localCopy.onSettingsTargetReceived(message);
+  }
+
+  private void notifyShowTargetReceived() {
+    OnShowTargetListener localCopy = onShowTargetListener;
+    if (localCopy != null)
+      localCopy.onShowTargetReceived();
+  }
+
+  private void notifyHideTargetReceived() {
+    OnHideTargetListener localCopy = onHideTargetListener;
+    if (localCopy != null)
+      localCopy.onHideTargetReceived();
+  }
+
+  private void notifyStatisticsTargetReceived(TargetMilitary.StatisticsTarget message) {
+    OnStatisticsTargetListener localCopy = onStatisticsTargetListener;
+    if (localCopy != null)
+      localCopy.onStatisticsTargetReceived(message);
+  }
+
+  private void notifyResetErrorReceived(TargetMilitary.ResetError message) {
+    OnResetErrorListener localCopy = onResetErrorListener;
+    if (localCopy != null)
+      localCopy.onResetErrorReceived(message);
+  }
+
+  private void notifySettingsPanzerReceived(PanzerMilitary.SettingsPanzer message) {
+    OnSettingsPanzerListener localCopy = onSettingsPanzerListener;
+    if (localCopy != null)
+      localCopy.onSettingsPanzerReceived(message);
+  }
+
+  private void notifyStatisticsPanzerGunReceived(PanzerMilitary.StatisticsPanzerGun message) {
+    OnStatisticsPanzerGunListener localCopy = onStatisticsPanzerGunListener;
+    if (localCopy != null)
+      localCopy.onStatisticsPanzerGunReceived(message);
+  }
+
+  private void notifyStatisticsPanzerCannonReceived(PanzerMilitary.StatisticsPanzerCannon message) {
+    OnStatisticsPanzerCannonListener localCopy = onStatisticsPanzerCannonListener;
+    if (localCopy != null)
+      localCopy.onStatisticsPanzerCannonReceived(message);
+  }
+
+  private void notifyGetStatisticsPanzerGunReceived() {
+    OnGetStatisticsPanzerGunListener localCopy = onGetStatisticsPanzerGunListener;
+    if (localCopy != null)
+      localCopy.onGetStatisticsPanzerGunReceived();
+  }
+
+  private void notifyGetStatisticsPanzerCannonReceived() {
+    OnGetStatisticsPanzerCannonListener localCopy = onGetStatisticsPanzerCannonListener;
+    if (localCopy != null)
+      localCopy.onGetStatisticsPanzerCannonReceived();
+  }
+
+  private void notifyGetSettingsPanzerReceived() {
+    OnGetSettingsPanzerListener localCopy = onGetSettingsPanzerListener;
+    if (localCopy != null)
+      localCopy.onGetSettingsPanzerReceived();
+  }
+
+  private void notifyMovingCartForwardDirectionReceived() {
+    OnMovingCartForwardDirectionListener localCopy = onMovingCartForwardDirectionListener;
+    if (localCopy != null)
+      localCopy.onMovingCartForwardDirectionReceived();
+  }
+
+  private void notifyMovingCartReverseDirectionReceived() {
+    OnMovingCartReverseDirectionListener localCopy = onMovingCartReverseDirectionListener;
+    if (localCopy != null)
+      localCopy.onMovingCartReverseDirectionReceived();
+  }
+
+  private void notifyStopMovingCartReceived() {
+    OnStopMovingCartListener localCopy = onStopMovingCartListener;
+    if (localCopy != null)
+      localCopy.onStopMovingCartReceived();
+  }
+
+  private void notifyMineThrowerSettingsReceived(MineThrower.MineThrowerSettings message) {
+    OnMineThrowerSettingsListener localCopy = onMineThrowerSettingsListener;
+    if (localCopy != null)
+      localCopy.onMineThrowerSettingsReceived(message);
+  }
+
+  private void notifyEspConectionStateReceived(Esp.ESPConectionState message) {
+    OnEspConectionStateListener localCopy = onEspConectionStateListener;
+    if (localCopy != null)
+      localCopy.onEspConectionStateReceived(message);
+  }
+
+  private void notifyEspConnectToTcpReplyReceived(Esp.ESPConnectToTCPReply message) {
+    OnEspConnectToTcpReplyListener localCopy = onEspConnectToTcpReplyListener;
+    if (localCopy != null)
+      localCopy.onEspConnectToTcpReplyReceived(message);
+  }
+
+  private void notifyEspTcpConfirmationReceived(Esp.ESPTcpConfirmation message) {
+    OnEspTcpConfirmationListener localCopy = onEspTcpConfirmationListener;
+    if (localCopy != null)
+      localCopy.onEspTcpConfirmationReceived(message);
+  }
+
+  private void notifyEspServerDiscoveredReceived(Esp.ESPServerDiscovered message) {
+    OnEspServerDiscoveredListener localCopy = onEspServerDiscoveredListener;
+    if (localCopy != null)
+      localCopy.onEspServerDiscoveredReceived(message);
+  }
+
+  private void notifyEspRssiForNetworkNameReceived(Esp.ESPRssiForNetworkName message) {
+    OnEspRssiForNetworkNameListener localCopy = onEspRssiForNetworkNameListener;
+    if (localCopy != null)
+      localCopy.onEspRssiForNetworkNameReceived(message);
+  }
+
+  private void notifyEspWifiAccessPointReceived(Esp.ESPWifiAccessPoint message) {
+    OnEspWifiAccessPointListener localCopy = onEspWifiAccessPointListener;
+    if (localCopy != null)
+      localCopy.onEspWifiAccessPointReceived(message);
+  }
+
+  private void notifyEspKillWifiAccessPointReplyReceived(Esp.ESPKillWifiAccessPointReply message) {
+    OnEspKillWifiAccessPointReplyListener localCopy = onEspKillWifiAccessPointReplyListener;
+    if (localCopy != null)
+      localCopy.onEspKillWifiAccessPointReplyReceived(message);
+  }
+
+  private void notifyRebootReceived() {
+    OnRebootListener localCopy = onRebootListener;
+    if (localCopy != null)
+      localCopy.onRebootReceived();
+  }
+
+  private void notifyVersionRequestReceived() {
+    OnVersionRequestListener localCopy = onVersionRequestListener;
+    if (localCopy != null)
+      localCopy.onVersionRequestReceived();
+  }
+
+  private void notifyFirmwareTaskReceived(Firmware.FirmwareTask message) {
+    OnFirmwareTaskListener localCopy = onFirmwareTaskListener;
+    if (localCopy != null)
+      localCopy.onFirmwareTaskReceived(message);
+  }
+
+  private void notifyBeginUpdateResourcesReceived() {
+    OnBeginUpdateResourcesListener localCopy = onBeginUpdateResourcesListener;
+    if (localCopy != null)
+      localCopy.onBeginUpdateResourcesReceived();
+  }
+
+  private void notifyFinishUpdateResourcesReceived() {
+    OnFinishUpdateResourcesListener localCopy = onFinishUpdateResourcesListener;
+    if (localCopy != null)
+      localCopy.onFinishUpdateResourcesReceived();
+  }
+
+  private void notifyGetStackReceived() {
+    OnGetStackListener localCopy = onGetStackListener;
+    if (localCopy != null)
+      localCopy.onGetStackReceived();
+  }
+
+  private void notifyGetBuffersStateReceived() {
+    OnGetBuffersStateListener localCopy = onGetBuffersStateListener;
+    if (localCopy != null)
+      localCopy.onGetBuffersStateReceived();
+  }
+
+  private void notifySomeDataReceived(RuntimeDbg.SomeData message) {
+    OnSomeDataListener localCopy = onSomeDataListener;
+    if (localCopy != null)
+      localCopy.onSomeDataReceived(message);
+  }
+
+  private void notifyRuntimeErrorReceived(RuntimeDbg.RuntimeError message) {
+    OnRuntimeErrorListener localCopy = onRuntimeErrorListener;
+    if (localCopy != null)
+      localCopy.onRuntimeErrorReceived(message);
+  }
+
+  private void notifyRuntimeGetErrorsReceived() {
+    OnRuntimeGetErrorsListener localCopy = onRuntimeGetErrorsListener;
+    if (localCopy != null)
+      localCopy.onRuntimeGetErrorsReceived();
+  }
+
+  private void notifyRuntimeClearErrorMessagesReceived() {
+    OnRuntimeClearErrorMessagesListener localCopy = onRuntimeClearErrorMessagesListener;
+    if (localCopy != null)
+      localCopy.onRuntimeClearErrorMessagesReceived();
+  }
+
+  private void notifyEspRebootReceived() {
+    OnEspRebootListener localCopy = onEspRebootListener;
+    if (localCopy != null)
+      localCopy.onEspRebootReceived();
+  }
+
+  private void notifyEspVersionRequestReceived() {
+    OnEspVersionRequestListener localCopy = onEspVersionRequestListener;
+    if (localCopy != null)
+      localCopy.onEspVersionRequestReceived();
+  }
+
+  private void notifyEspFirmwareTaskReceived(EspSrv.ESP_FirmwareTask message) {
+    OnEspFirmwareTaskListener localCopy = onEspFirmwareTaskListener;
+    if (localCopy != null)
+      localCopy.onEspFirmwareTaskReceived(message);
+  }
+
+  private void notifyEspSomeDataReceived(EspSrv.ESP_SomeData message) {
+    OnEspSomeDataListener localCopy = onEspSomeDataListener;
+    if (localCopy != null)
+      localCopy.onEspSomeDataReceived(message);
+  }
+
+  private void notifyEspRuntimeErrorReceived(EspSrv.ESP_RuntimeError message) {
+    OnEspRuntimeErrorListener localCopy = onEspRuntimeErrorListener;
+    if (localCopy != null)
+      localCopy.onEspRuntimeErrorReceived(message);
+  }
+
+  private void notifyEspBeginUpdateResourcesReceived() {
+    OnEspBeginUpdateResourcesListener localCopy = onEspBeginUpdateResourcesListener;
+    if (localCopy != null)
+      localCopy.onEspBeginUpdateResourcesReceived();
+  }
+
+  private void notifyEspFinishUpdateResourcesReceived() {
+    OnEspFinishUpdateResourcesListener localCopy = onEspFinishUpdateResourcesListener;
+    if (localCopy != null)
+      localCopy.onEspFinishUpdateResourcesReceived();
+  }
+
+  private void notifyRsHelloFromMasterReceived(RsMilitary.RsHelloFromMaster message) {
+    OnRsHelloFromMasterListener localCopy = onRsHelloFromMasterListener;
+    if (localCopy != null)
+      localCopy.onRsHelloFromMasterReceived(message);
+  }
+
+  private void notifyRsSendIrReceived(RsMilitary.RsSendIr message) {
+    OnRsSendIrListener localCopy = onRsSendIrListener;
+    if (localCopy != null)
+      localCopy.onRsSendIrReceived(message);
+  }
+
+  private void notifyRsSystemCommandReceived(RsMilitary.RsSystemCommand message) {
+    OnRsSystemCommandListener localCopy = onRsSystemCommandListener;
+    if (localCopy != null)
+      localCopy.onRsSystemCommandReceived(message);
+  }
+
+  private void notifyRsChangeIdReceived(RsMilitary.RsChangeID message) {
+    OnRsChangeIdListener localCopy = onRsChangeIdListener;
+    if (localCopy != null)
+      localCopy.onRsChangeIdReceived(message);
+  }
+
+  private void notifyRsSetIndicationReceived(RsMilitary.RsSetIndication message) {
+    OnRsSetIndicationListener localCopy = onRsSetIndicationListener;
+    if (localCopy != null)
+      localCopy.onRsSetIndicationReceived(message);
+  }
+
+  private void notifyRsPowerOnReceived() {
+    OnRsPowerOnListener localCopy = onRsPowerOnListener;
+    if (localCopy != null)
+      localCopy.onRsPowerOnReceived();
+  }
+
+  private void notifyRsPowerOffReceived() {
+    OnRsPowerOffListener localCopy = onRsPowerOffListener;
+    if (localCopy != null)
+      localCopy.onRsPowerOffReceived();
+  }
+
+  private void notifyRsStressBeltSettingsReceived(RsMilitary.RsStressBeltSettings message) {
+    OnRsStressBeltSettingsListener localCopy = onRsStressBeltSettingsListener;
+    if (localCopy != null)
+      localCopy.onRsStressBeltSettingsReceived(message);
+  }
+
+  private void notifyRsSendIrCustomReceived(RsMilitary.RsSendIrCustom message) {
+    OnRsSendIrCustomListener localCopy = onRsSendIrCustomListener;
+    if (localCopy != null)
+      localCopy.onRsSendIrCustomReceived(message);
+  }
+
+  private void notifyRsIlluminationLevelQueryReceived() {
+    OnRsIlluminationLevelQueryListener localCopy = onRsIlluminationLevelQueryListener;
+    if (localCopy != null)
+      localCopy.onRsIlluminationLevelQueryReceived();
+  }
+
+  private void notifyRsButtonsStateQueryReceived() {
+    OnRsButtonsStateQueryListener localCopy = onRsButtonsStateQueryListener;
+    if (localCopy != null)
+      localCopy.onRsButtonsStateQueryReceived();
+  }
+
+  private void notifyRsVisibleLaserOnReceived(RsMilitary.RsVisibleLaserOn message) {
+    OnRsVisibleLaserOnListener localCopy = onRsVisibleLaserOnListener;
+    if (localCopy != null)
+      localCopy.onRsVisibleLaserOnReceived(message);
+  }
+
+  private void notifyRsGetGpsReceived() {
+    OnRsGetGpsListener localCopy = onRsGetGpsListener;
+    if (localCopy != null)
+      localCopy.onRsGetGpsReceived();
+  }
+
+  private void notifyRsGetCompasReceived() {
+    OnRsGetCompasListener localCopy = onRsGetCompasListener;
+    if (localCopy != null)
+      localCopy.onRsGetCompasReceived();
+  }
+
+  private void notifyRsGetStatusReceived() {
+    OnRsGetStatusListener localCopy = onRsGetStatusListener;
+    if (localCopy != null)
+      localCopy.onRsGetStatusReceived();
+  }
+
+  private void notifyPlaySoundToSlaveReceived(RsMilitary.PlaySoundToSlave message) {
+    OnPlaySoundToSlaveListener localCopy = onPlaySoundToSlaveListener;
+    if (localCopy != null)
+      localCopy.onPlaySoundToSlaveReceived(message);
+  }
+
+  private void notifySetPositionReceived(RsMilitary.SetPosition message) {
+    OnSetPositionListener localCopy = onSetPositionListener;
+    if (localCopy != null)
+      localCopy.onSetPositionReceived(message);
+  }
+
+  private void notifyBrakeOnReceived() {
+    OnBrakeOnListener localCopy = onBrakeOnListener;
+    if (localCopy != null)
+      localCopy.onBrakeOnReceived();
+  }
+
+  private void notifyBrakeOffReceived() {
+    OnBrakeOffListener localCopy = onBrakeOffListener;
+    if (localCopy != null)
+      localCopy.onBrakeOffReceived();
+  }
+
+  private void notifyRotationBySectorOnTimeReceived(RsMilitary.RotationBySectorOnTime message) {
+    OnRotationBySectorOnTimeListener localCopy = onRotationBySectorOnTimeListener;
+    if (localCopy != null)
+      localCopy.onRotationBySectorOnTimeReceived(message);
+  }
+
+  private void notifyStopRotationReceived() {
+    OnStopRotationListener localCopy = onStopRotationListener;
+    if (localCopy != null)
+      localCopy.onStopRotationReceived();
+  }
+
+  private void notifyWiredHelloFromMasterReceived(WiredConnection.WiredHelloFromMaster message) {
+    OnWiredHelloFromMasterListener localCopy = onWiredHelloFromMasterListener;
+    if (localCopy != null)
+      localCopy.onWiredHelloFromMasterReceived(message);
+  }
+
+  private void notifyWiredActionPyrotechnyReceived(WiredConnection.WiredActionPyrotechny message) {
+    OnWiredActionPyrotechnyListener localCopy = onWiredActionPyrotechnyListener;
+    if (localCopy != null)
+      localCopy.onWiredActionPyrotechnyReceived(message);
+  }
+
+  private void notifyWiredSettingsIrEmitterReceived(WiredConnection.WiredSettingsIrEmitter message) {
+    OnWiredSettingsIrEmitterListener localCopy = onWiredSettingsIrEmitterListener;
+    if (localCopy != null)
+      localCopy.onWiredSettingsIrEmitterReceived(message);
+  }
+
+  private void notifyWiredSendSequenceIrPacketsReceived(WiredConnection.WiredSendSequenceIrPackets message) {
+    OnWiredSendSequenceIrPacketsListener localCopy = onWiredSendSequenceIrPacketsListener;
+    if (localCopy != null)
+      localCopy.onWiredSendSequenceIrPacketsReceived(message);
+  }
+
+  private void notifyWiredSendIrPacketReceived(WiredConnection.WiredSendIrPacket message) {
+    OnWiredSendIrPacketListener localCopy = onWiredSendIrPacketListener;
+    if (localCopy != null)
+      localCopy.onWiredSendIrPacketReceived(message);
+  }
+
+  private void notifyWiredChangeIdReceived(WiredConnection.WiredChangeID message) {
+    OnWiredChangeIdListener localCopy = onWiredChangeIdListener;
+    if (localCopy != null)
+      localCopy.onWiredChangeIdReceived(message);
+  }
+
+  private void notifyWiredSettingsTargetShooterReceived(WiredConnection.WiredSettingsTargetShooter message) {
+    OnWiredSettingsTargetShooterListener localCopy = onWiredSettingsTargetShooterListener;
+    if (localCopy != null)
+      localCopy.onWiredSettingsTargetShooterReceived(message);
+  }
+
+  private void notifyWiredTargetShooterActionReceived(WiredConnection.WiredTargetShooterAction message) {
+    OnWiredTargetShooterActionListener localCopy = onWiredTargetShooterActionListener;
+    if (localCopy != null)
+      localCopy.onWiredTargetShooterActionReceived(message);
+  }
+
+  private void notifyWiredActionGrenadeThrowerReceived() {
+    OnWiredActionGrenadeThrowerListener localCopy = onWiredActionGrenadeThrowerListener;
+    if (localCopy != null)
+      localCopy.onWiredActionGrenadeThrowerReceived();
+  }
+
+  private void notifyWiredSetIndicationReceived(WiredConnection.WiredSetIndication message) {
+    OnWiredSetIndicationListener localCopy = onWiredSetIndicationListener;
+    if (localCopy != null)
+      localCopy.onWiredSetIndicationReceived(message);
+  }
+
+  private void notifyWiredPlaySoundReceived(WiredConnection.WiredPlaySound message) {
+    OnWiredPlaySoundListener localCopy = onWiredPlaySoundListener;
+    if (localCopy != null)
+      localCopy.onWiredPlaySoundReceived(message);
+  }
+
+  private void notifyWiredStopActionsReceived() {
+    OnWiredStopActionsListener localCopy = onWiredStopActionsListener;
+    if (localCopy != null)
+      localCopy.onWiredStopActionsReceived();
+  }
+
+  private void notifyGetBatteryLevelReceived() {
+    OnGetBatteryLevelListener localCopy = onGetBatteryLevelListener;
+    if (localCopy != null)
+      localCopy.onGetBatteryLevelReceived();
+  }
+
+  private void notifyGetSettingsReceived() {
+    OnGetSettingsListener localCopy = onGetSettingsListener;
+    if (localCopy != null)
+      localCopy.onGetSettingsReceived();
+  }
+
+  private void notifyChangeTeamReceived(CommonMilitary.ChangeTeam message) {
+    OnChangeTeamListener localCopy = onChangeTeamListener;
+    if (localCopy != null)
+      localCopy.onChangeTeamReceived(message);
+  }
+
+  private void notifyKillPlayerReceived(CommonMilitary.KillPlayer message) {
+    OnKillPlayerListener localCopy = onKillPlayerListener;
+    if (localCopy != null)
+      localCopy.onKillPlayerReceived(message);
+  }
+
+  private void notifyResetAllErrorsReceived() {
+    OnResetAllErrorsListener localCopy = onResetAllErrorsListener;
+    if (localCopy != null)
+      localCopy.onResetAllErrorsReceived();
+  }
+
+  private void notifySetTypeExerciseReceived(CommonMilitary.SetTypeExercise message) {
+    OnSetTypeExerciseListener localCopy = onSetTypeExerciseListener;
+    if (localCopy != null)
+      localCopy.onSetTypeExerciseReceived(message);
+  }
+
+  private void notifyStatFromKitReceived(KitMilitary.StatFromKit message) {
+    OnStatFromKitListener localCopy = onStatFromKitListener;
+    if (localCopy != null)
+      localCopy.onStatFromKitReceived(message);
+  }
+
+  private void notifyWeaponStatReceived(KitMilitary.WeaponStat message) {
+    OnWeaponStatListener localCopy = onWeaponStatListener;
+    if (localCopy != null)
+      localCopy.onWeaponStatReceived(message);
+  }
+
+  private void notifyKitSettingsReceived(KitMilitary.KitSettings message) {
+    OnKitSettingsListener localCopy = onKitSettingsListener;
+    if (localCopy != null)
+      localCopy.onKitSettingsReceived(message);
+  }
+
+  private void notifyStressBeltSettingsReceived(KitMilitary.StressBeltSettings message) {
+    OnStressBeltSettingsListener localCopy = onStressBeltSettingsListener;
+    if (localCopy != null)
+      localCopy.onStressBeltSettingsReceived(message);
+  }
+
+  private void notifyWeaponSettingsReceived(KitMilitary.WeaponSettings message) {
+    OnWeaponSettingsListener localCopy = onWeaponSettingsListener;
+    if (localCopy != null)
+      localCopy.onWeaponSettingsReceived(message);
+  }
+
+  private void notifyGetAllStatReceived() {
+    OnGetAllStatListener localCopy = onGetAllStatListener;
+    if (localCopy != null)
+      localCopy.onGetAllStatReceived();
+  }
+
+  private void notifySilentModeReceived(KitMilitary.SilentMode message) {
+    OnSilentModeListener localCopy = onSilentModeListener;
+    if (localCopy != null)
+      localCopy.onSilentModeReceived(message);
+  }
+
+  private void notifyGetActivatedMinesReceived() {
+    OnGetActivatedMinesListener localCopy = onGetActivatedMinesListener;
+    if (localCopy != null)
+      localCopy.onGetActivatedMinesReceived();
+  }
+
+  private void notifyGetDeactivatedMinesReceived() {
+    OnGetDeactivatedMinesListener localCopy = onGetDeactivatedMinesListener;
+    if (localCopy != null)
+      localCopy.onGetDeactivatedMinesReceived();
+  }
+
+  private void notifyGetInfoFromHingedBlockReceived(KitMilitary.GetInfoFromHingedBlock message) {
+    OnGetInfoFromHingedBlockListener localCopy = onGetInfoFromHingedBlockListener;
+    if (localCopy != null)
+      localCopy.onGetInfoFromHingedBlockReceived(message);
+  }
+
+  private void notifyIrEmitterSettingsReceived(KitMilitary.IrEmitterSettings message) {
+    OnIrEmitterSettingsListener localCopy = onIrEmitterSettingsListener;
+    if (localCopy != null)
+      localCopy.onIrEmitterSettingsReceived(message);
+  }
+
+  private void notifyIrEmitterStatisticReceived(KitMilitary.IrEmitterStatistic message) {
+    OnIrEmitterStatisticListener localCopy = onIrEmitterStatisticListener;
+    if (localCopy != null)
+      localCopy.onIrEmitterStatisticReceived(message);
+  }
+
+  private void notifySetDamageAppropriateToWeaponReceived(KitMilitary.SetDamageAppropriateToWeapon message) {
+    OnSetDamageAppropriateToWeaponListener localCopy = onSetDamageAppropriateToWeaponListener;
+    if (localCopy != null)
+      localCopy.onSetDamageAppropriateToWeaponReceived(message);
+  }
+
+  private void notifySaveTableDamageReceived() {
+    OnSaveTableDamageListener localCopy = onSaveTableDamageListener;
+    if (localCopy != null)
+      localCopy.onSaveTableDamageReceived();
+  }
+
+  private void notifySetTypeVehicleReceived(KitMilitary.SetTypeVehicle message) {
+    OnSetTypeVehicleListener localCopy = onSetTypeVehicleListener;
+    if (localCopy != null)
+      localCopy.onSetTypeVehicleReceived(message);
+  }
+
+  private void notifyGetQuantityBlocksPosReceived(KitMilitary.GetQuantityBlocksPos message) {
+    OnGetQuantityBlocksPosListener localCopy = onGetQuantityBlocksPosListener;
+    if (localCopy != null)
+      localCopy.onGetQuantityBlocksPosReceived(message);
+  }
+
+  private void notifyGetBlockByTimePosReceived(KitMilitary.GetBlockByTimePos message) {
+    OnGetBlockByTimePosListener localCopy = onGetBlockByTimePosListener;
+    if (localCopy != null)
+      localCopy.onGetBlockByTimePosReceived(message);
+  }
+
+  private void notifyDeleteBlocksPosReceived(KitMilitary.DeleteBlocksPos message) {
+    OnDeleteBlocksPosListener localCopy = onDeleteBlocksPosListener;
+    if (localCopy != null)
+      localCopy.onDeleteBlocksPosReceived(message);
+  }
+
+  private void notifyGetAllEventsPzrkReceived() {
+    OnGetAllEventsPzrkListener localCopy = onGetAllEventsPzrkListener;
+    if (localCopy != null)
+      localCopy.onGetAllEventsPzrkReceived();
+  }
+
+  private void notifyPzrkSettingReceived(PZRKMilitary.PzrkSetting message) {
+    OnPzrkSettingListener localCopy = onPzrkSettingListener;
+    if (localCopy != null)
+      localCopy.onPzrkSettingReceived(message);
+  }
+
+  private void notifySettingAntiSniperReceived(AntiSniper.SettingAntiSniper message) {
+    OnSettingAntiSniperListener localCopy = onSettingAntiSniperListener;
+    if (localCopy != null)
+      localCopy.onSettingAntiSniperReceived(message);
+  }
+
+  private void notifyCommandReceived(AntiSniper.Command message) {
+    OnCommandListener localCopy = onCommandListener;
+    if (localCopy != null)
+      localCopy.onCommandReceived(message);
+  }
+
+  private void notifyDefeatTargetReceived() {
+    OnDefeatTargetListener localCopy = onDefeatTargetListener;
+    if (localCopy != null)
+      localCopy.onDefeatTargetReceived();
+  }
+
+  private void notifySetDwmPanIdReceived(IndoorNavigation.SetDwmPanId message) {
+    OnSetDwmPanIdListener localCopy = onSetDwmPanIdListener;
+    if (localCopy != null)
+      localCopy.onSetDwmPanIdReceived(message);
+  }
+
+
+  @Override
+  public void notifyOnConnected() {
+    OnConnectedListener localCopy = this.onConnectedListener;
+    if (localCopy != null)
+      localCopy.onConnected();
+  }
+
+  @Override
+  public void notifyOnError(Throwable error) {
+    OnErrorListener localCopy = this.onErrorListener;
+    if (localCopy != null)
+      localCopy.onError(error);
+  }
+
+  @Override
+  public void notifyOnDisconnected() {
+    OnDisconnectedListener localCopy = this.onDisconnectedListener;
+    if (localCopy != null)
+      localCopy.onDisconnected();
+  }
+
+
+  public void setOnStartGameListener(OnStartGameListener listener)
+  {
+    onStartGameListener = listener;
+  }
+
+  public void setOnStopGameListener(OnStopGameListener listener)
+  {
+    onStopGameListener = listener;
+  }
+
+  public void setOnPauseGameListener(OnPauseGameListener listener)
+  {
+    onPauseGameListener = listener;
+  }
+
+  public void setOnChangeIdListener(OnChangeIdListener listener)
+  {
+    onChangeIdListener = listener;
+  }
+
+  public void setOnSetVolumeListener(OnSetVolumeListener listener)
+  {
+    onSetVolumeListener = listener;
+  }
+
+  public void setOnPingListener(OnPingListener listener)
+  {
+    onPingListener = listener;
+  }
+
+  public void setOnUpdateDevListener(OnUpdateDevListener listener)
+  {
+    onUpdateDevListener = listener;
+  }
+
+  public void setOnSetLanguageListener(OnSetLanguageListener listener)
+  {
+    onSetLanguageListener = listener;
+  }
+
+  public void setOnPlaySoundListener(OnPlaySoundListener listener)
+  {
+    onPlaySoundListener = listener;
+  }
+
+  public void setOnStopSoundListener(OnStopSoundListener listener)
+  {
+    onStopSoundListener = listener;
+  }
+
+  public void setOnGetSoundsInfoListener(OnGetSoundsInfoListener listener)
+  {
+    onGetSoundsInfoListener = listener;
+  }
+
+  public void setOnSendDevTypeListener(OnSendDevTypeListener listener)
+  {
+    onSendDevTypeListener = listener;
+  }
+
+  public void setOnTurnOffDeviceListener(OnTurnOffDeviceListener listener)
+  {
+    onTurnOffDeviceListener = listener;
+  }
+
+  public void setOnGetInfoSlavesListener(OnGetInfoSlavesListener listener)
+  {
+    onGetInfoSlavesListener = listener;
+  }
+
+  public void setOnFsInfoListener(OnFsInfoListener listener)
+  {
+    onFsInfoListener = listener;
+  }
+
+  public void setOnFormatFsListener(OnFormatFsListener listener)
+  {
+    onFormatFsListener = listener;
+  }
+
+  public void setOnLsDirListener(OnLsDirListener listener)
+  {
+    onLsDirListener = listener;
+  }
+
+  public void setOnFileInfoListener(OnFileInfoListener listener)
+  {
+    onFileInfoListener = listener;
+  }
+
+  public void setOnDelFileListener(OnDelFileListener listener)
+  {
+    onDelFileListener = listener;
+  }
+
+  public void setOnReadFileListener(OnReadFileListener listener)
+  {
+    onReadFileListener = listener;
+  }
+
+  public void setOnWriteFileListener(OnWriteFileListener listener)
+  {
+    onWriteFileListener = listener;
+  }
+
+  public void setOnCalcMd5Listener(OnCalcMd5Listener listener)
+  {
+    onCalcMd5Listener = listener;
+  }
+
+  public void setOnStatFromPtrkListener(OnStatFromPtrkListener listener)
+  {
+    onStatFromPtrkListener = listener;
+  }
+
+  public void setOnPtrkSettingsListener(OnPtrkSettingsListener listener)
+  {
+    onPtrkSettingsListener = listener;
+  }
+
+  public void setOnReloadPtrkListener(OnReloadPtrkListener listener)
+  {
+    onReloadPtrkListener = listener;
+  }
+
+  public void setOnSettingsTargetListener(OnSettingsTargetListener listener)
+  {
+    onSettingsTargetListener = listener;
+  }
+
+  public void setOnShowTargetListener(OnShowTargetListener listener)
+  {
+    onShowTargetListener = listener;
+  }
+
+  public void setOnHideTargetListener(OnHideTargetListener listener)
+  {
+    onHideTargetListener = listener;
+  }
+
+  public void setOnStatisticsTargetListener(OnStatisticsTargetListener listener)
+  {
+    onStatisticsTargetListener = listener;
+  }
+
+  public void setOnResetErrorListener(OnResetErrorListener listener)
+  {
+    onResetErrorListener = listener;
+  }
+
+  public void setOnSettingsPanzerListener(OnSettingsPanzerListener listener)
+  {
+    onSettingsPanzerListener = listener;
+  }
+
+  public void setOnStatisticsPanzerGunListener(OnStatisticsPanzerGunListener listener)
+  {
+    onStatisticsPanzerGunListener = listener;
+  }
+
+  public void setOnStatisticsPanzerCannonListener(OnStatisticsPanzerCannonListener listener)
+  {
+    onStatisticsPanzerCannonListener = listener;
+  }
+
+  public void setOnGetStatisticsPanzerGunListener(OnGetStatisticsPanzerGunListener listener)
+  {
+    onGetStatisticsPanzerGunListener = listener;
+  }
+
+  public void setOnGetStatisticsPanzerCannonListener(OnGetStatisticsPanzerCannonListener listener)
+  {
+    onGetStatisticsPanzerCannonListener = listener;
+  }
+
+  public void setOnGetSettingsPanzerListener(OnGetSettingsPanzerListener listener)
+  {
+    onGetSettingsPanzerListener = listener;
+  }
+
+  public void setOnMovingCartForwardDirectionListener(OnMovingCartForwardDirectionListener listener)
+  {
+    onMovingCartForwardDirectionListener = listener;
+  }
+
+  public void setOnMovingCartReverseDirectionListener(OnMovingCartReverseDirectionListener listener)
+  {
+    onMovingCartReverseDirectionListener = listener;
+  }
+
+  public void setOnStopMovingCartListener(OnStopMovingCartListener listener)
+  {
+    onStopMovingCartListener = listener;
+  }
+
+  public void setOnMineThrowerSettingsListener(OnMineThrowerSettingsListener listener)
+  {
+    onMineThrowerSettingsListener = listener;
+  }
+
+  public void setOnEspConectionStateListener(OnEspConectionStateListener listener)
+  {
+    onEspConectionStateListener = listener;
+  }
+
+  public void setOnEspConnectToTcpReplyListener(OnEspConnectToTcpReplyListener listener)
+  {
+    onEspConnectToTcpReplyListener = listener;
+  }
+
+  public void setOnEspTcpConfirmationListener(OnEspTcpConfirmationListener listener)
+  {
+    onEspTcpConfirmationListener = listener;
+  }
+
+  public void setOnEspServerDiscoveredListener(OnEspServerDiscoveredListener listener)
+  {
+    onEspServerDiscoveredListener = listener;
+  }
+
+  public void setOnEspRssiForNetworkNameListener(OnEspRssiForNetworkNameListener listener)
+  {
+    onEspRssiForNetworkNameListener = listener;
+  }
+
+  public void setOnEspWifiAccessPointListener(OnEspWifiAccessPointListener listener)
+  {
+    onEspWifiAccessPointListener = listener;
+  }
+
+  public void setOnEspKillWifiAccessPointReplyListener(OnEspKillWifiAccessPointReplyListener listener)
+  {
+    onEspKillWifiAccessPointReplyListener = listener;
+  }
+
+  public void setOnRebootListener(OnRebootListener listener)
+  {
+    onRebootListener = listener;
+  }
+
+  public void setOnVersionRequestListener(OnVersionRequestListener listener)
+  {
+    onVersionRequestListener = listener;
+  }
+
+  public void setOnFirmwareTaskListener(OnFirmwareTaskListener listener)
+  {
+    onFirmwareTaskListener = listener;
+  }
+
+  public void setOnBeginUpdateResourcesListener(OnBeginUpdateResourcesListener listener)
+  {
+    onBeginUpdateResourcesListener = listener;
+  }
+
+  public void setOnFinishUpdateResourcesListener(OnFinishUpdateResourcesListener listener)
+  {
+    onFinishUpdateResourcesListener = listener;
+  }
+
+  public void setOnGetStackListener(OnGetStackListener listener)
+  {
+    onGetStackListener = listener;
+  }
+
+  public void setOnGetBuffersStateListener(OnGetBuffersStateListener listener)
+  {
+    onGetBuffersStateListener = listener;
+  }
+
+  public void setOnSomeDataListener(OnSomeDataListener listener)
+  {
+    onSomeDataListener = listener;
+  }
+
+  public void setOnRuntimeErrorListener(OnRuntimeErrorListener listener)
+  {
+    onRuntimeErrorListener = listener;
+  }
+
+  public void setOnRuntimeGetErrorsListener(OnRuntimeGetErrorsListener listener)
+  {
+    onRuntimeGetErrorsListener = listener;
+  }
+
+  public void setOnRuntimeClearErrorMessagesListener(OnRuntimeClearErrorMessagesListener listener)
+  {
+    onRuntimeClearErrorMessagesListener = listener;
+  }
+
+  public void setOnEspRebootListener(OnEspRebootListener listener)
+  {
+    onEspRebootListener = listener;
+  }
+
+  public void setOnEspVersionRequestListener(OnEspVersionRequestListener listener)
+  {
+    onEspVersionRequestListener = listener;
+  }
+
+  public void setOnEspFirmwareTaskListener(OnEspFirmwareTaskListener listener)
+  {
+    onEspFirmwareTaskListener = listener;
+  }
+
+  public void setOnEspSomeDataListener(OnEspSomeDataListener listener)
+  {
+    onEspSomeDataListener = listener;
+  }
+
+  public void setOnEspRuntimeErrorListener(OnEspRuntimeErrorListener listener)
+  {
+    onEspRuntimeErrorListener = listener;
+  }
+
+  public void setOnEspBeginUpdateResourcesListener(OnEspBeginUpdateResourcesListener listener)
+  {
+    onEspBeginUpdateResourcesListener = listener;
+  }
+
+  public void setOnEspFinishUpdateResourcesListener(OnEspFinishUpdateResourcesListener listener)
+  {
+    onEspFinishUpdateResourcesListener = listener;
+  }
+
+  public void setOnRsHelloFromMasterListener(OnRsHelloFromMasterListener listener)
+  {
+    onRsHelloFromMasterListener = listener;
+  }
+
+  public void setOnRsSendIrListener(OnRsSendIrListener listener)
+  {
+    onRsSendIrListener = listener;
+  }
+
+  public void setOnRsSystemCommandListener(OnRsSystemCommandListener listener)
+  {
+    onRsSystemCommandListener = listener;
+  }
+
+  public void setOnRsChangeIdListener(OnRsChangeIdListener listener)
+  {
+    onRsChangeIdListener = listener;
+  }
+
+  public void setOnRsSetIndicationListener(OnRsSetIndicationListener listener)
+  {
+    onRsSetIndicationListener = listener;
+  }
+
+  public void setOnRsPowerOnListener(OnRsPowerOnListener listener)
+  {
+    onRsPowerOnListener = listener;
+  }
+
+  public void setOnRsPowerOffListener(OnRsPowerOffListener listener)
+  {
+    onRsPowerOffListener = listener;
+  }
+
+  public void setOnRsStressBeltSettingsListener(OnRsStressBeltSettingsListener listener)
+  {
+    onRsStressBeltSettingsListener = listener;
+  }
+
+  public void setOnRsSendIrCustomListener(OnRsSendIrCustomListener listener)
+  {
+    onRsSendIrCustomListener = listener;
+  }
+
+  public void setOnRsIlluminationLevelQueryListener(OnRsIlluminationLevelQueryListener listener)
+  {
+    onRsIlluminationLevelQueryListener = listener;
+  }
+
+  public void setOnRsButtonsStateQueryListener(OnRsButtonsStateQueryListener listener)
+  {
+    onRsButtonsStateQueryListener = listener;
+  }
+
+  public void setOnRsVisibleLaserOnListener(OnRsVisibleLaserOnListener listener)
+  {
+    onRsVisibleLaserOnListener = listener;
+  }
+
+  public void setOnRsGetGpsListener(OnRsGetGpsListener listener)
+  {
+    onRsGetGpsListener = listener;
+  }
+
+  public void setOnRsGetCompasListener(OnRsGetCompasListener listener)
+  {
+    onRsGetCompasListener = listener;
+  }
+
+  public void setOnRsGetStatusListener(OnRsGetStatusListener listener)
+  {
+    onRsGetStatusListener = listener;
+  }
+
+  public void setOnPlaySoundToSlaveListener(OnPlaySoundToSlaveListener listener)
+  {
+    onPlaySoundToSlaveListener = listener;
+  }
+
+  public void setOnSetPositionListener(OnSetPositionListener listener)
+  {
+    onSetPositionListener = listener;
+  }
+
+  public void setOnBrakeOnListener(OnBrakeOnListener listener)
+  {
+    onBrakeOnListener = listener;
+  }
+
+  public void setOnBrakeOffListener(OnBrakeOffListener listener)
+  {
+    onBrakeOffListener = listener;
+  }
+
+  public void setOnRotationBySectorOnTimeListener(OnRotationBySectorOnTimeListener listener)
+  {
+    onRotationBySectorOnTimeListener = listener;
+  }
+
+  public void setOnStopRotationListener(OnStopRotationListener listener)
+  {
+    onStopRotationListener = listener;
+  }
+
+  public void setOnWiredHelloFromMasterListener(OnWiredHelloFromMasterListener listener)
+  {
+    onWiredHelloFromMasterListener = listener;
+  }
+
+  public void setOnWiredActionPyrotechnyListener(OnWiredActionPyrotechnyListener listener)
+  {
+    onWiredActionPyrotechnyListener = listener;
+  }
+
+  public void setOnWiredSettingsIrEmitterListener(OnWiredSettingsIrEmitterListener listener)
+  {
+    onWiredSettingsIrEmitterListener = listener;
+  }
+
+  public void setOnWiredSendSequenceIrPacketsListener(OnWiredSendSequenceIrPacketsListener listener)
+  {
+    onWiredSendSequenceIrPacketsListener = listener;
+  }
+
+  public void setOnWiredSendIrPacketListener(OnWiredSendIrPacketListener listener)
+  {
+    onWiredSendIrPacketListener = listener;
+  }
+
+  public void setOnWiredChangeIdListener(OnWiredChangeIdListener listener)
+  {
+    onWiredChangeIdListener = listener;
+  }
+
+  public void setOnWiredSettingsTargetShooterListener(OnWiredSettingsTargetShooterListener listener)
+  {
+    onWiredSettingsTargetShooterListener = listener;
+  }
+
+  public void setOnWiredTargetShooterActionListener(OnWiredTargetShooterActionListener listener)
+  {
+    onWiredTargetShooterActionListener = listener;
+  }
+
+  public void setOnWiredActionGrenadeThrowerListener(OnWiredActionGrenadeThrowerListener listener)
+  {
+    onWiredActionGrenadeThrowerListener = listener;
+  }
+
+  public void setOnWiredSetIndicationListener(OnWiredSetIndicationListener listener)
+  {
+    onWiredSetIndicationListener = listener;
+  }
+
+  public void setOnWiredPlaySoundListener(OnWiredPlaySoundListener listener)
+  {
+    onWiredPlaySoundListener = listener;
+  }
+
+  public void setOnWiredStopActionsListener(OnWiredStopActionsListener listener)
+  {
+    onWiredStopActionsListener = listener;
+  }
+
+  public void setOnGetBatteryLevelListener(OnGetBatteryLevelListener listener)
+  {
+    onGetBatteryLevelListener = listener;
+  }
+
+  public void setOnGetSettingsListener(OnGetSettingsListener listener)
+  {
+    onGetSettingsListener = listener;
+  }
+
+  public void setOnChangeTeamListener(OnChangeTeamListener listener)
+  {
+    onChangeTeamListener = listener;
+  }
+
+  public void setOnKillPlayerListener(OnKillPlayerListener listener)
+  {
+    onKillPlayerListener = listener;
+  }
+
+  public void setOnResetAllErrorsListener(OnResetAllErrorsListener listener)
+  {
+    onResetAllErrorsListener = listener;
+  }
+
+  public void setOnSetTypeExerciseListener(OnSetTypeExerciseListener listener)
+  {
+    onSetTypeExerciseListener = listener;
+  }
+
+  public void setOnStatFromKitListener(OnStatFromKitListener listener)
+  {
+    onStatFromKitListener = listener;
+  }
+
+  public void setOnWeaponStatListener(OnWeaponStatListener listener)
+  {
+    onWeaponStatListener = listener;
+  }
+
+  public void setOnKitSettingsListener(OnKitSettingsListener listener)
+  {
+    onKitSettingsListener = listener;
+  }
+
+  public void setOnStressBeltSettingsListener(OnStressBeltSettingsListener listener)
+  {
+    onStressBeltSettingsListener = listener;
+  }
+
+  public void setOnWeaponSettingsListener(OnWeaponSettingsListener listener)
+  {
+    onWeaponSettingsListener = listener;
+  }
+
+  public void setOnGetAllStatListener(OnGetAllStatListener listener)
+  {
+    onGetAllStatListener = listener;
+  }
+
+  public void setOnSilentModeListener(OnSilentModeListener listener)
+  {
+    onSilentModeListener = listener;
+  }
+
+  public void setOnGetActivatedMinesListener(OnGetActivatedMinesListener listener)
+  {
+    onGetActivatedMinesListener = listener;
+  }
+
+  public void setOnGetDeactivatedMinesListener(OnGetDeactivatedMinesListener listener)
+  {
+    onGetDeactivatedMinesListener = listener;
+  }
+
+  public void setOnGetInfoFromHingedBlockListener(OnGetInfoFromHingedBlockListener listener)
+  {
+    onGetInfoFromHingedBlockListener = listener;
+  }
+
+  public void setOnIrEmitterSettingsListener(OnIrEmitterSettingsListener listener)
+  {
+    onIrEmitterSettingsListener = listener;
+  }
+
+  public void setOnIrEmitterStatisticListener(OnIrEmitterStatisticListener listener)
+  {
+    onIrEmitterStatisticListener = listener;
+  }
+
+  public void setOnSetDamageAppropriateToWeaponListener(OnSetDamageAppropriateToWeaponListener listener)
+  {
+    onSetDamageAppropriateToWeaponListener = listener;
+  }
+
+  public void setOnSaveTableDamageListener(OnSaveTableDamageListener listener)
+  {
+    onSaveTableDamageListener = listener;
+  }
+
+  public void setOnSetTypeVehicleListener(OnSetTypeVehicleListener listener)
+  {
+    onSetTypeVehicleListener = listener;
+  }
+
+  public void setOnGetQuantityBlocksPosListener(OnGetQuantityBlocksPosListener listener)
+  {
+    onGetQuantityBlocksPosListener = listener;
+  }
+
+  public void setOnGetBlockByTimePosListener(OnGetBlockByTimePosListener listener)
+  {
+    onGetBlockByTimePosListener = listener;
+  }
+
+  public void setOnDeleteBlocksPosListener(OnDeleteBlocksPosListener listener)
+  {
+    onDeleteBlocksPosListener = listener;
+  }
+
+  public void setOnGetAllEventsPzrkListener(OnGetAllEventsPzrkListener listener)
+  {
+    onGetAllEventsPzrkListener = listener;
+  }
+
+  public void setOnPzrkSettingListener(OnPzrkSettingListener listener)
+  {
+    onPzrkSettingListener = listener;
+  }
+
+  public void setOnSettingAntiSniperListener(OnSettingAntiSniperListener listener)
+  {
+    onSettingAntiSniperListener = listener;
+  }
+
+  public void setOnCommandListener(OnCommandListener listener)
+  {
+    onCommandListener = listener;
+  }
+
+  public void setOnDefeatTargetListener(OnDefeatTargetListener listener)
+  {
+    onDefeatTargetListener = listener;
+  }
+
+  public void setOnSetDwmPanIdListener(OnSetDwmPanIdListener listener)
+  {
+    onSetDwmPanIdListener = listener;
+  }
+
+
+  public void setOnConnectedListener(OnConnectedListener listener)
+  {
+    this.onConnectedListener = listener;
+  }
+
+  public void setOnErrorListener(OnErrorListener listener)
+  {
+    this.onErrorListener = listener;
+  }
+
+  public void setOnDisconnectedListener(OnDisconnectedListener listener)
+  {
+    this.onDisconnectedListener = listener;
+  }
+
+
+  @Override
+  public Message parseMessage(int commandId, CodedInputStream inputStream) throws IOException {
+    switch(commandId) {
+    case 3: return Base.StartGame.parser().parsePartialFrom(inputStream);
+    case 12: return Base.ChangeId.parser().parsePartialFrom(inputStream);
+    case 14: return Multimedia.SetVolume.parser().parsePartialFrom(inputStream);
+    case 26: return Base.setLanguage.parser().parsePartialFrom(inputStream);
+    case 30: return Multimedia.PlaySound.parser().parsePartialFrom(inputStream);
+    case 31: return Multimedia.StopSound.parser().parsePartialFrom(inputStream);
+    case 34: return Base.SendDevType.parser().parsePartialFrom(inputStream);
+    case 303: return Filesystem.LsDir.parser().parsePartialFrom(inputStream);
+    case 304: return Filesystem.FileInfo.parser().parsePartialFrom(inputStream);
+    case 305: return Filesystem.DelFile.parser().parsePartialFrom(inputStream);
+    case 306: return Filesystem.ReadFile.parser().parsePartialFrom(inputStream);
+    case 307: return Filesystem.WriteFile.parser().parsePartialFrom(inputStream);
+    case 308: return Filesystem.CalcMD5.parser().parsePartialFrom(inputStream);
+    case 501: return PTRKMilitary.StatFromPTRK.parser().parsePartialFrom(inputStream);
+    case 502: return PTRKMilitary.PTRKSettings.parser().parsePartialFrom(inputStream);
+    case 503: return PTRKMilitary.ReloadPtrk.parser().parsePartialFrom(inputStream);
+    case 601: return TargetMilitary.SettingsTarget.parser().parsePartialFrom(inputStream);
+    case 604: return TargetMilitary.StatisticsTarget.parser().parsePartialFrom(inputStream);
+    case 605: return TargetMilitary.ResetError.parser().parsePartialFrom(inputStream);
+    case 651: return PanzerMilitary.SettingsPanzer.parser().parsePartialFrom(inputStream);
+    case 652: return PanzerMilitary.StatisticsPanzerGun.parser().parsePartialFrom(inputStream);
+    case 653: return PanzerMilitary.StatisticsPanzerCannon.parser().parsePartialFrom(inputStream);
+    case 801: return MineThrower.MineThrowerSettings.parser().parsePartialFrom(inputStream);
+    case 1001: return Esp.ESPConectionState.parser().parsePartialFrom(inputStream);
+    case 1002: return Esp.ESPConnectToTCPReply.parser().parsePartialFrom(inputStream);
+    case 1003: return Esp.ESPTcpConfirmation.parser().parsePartialFrom(inputStream);
+    case 1004: return Esp.ESPServerDiscovered.parser().parsePartialFrom(inputStream);
+    case 1005: return Esp.ESPRssiForNetworkName.parser().parsePartialFrom(inputStream);
+    case 1006: return Esp.ESPWifiAccessPoint.parser().parsePartialFrom(inputStream);
+    case 1007: return Esp.ESPKillWifiAccessPointReply.parser().parsePartialFrom(inputStream);
+    case 1103: return Firmware.FirmwareTask.parser().parsePartialFrom(inputStream);
+    case 1203: return RuntimeDbg.SomeData.parser().parsePartialFrom(inputStream);
+    case 1204: return RuntimeDbg.RuntimeError.parser().parsePartialFrom(inputStream);
+    case 2003: return EspSrv.ESP_FirmwareTask.parser().parsePartialFrom(inputStream);
+    case 2005: return EspSrv.ESP_SomeData.parser().parsePartialFrom(inputStream);
+    case 2006: return EspSrv.ESP_RuntimeError.parser().parsePartialFrom(inputStream);
+    case 4001: return RsMilitary.RsHelloFromMaster.parser().parsePartialFrom(inputStream);
+    case 4002: return RsMilitary.RsSendIr.parser().parsePartialFrom(inputStream);
+    case 4003: return RsMilitary.RsSystemCommand.parser().parsePartialFrom(inputStream);
+    case 4006: return RsMilitary.RsChangeID.parser().parsePartialFrom(inputStream);
+    case 4007: return RsMilitary.RsSetIndication.parser().parsePartialFrom(inputStream);
+    case 4010: return RsMilitary.RsStressBeltSettings.parser().parsePartialFrom(inputStream);
+    case 4011: return RsMilitary.RsSendIrCustom.parser().parsePartialFrom(inputStream);
+    case 4014: return RsMilitary.RsVisibleLaserOn.parser().parsePartialFrom(inputStream);
+    case 4020: return RsMilitary.PlaySoundToSlave.parser().parsePartialFrom(inputStream);
+    case 4021: return RsMilitary.SetPosition.parser().parsePartialFrom(inputStream);
+    case 4024: return RsMilitary.RotationBySectorOnTime.parser().parsePartialFrom(inputStream);
+    case 5001: return WiredConnection.WiredHelloFromMaster.parser().parsePartialFrom(inputStream);
+    case 5002: return WiredConnection.WiredActionPyrotechny.parser().parsePartialFrom(inputStream);
+    case 5003: return WiredConnection.WiredSettingsIrEmitter.parser().parsePartialFrom(inputStream);
+    case 5004: return WiredConnection.WiredSendSequenceIrPackets.parser().parsePartialFrom(inputStream);
+    case 5005: return WiredConnection.WiredSendIrPacket.parser().parsePartialFrom(inputStream);
+    case 5006: return WiredConnection.WiredChangeID.parser().parsePartialFrom(inputStream);
+    case 5007: return WiredConnection.WiredSettingsTargetShooter.parser().parsePartialFrom(inputStream);
+    case 5008: return WiredConnection.WiredTargetShooterAction.parser().parsePartialFrom(inputStream);
+    case 5010: return WiredConnection.WiredSetIndication.parser().parsePartialFrom(inputStream);
+    case 5011: return WiredConnection.WiredPlaySound.parser().parsePartialFrom(inputStream);
+    case 10003: return CommonMilitary.ChangeTeam.parser().parsePartialFrom(inputStream);
+    case 10004: return CommonMilitary.KillPlayer.parser().parsePartialFrom(inputStream);
+    case 10006: return CommonMilitary.SetTypeExercise.parser().parsePartialFrom(inputStream);
+    case 10201: return KitMilitary.StatFromKit.parser().parsePartialFrom(inputStream);
+    case 10202: return KitMilitary.WeaponStat.parser().parsePartialFrom(inputStream);
+    case 10203: return KitMilitary.KitSettings.parser().parsePartialFrom(inputStream);
+    case 10204: return KitMilitary.StressBeltSettings.parser().parsePartialFrom(inputStream);
+    case 10205: return KitMilitary.WeaponSettings.parser().parsePartialFrom(inputStream);
+    case 10207: return KitMilitary.SilentMode.parser().parsePartialFrom(inputStream);
+    case 10210: return KitMilitary.GetInfoFromHingedBlock.parser().parsePartialFrom(inputStream);
+    case 10211: return KitMilitary.IrEmitterSettings.parser().parsePartialFrom(inputStream);
+    case 10212: return KitMilitary.IrEmitterStatistic.parser().parsePartialFrom(inputStream);
+    case 10213: return KitMilitary.SetDamageAppropriateToWeapon.parser().parsePartialFrom(inputStream);
+    case 10215: return KitMilitary.SetTypeVehicle.parser().parsePartialFrom(inputStream);
+    case 10216: return KitMilitary.GetQuantityBlocksPos.parser().parsePartialFrom(inputStream);
+    case 10217: return KitMilitary.GetBlockByTimePos.parser().parsePartialFrom(inputStream);
+    case 10218: return KitMilitary.DeleteBlocksPos.parser().parsePartialFrom(inputStream);
+    case 10502: return PZRKMilitary.PzrkSetting.parser().parsePartialFrom(inputStream);
+    case 10601: return AntiSniper.SettingAntiSniper.parser().parsePartialFrom(inputStream);
+    case 10602: return AntiSniper.Command.parser().parsePartialFrom(inputStream);
+    case 10801: return IndoorNavigation.SetDwmPanId.parser().parsePartialFrom(inputStream);
+    default:
+       return null;
     }
+  }
 
-    private ProtoClient client;
-
-    public boolean sendEspConnectToAp(Esp.ESPConnectToAP message) {
-        return client.sendCommand(1001, message);
+  @Override
+  public void dispatchMessage(int commandId, MessageLite message) {
+    switch(commandId) {
+    case 3: notifyStartGameReceived((Base.StartGame)message);
+      break;
+    case 4: notifyStopGameReceived();
+      break;
+    case 10: notifyPauseGameReceived();
+      break;
+    case 12: notifyChangeIdReceived((Base.ChangeId)message);
+      break;
+    case 14: notifySetVolumeReceived((Multimedia.SetVolume)message);
+      break;
+    case 17: notifyPingReceived();
+      break;
+    case 25: notifyUpdateDevReceived();
+      break;
+    case 26: notifySetLanguageReceived((Base.setLanguage)message);
+      break;
+    case 30: notifyPlaySoundReceived((Multimedia.PlaySound)message);
+      break;
+    case 31: notifyStopSoundReceived((Multimedia.StopSound)message);
+      break;
+    case 32: notifyGetSoundsInfoReceived();
+      break;
+    case 34: notifySendDevTypeReceived((Base.SendDevType)message);
+      break;
+    case 36: notifyTurnOffDeviceReceived();
+      break;
+    case 37: notifyGetInfoSlavesReceived();
+      break;
+    case 301: notifyFsInfoReceived();
+      break;
+    case 302: notifyFormatFsReceived();
+      break;
+    case 303: notifyLsDirReceived((Filesystem.LsDir)message);
+      break;
+    case 304: notifyFileInfoReceived((Filesystem.FileInfo)message);
+      break;
+    case 305: notifyDelFileReceived((Filesystem.DelFile)message);
+      break;
+    case 306: notifyReadFileReceived((Filesystem.ReadFile)message);
+      break;
+    case 307: notifyWriteFileReceived((Filesystem.WriteFile)message);
+      break;
+    case 308: notifyCalcMd5Received((Filesystem.CalcMD5)message);
+      break;
+    case 501: notifyStatFromPtrkReceived((PTRKMilitary.StatFromPTRK)message);
+      break;
+    case 502: notifyPtrkSettingsReceived((PTRKMilitary.PTRKSettings)message);
+      break;
+    case 503: notifyReloadPtrkReceived((PTRKMilitary.ReloadPtrk)message);
+      break;
+    case 601: notifySettingsTargetReceived((TargetMilitary.SettingsTarget)message);
+      break;
+    case 602: notifyShowTargetReceived();
+      break;
+    case 603: notifyHideTargetReceived();
+      break;
+    case 604: notifyStatisticsTargetReceived((TargetMilitary.StatisticsTarget)message);
+      break;
+    case 605: notifyResetErrorReceived((TargetMilitary.ResetError)message);
+      break;
+    case 651: notifySettingsPanzerReceived((PanzerMilitary.SettingsPanzer)message);
+      break;
+    case 652: notifyStatisticsPanzerGunReceived((PanzerMilitary.StatisticsPanzerGun)message);
+      break;
+    case 653: notifyStatisticsPanzerCannonReceived((PanzerMilitary.StatisticsPanzerCannon)message);
+      break;
+    case 655: notifyGetStatisticsPanzerGunReceived();
+      break;
+    case 656: notifyGetStatisticsPanzerCannonReceived();
+      break;
+    case 657: notifyGetSettingsPanzerReceived();
+      break;
+    case 701: notifyMovingCartForwardDirectionReceived();
+      break;
+    case 702: notifyMovingCartReverseDirectionReceived();
+      break;
+    case 703: notifyStopMovingCartReceived();
+      break;
+    case 801: notifyMineThrowerSettingsReceived((MineThrower.MineThrowerSettings)message);
+      break;
+    case 1001: notifyEspConectionStateReceived((Esp.ESPConectionState)message);
+      break;
+    case 1002: notifyEspConnectToTcpReplyReceived((Esp.ESPConnectToTCPReply)message);
+      break;
+    case 1003: notifyEspTcpConfirmationReceived((Esp.ESPTcpConfirmation)message);
+      break;
+    case 1004: notifyEspServerDiscoveredReceived((Esp.ESPServerDiscovered)message);
+      break;
+    case 1005: notifyEspRssiForNetworkNameReceived((Esp.ESPRssiForNetworkName)message);
+      break;
+    case 1006: notifyEspWifiAccessPointReceived((Esp.ESPWifiAccessPoint)message);
+      break;
+    case 1007: notifyEspKillWifiAccessPointReplyReceived((Esp.ESPKillWifiAccessPointReply)message);
+      break;
+    case 1101: notifyRebootReceived();
+      break;
+    case 1102: notifyVersionRequestReceived();
+      break;
+    case 1103: notifyFirmwareTaskReceived((Firmware.FirmwareTask)message);
+      break;
+    case 1104: notifyBeginUpdateResourcesReceived();
+      break;
+    case 1105: notifyFinishUpdateResourcesReceived();
+      break;
+    case 1201: notifyGetStackReceived();
+      break;
+    case 1202: notifyGetBuffersStateReceived();
+      break;
+    case 1203: notifySomeDataReceived((RuntimeDbg.SomeData)message);
+      break;
+    case 1204: notifyRuntimeErrorReceived((RuntimeDbg.RuntimeError)message);
+      break;
+    case 1205: notifyRuntimeGetErrorsReceived();
+      break;
+    case 1206: notifyRuntimeClearErrorMessagesReceived();
+      break;
+    case 2001: notifyEspRebootReceived();
+      break;
+    case 2002: notifyEspVersionRequestReceived();
+      break;
+    case 2003: notifyEspFirmwareTaskReceived((EspSrv.ESP_FirmwareTask)message);
+      break;
+    case 2005: notifyEspSomeDataReceived((EspSrv.ESP_SomeData)message);
+      break;
+    case 2006: notifyEspRuntimeErrorReceived((EspSrv.ESP_RuntimeError)message);
+      break;
+    case 2007: notifyEspBeginUpdateResourcesReceived();
+      break;
+    case 2008: notifyEspFinishUpdateResourcesReceived();
+      break;
+    case 4001: notifyRsHelloFromMasterReceived((RsMilitary.RsHelloFromMaster)message);
+      break;
+    case 4002: notifyRsSendIrReceived((RsMilitary.RsSendIr)message);
+      break;
+    case 4003: notifyRsSystemCommandReceived((RsMilitary.RsSystemCommand)message);
+      break;
+    case 4006: notifyRsChangeIdReceived((RsMilitary.RsChangeID)message);
+      break;
+    case 4007: notifyRsSetIndicationReceived((RsMilitary.RsSetIndication)message);
+      break;
+    case 4008: notifyRsPowerOnReceived();
+      break;
+    case 4009: notifyRsPowerOffReceived();
+      break;
+    case 4010: notifyRsStressBeltSettingsReceived((RsMilitary.RsStressBeltSettings)message);
+      break;
+    case 4011: notifyRsSendIrCustomReceived((RsMilitary.RsSendIrCustom)message);
+      break;
+    case 4012: notifyRsIlluminationLevelQueryReceived();
+      break;
+    case 4013: notifyRsButtonsStateQueryReceived();
+      break;
+    case 4014: notifyRsVisibleLaserOnReceived((RsMilitary.RsVisibleLaserOn)message);
+      break;
+    case 4015: notifyRsGetGpsReceived();
+      break;
+    case 4016: notifyRsGetCompasReceived();
+      break;
+    case 4017: notifyRsGetStatusReceived();
+      break;
+    case 4020: notifyPlaySoundToSlaveReceived((RsMilitary.PlaySoundToSlave)message);
+      break;
+    case 4021: notifySetPositionReceived((RsMilitary.SetPosition)message);
+      break;
+    case 4022: notifyBrakeOnReceived();
+      break;
+    case 4023: notifyBrakeOffReceived();
+      break;
+    case 4024: notifyRotationBySectorOnTimeReceived((RsMilitary.RotationBySectorOnTime)message);
+      break;
+    case 4025: notifyStopRotationReceived();
+      break;
+    case 5001: notifyWiredHelloFromMasterReceived((WiredConnection.WiredHelloFromMaster)message);
+      break;
+    case 5002: notifyWiredActionPyrotechnyReceived((WiredConnection.WiredActionPyrotechny)message);
+      break;
+    case 5003: notifyWiredSettingsIrEmitterReceived((WiredConnection.WiredSettingsIrEmitter)message);
+      break;
+    case 5004: notifyWiredSendSequenceIrPacketsReceived((WiredConnection.WiredSendSequenceIrPackets)message);
+      break;
+    case 5005: notifyWiredSendIrPacketReceived((WiredConnection.WiredSendIrPacket)message);
+      break;
+    case 5006: notifyWiredChangeIdReceived((WiredConnection.WiredChangeID)message);
+      break;
+    case 5007: notifyWiredSettingsTargetShooterReceived((WiredConnection.WiredSettingsTargetShooter)message);
+      break;
+    case 5008: notifyWiredTargetShooterActionReceived((WiredConnection.WiredTargetShooterAction)message);
+      break;
+    case 5009: notifyWiredActionGrenadeThrowerReceived();
+      break;
+    case 5010: notifyWiredSetIndicationReceived((WiredConnection.WiredSetIndication)message);
+      break;
+    case 5011: notifyWiredPlaySoundReceived((WiredConnection.WiredPlaySound)message);
+      break;
+    case 5012: notifyWiredStopActionsReceived();
+      break;
+    case 10001: notifyGetBatteryLevelReceived();
+      break;
+    case 10002: notifyGetSettingsReceived();
+      break;
+    case 10003: notifyChangeTeamReceived((CommonMilitary.ChangeTeam)message);
+      break;
+    case 10004: notifyKillPlayerReceived((CommonMilitary.KillPlayer)message);
+      break;
+    case 10005: notifyResetAllErrorsReceived();
+      break;
+    case 10006: notifySetTypeExerciseReceived((CommonMilitary.SetTypeExercise)message);
+      break;
+    case 10201: notifyStatFromKitReceived((KitMilitary.StatFromKit)message);
+      break;
+    case 10202: notifyWeaponStatReceived((KitMilitary.WeaponStat)message);
+      break;
+    case 10203: notifyKitSettingsReceived((KitMilitary.KitSettings)message);
+      break;
+    case 10204: notifyStressBeltSettingsReceived((KitMilitary.StressBeltSettings)message);
+      break;
+    case 10205: notifyWeaponSettingsReceived((KitMilitary.WeaponSettings)message);
+      break;
+    case 10206: notifyGetAllStatReceived();
+      break;
+    case 10207: notifySilentModeReceived((KitMilitary.SilentMode)message);
+      break;
+    case 10208: notifyGetActivatedMinesReceived();
+      break;
+    case 10209: notifyGetDeactivatedMinesReceived();
+      break;
+    case 10210: notifyGetInfoFromHingedBlockReceived((KitMilitary.GetInfoFromHingedBlock)message);
+      break;
+    case 10211: notifyIrEmitterSettingsReceived((KitMilitary.IrEmitterSettings)message);
+      break;
+    case 10212: notifyIrEmitterStatisticReceived((KitMilitary.IrEmitterStatistic)message);
+      break;
+    case 10213: notifySetDamageAppropriateToWeaponReceived((KitMilitary.SetDamageAppropriateToWeapon)message);
+      break;
+    case 10214: notifySaveTableDamageReceived();
+      break;
+    case 10215: notifySetTypeVehicleReceived((KitMilitary.SetTypeVehicle)message);
+      break;
+    case 10216: notifyGetQuantityBlocksPosReceived((KitMilitary.GetQuantityBlocksPos)message);
+      break;
+    case 10217: notifyGetBlockByTimePosReceived((KitMilitary.GetBlockByTimePos)message);
+      break;
+    case 10218: notifyDeleteBlocksPosReceived((KitMilitary.DeleteBlocksPos)message);
+      break;
+    case 10501: notifyGetAllEventsPzrkReceived();
+      break;
+    case 10502: notifyPzrkSettingReceived((PZRKMilitary.PzrkSetting)message);
+      break;
+    case 10601: notifySettingAntiSniperReceived((AntiSniper.SettingAntiSniper)message);
+      break;
+    case 10602: notifyCommandReceived((AntiSniper.Command)message);
+      break;
+    case 10603: notifyDefeatTargetReceived();
+      break;
+    case 10801: notifySetDwmPanIdReceived((IndoorNavigation.SetDwmPanId)message);
+      break;
+    default:
     }
-
-    public boolean sendEspConnectToTcp(Esp.ESPConnectToTCP message) {
-        return client.sendCommand(1002, message);
-    }
-
-    public boolean sendEspSendByUdp(Esp.ESPSendByUDP message) {
-        return client.sendCommand(1003, message);
-    }
-
-    public boolean sendEspDiscoverServers(Esp.ESPDiscoverServers message) {
-        return client.sendCommand(1004, message);
-    }
-
-    public boolean sendEspSendLogByUdp(Esp.ESPSendLogByUDP message) {
-        return client.sendCommand(1005, message);
-    }
-
-    public boolean sendEspConnectToTcpReply(Esp.ESPConnectToTCPReply message) {
-        return client.sendCommand(1006, message);
-    }
-
-    public boolean sendEspTcpConfirmation(Esp.ESPTcpConfirmation message) {
-        return client.sendCommand(1007, message);
-    }
-
-    public boolean sendEspGetRssiByNetworkName(Esp.ESPGetRssiByNetworkName message) {
-        return client.sendCommand(1008, message);
-    }
-
-    public boolean sendEspScanWifiByChannel(Esp.ESPScanWifiByChannel message) {
-        return client.sendCommand(1009, message);
-    }
-
-    public boolean sendEspSetWifiAccessPoint(Esp.ESPSetWifiAccessPoint message) {
-        return client.sendCommand(1010, message);
-    }
-
-    public boolean sendEspKillWifiAccessPoint() {
-        return client.sendCommand(1011, null);
-    }
-
-    public void diconnect() {
-        client.disconnect();
-    }
-
-    public ProtoClient getClient() {
-        return client;
-    }
-
-    // Listeners interfaces for incoming messages
-
-    public interface OnEspConectionStateListener {
-        void onEspConectionStateReceived(Esp.ESPConectionState message);
-    }
-
-    public interface OnEspConnectToTcpReplyListener {
-        void onEspConnectToTcpReplyReceived(Esp.ESPConnectToTCPReply message);
-    }
-
-    public interface OnEspTcpConfirmationListener {
-        void onEspTcpConfirmationReceived(Esp.ESPTcpConfirmation message);
-    }
-
-    public interface OnEspServerDiscoveredListener {
-        void onEspServerDiscoveredReceived(Esp.ESPServerDiscovered message);
-    }
-
-    public interface OnEspRssiForNetworkNameListener {
-        void onEspRssiForNetworkNameReceived(Esp.ESPRssiForNetworkName message);
-    }
-
-    public interface OnEspWifiAccessPointListener {
-        void onEspWifiAccessPointReceived(Esp.ESPWifiAccessPoint message);
-    }
-
-    public interface OnEspKillWifiAccessPointReplyListener {
-        void onEspKillWifiAccessPointReplyReceived(Esp.ESPKillWifiAccessPointReply message);
-    }
-
-    public interface OnConnectedListener {
-        void onConnected();
-    }
-
-    public interface OnErrorListener {
-        void onError(Throwable error);
-    }
-
-    public interface OnDisconnectedListener {
-        void onDisconnected();
-    }
-
-
-    private volatile OnEspConectionStateListener onEspConectionStateListener = null;
-    private volatile OnEspConnectToTcpReplyListener onEspConnectToTcpReplyListener = null;
-    private volatile OnEspTcpConfirmationListener onEspTcpConfirmationListener = null;
-    private volatile OnEspServerDiscoveredListener onEspServerDiscoveredListener = null;
-    private volatile OnEspRssiForNetworkNameListener onEspRssiForNetworkNameListener = null;
-    private volatile OnEspWifiAccessPointListener onEspWifiAccessPointListener = null;
-    private volatile OnEspKillWifiAccessPointReplyListener onEspKillWifiAccessPointReplyListener = null;
-    private volatile OnConnectedListener onConnectedListener = null;
-    private volatile OnErrorListener onErrorListener = null;
-    private volatile OnDisconnectedListener onDisconnectedListener = null;
-
-    private void notifyEspConectionStateReceived(Esp.ESPConectionState message) {
-        OnEspConectionStateListener localCopy = onEspConectionStateListener;
-        if (localCopy != null)
-            localCopy.onEspConectionStateReceived(message);
-    }
-
-    private void notifyEspConnectToTcpReplyReceived(Esp.ESPConnectToTCPReply message) {
-        OnEspConnectToTcpReplyListener localCopy = onEspConnectToTcpReplyListener;
-        if (localCopy != null)
-            localCopy.onEspConnectToTcpReplyReceived(message);
-    }
-
-    private void notifyEspTcpConfirmationReceived(Esp.ESPTcpConfirmation message) {
-        OnEspTcpConfirmationListener localCopy = onEspTcpConfirmationListener;
-        if (localCopy != null)
-            localCopy.onEspTcpConfirmationReceived(message);
-    }
-
-    private void notifyEspServerDiscoveredReceived(Esp.ESPServerDiscovered message) {
-        OnEspServerDiscoveredListener localCopy = onEspServerDiscoveredListener;
-        if (localCopy != null)
-            localCopy.onEspServerDiscoveredReceived(message);
-    }
-
-    private void notifyEspRssiForNetworkNameReceived(Esp.ESPRssiForNetworkName message) {
-        OnEspRssiForNetworkNameListener localCopy = onEspRssiForNetworkNameListener;
-        if (localCopy != null)
-            localCopy.onEspRssiForNetworkNameReceived(message);
-    }
-
-    private void notifyEspWifiAccessPointReceived(Esp.ESPWifiAccessPoint message) {
-        OnEspWifiAccessPointListener localCopy = onEspWifiAccessPointListener;
-        if (localCopy != null)
-            localCopy.onEspWifiAccessPointReceived(message);
-    }
-
-    private void notifyEspKillWifiAccessPointReplyReceived(Esp.ESPKillWifiAccessPointReply message) {
-        OnEspKillWifiAccessPointReplyListener localCopy = onEspKillWifiAccessPointReplyListener;
-        if (localCopy != null)
-            localCopy.onEspKillWifiAccessPointReplyReceived(message);
-    }
-
-
-    @Override
-    public void notifyOnConnected() {
-        OnConnectedListener localCopy = this.onConnectedListener;
-        if (localCopy != null)
-            localCopy.onConnected();
-    }
-
-    @Override
-    public void notifyOnError(Throwable error) {
-        OnErrorListener localCopy = this.onErrorListener;
-        if (localCopy != null)
-            localCopy.onError(error);
-    }
-
-    @Override
-    public void notifyOnDisconnected() {
-        OnDisconnectedListener localCopy = this.onDisconnectedListener;
-        if (localCopy != null)
-            localCopy.onDisconnected();
-    }
-
-
-    public void setOnEspConectionStateListener(OnEspConectionStateListener listener) {
-        onEspConectionStateListener = listener;
-    }
-
-    public void setOnEspConnectToTcpReplyListener(OnEspConnectToTcpReplyListener listener) {
-        onEspConnectToTcpReplyListener = listener;
-    }
-
-    public void setOnEspTcpConfirmationListener(OnEspTcpConfirmationListener listener) {
-        onEspTcpConfirmationListener = listener;
-    }
-
-    public void setOnEspServerDiscoveredListener(OnEspServerDiscoveredListener listener) {
-        onEspServerDiscoveredListener = listener;
-    }
-
-    public void setOnEspRssiForNetworkNameListener(OnEspRssiForNetworkNameListener listener) {
-        onEspRssiForNetworkNameListener = listener;
-    }
-
-    public void setOnEspWifiAccessPointListener(OnEspWifiAccessPointListener listener) {
-        onEspWifiAccessPointListener = listener;
-    }
-
-    public void setOnEspKillWifiAccessPointReplyListener(OnEspKillWifiAccessPointReplyListener listener) {
-        onEspKillWifiAccessPointReplyListener = listener;
-    }
-
-
-    public void setOnConnectedListener(OnConnectedListener listener) {
-        this.onConnectedListener = listener;
-    }
-
-    public void setOnErrorListener(OnErrorListener listener) {
-        this.onErrorListener = listener;
-    }
-
-    public void setOnDisconnectedListener(OnDisconnectedListener listener) {
-        this.onDisconnectedListener = listener;
-    }
-
-
-    @Override
-    public Message parseMessage(int commandId, CodedInputStream inputStream) throws IOException {
-        switch (commandId) {
-            case 1001:
-                return Esp.ESPConectionState.parser().parsePartialFrom(inputStream);
-            case 1002:
-                return Esp.ESPConnectToTCPReply.parser().parsePartialFrom(inputStream);
-            case 1003:
-                return Esp.ESPTcpConfirmation.parser().parsePartialFrom(inputStream);
-            case 1004:
-                return Esp.ESPServerDiscovered.parser().parsePartialFrom(inputStream);
-            case 1005:
-                return Esp.ESPRssiForNetworkName.parser().parsePartialFrom(inputStream);
-            case 1006:
-                return Esp.ESPWifiAccessPoint.parser().parsePartialFrom(inputStream);
-            case 1007:
-                return Esp.ESPKillWifiAccessPointReply.parser().parsePartialFrom(inputStream);
-            default:
-                return null;
-        }
-    }
-
-    @Override
-    public void dispatchMessage(int commandId, MessageLite message) {
-        switch (commandId) {
-            case 1001:
-                notifyEspConectionStateReceived((Esp.ESPConectionState) message);
-                return;
-            case 1002:
-                notifyEspConnectToTcpReplyReceived((Esp.ESPConnectToTCPReply) message);
-                return;
-            case 1003:
-                notifyEspTcpConfirmationReceived((Esp.ESPTcpConfirmation) message);
-                return;
-            case 1004:
-                notifyEspServerDiscoveredReceived((Esp.ESPServerDiscovered) message);
-                return;
-            case 1005:
-                notifyEspRssiForNetworkNameReceived((Esp.ESPRssiForNetworkName) message);
-                return;
-            case 1006:
-                notifyEspWifiAccessPointReceived((Esp.ESPWifiAccessPoint) message);
-                return;
-            case 1007:
-                notifyEspKillWifiAccessPointReplyReceived((Esp.ESPKillWifiAccessPointReply) message);
-                return;
-            default:
-                return;
-        }
-    }
+  }
 
 }

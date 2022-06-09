@@ -65,10 +65,11 @@ val pathSubmodule = "proto_files"
 
 val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
 val pathProtoFilesCommercial = "$pathSubmodule/Proto_files_commerc"
+val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_military_"
 
 val protoDirectories = listOfNotNull(
     pathProtoFilesCommon,
-    pathProtoFilesCommercial
+    pathProtoFilesMilitary
 )
 
 // If you need to change directories for generating and coping files
@@ -109,7 +110,7 @@ protobuf {
 
     plugins {
         id("javaapi") {
-            path = "tools/protoc"
+            path = "tools/protoc-gen-javaapi.exe"
         }
     }
 
@@ -124,8 +125,6 @@ protobuf {
         }
     }
 }
-
-
 
 // start task : gradle for project -> other -> copyJavaServerClientApiFile
 val copyJavaServerClientApiFile = tasks.register<Copy>("copyJavaServerClientApiFile") {
