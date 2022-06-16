@@ -25,7 +25,7 @@ class ClientImpl :
     MessageInterceptor {
 
     companion object {
-        const val clientsCount = 100
+        const val clientsCount = 10
         const val UDP_PORT_SERVER_PROTO = 4011
         const val TCP_PORT_SERVER_PROTO = 4000
     }
@@ -77,26 +77,33 @@ class ClientImpl :
     fun startWork() {
         connected.set(0)
         clients.forEach {
-            it.connect("localhost", TCP_PORT_SERVER_PROTO)
+            //it.connect("localhost", TCP_PORT_SERVER_PROTO)
+            it.connect("192.168.0.105", TCP_PORT_SERVER_PROTO)
         }
+
+
 
         CoroutineScope(Dispatchers.Default).launch {
             sendPing()
         }
 
         CoroutineScope(Dispatchers.Default).launch {
+            delay(10_000)
             sendGpsCoordinate()
         }
 
         CoroutineScope(Dispatchers.Default).launch {
+            delay(10_000)
             sendBattery()
         }
 
         CoroutineScope(Dispatchers.Default).launch {
+            delay(10_000)
             sendBattery()
         }
 
         CoroutineScope(Dispatchers.Default).launch {
+            delay(10_000)
             sendStatById()
         }
     }
@@ -132,8 +139,8 @@ class ClientImpl :
     }
 
     private suspend fun sendGpsCoordinate() {
-        repeat(1200) {
-            delay(1000)
+        repeat(120000) {
+            delay(500)
 
             clientApis.forEach {
                 val deltaLong = Random.nextFloat()
@@ -147,7 +154,7 @@ class ClientImpl :
     }
 
     private suspend fun sendBattery() {
-        repeat(1200) {
+        repeat(12000) {
             delay(1000)
 
             clientApis.forEach {
@@ -178,7 +185,7 @@ class ClientImpl :
     }
 
     private suspend fun sendPing() {
-        repeat(60) {
+        repeat(6000) {
             delay(10_000)
             clientApis.forEach {
                 it.sendPing()
@@ -187,9 +194,7 @@ class ClientImpl :
     }
 
     override fun onDisconnected() {
-        clients.forEach {
-            it.isConnected = false
-        }
+        //clients.forEach { it.isConnected = false }
         println("onDisconnected")
     }
 
