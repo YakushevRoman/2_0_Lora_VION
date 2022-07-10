@@ -42,6 +42,10 @@ dependencies {
     testImplementation ("org.junit.vintage:junit-vintage-engine:5.8.0")
 }
 
+tasks.named<JavaCompile>("compileJava"){
+    options.encoding = "UTF-8"
+}
+
 tasks.test {
     useJUnitPlatform()
 }
@@ -60,6 +64,7 @@ compose.desktop {
         }
     }
 }
+
 
 val pathSubmodule = "proto_files"
 
