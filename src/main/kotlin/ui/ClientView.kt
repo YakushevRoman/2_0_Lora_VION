@@ -4,7 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -79,6 +79,16 @@ fun appClient( messages : MutableList<String>, reconnect: () -> Unit) {
     }
 }
 
+var b1 = false
+var b2 = fix(b1)
+
+
+fun fix(b1: Boolean): Boolean {
+    var b1 = b1
+    b1 = true
+    return true
+}
+
 fun main() = application {
     val client = ClientImpl()
 
@@ -91,4 +101,6 @@ fun main() = application {
     }
 
 }
+
+
 

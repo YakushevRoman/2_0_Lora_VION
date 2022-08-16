@@ -3,29 +3,29 @@ package server_client
 import MessagesState
 import androidx.compose.runtime.mutableStateListOf
 import build.generated.source.proto.main.java.*
+import clients.ProtoClient
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
-import generation_java_files.EspClientApi
+import generation_java_files.AntiSniperClientApi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import proto_server_client.utils.HandlerWrapper
-import proto_server_client.client.ProtoClient
-import proto_server_client.logger.FastServerLogger
-import proto_server_client.utils.MessageInterceptor
-import proto_server_client.utils.NetworkThread
-import proto_server_client.utils.ServerAutoDiscovery
-import java.net.InetAddress
+import utils.FastServerLogger
+import utils.HandlerWrapper
+import utils.NetworkThread
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 
 class ClientImpl :
-    EspClientApi.OnConnectedListener,
-    EspClientApi.OnDisconnectedListener,
-    MessageInterceptor {
+    AntiSniperClientApi.OnConnectedListener,
+    AntiSniperClientApi.OnDisconnectedListener,
+    AntiSniperClientApi.OnStartGameListener,
+    AntiSniperClientApi.OnSettingAntiSniperListener,
+    AntiSniperClientApi.OnSetVolumeListener,
+    AntiSniperClientApi.OnCommandListener {
 
     companion object {
-        const val clientsCount = 10
+        const val clientsCount = 5
         const val UDP_PORT_SERVER_PROTO = 4011
         const val TCP_PORT_SERVER_PROTO = 4000
     }
@@ -36,16 +36,14 @@ class ClientImpl :
     var messages = mutableStateListOf<String>()
 
     private val clients = mutableListOf<ProtoClient>()
-    private val clientApis = mutableListOf<EspClientApi>()
+    private val clientApis = mutableListOf<AntiSniperClientApi>()
 
     private val _clientMessagesState = MutableSharedFlow<MessagesState>()
     val clientMessagesState = _clientMessagesState.asSharedFlow()
 
-    var caughtMessages = mutableStateListOf<MessageLite>()
-
     private val handler = HandlerWrapper(Executors.newSingleThreadExecutor())
 
-    val logger = FastServerLogger("src/logs/client_logs", null)
+    val logger = FastServerLogger("src/logs/client_logs")
     private val networkThread = NetworkThread(logger)
 
     init {
@@ -57,7 +55,7 @@ class ClientImpl :
             val client = ProtoClient(logger, true)
             clients.add(client)
 
-            val clientApi = EspClientApi(
+            val clientApi = AntiSniperClientApi(
                 client,
                 true,
                 handler
@@ -65,10 +63,12 @@ class ClientImpl :
 
             clientApi.setOnConnectedListener(this)
             clientApi.setOnDisconnectedListener(this)
+            clientApi.setOnSettingAntiSniperListener(this)
+            clientApi.setOnCommandListener(this)
+            clientApi.setOnStartGameListener(this)
+            clientApi.setOnSetVolumeListener(this)
 
             client.setProtocolDispatcher(clientApi)
-            client.setMessageInterceptor(this)
-
             clientApis.add(clientApi)
 
         }
@@ -77,8 +77,8 @@ class ClientImpl :
     fun startWork() {
         connected.set(0)
         clients.forEach {
-            //it.connect("localhost", TCP_PORT_SERVER_PROTO)
-            it.connect("192.168.0.105", TCP_PORT_SERVER_PROTO)
+            it.connect("localhost", TCP_PORT_SERVER_PROTO)
+            //it.connect("192.168.1.104", TCP_PORT_SERVER_PROTO)
         }
 
 
@@ -87,7 +87,7 @@ class ClientImpl :
             sendPing()
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             delay(10_000)
             sendGpsCoordinate()
         }
@@ -99,12 +99,12 @@ class ClientImpl :
 
         CoroutineScope(Dispatchers.Default).launch {
             delay(10_000)
-            sendBattery()
+            //sendBattery()
         }
 
         CoroutineScope(Dispatchers.Default).launch {
             delay(10_000)
-            sendStatById()
+            //sendStatById()
         }
     }
 
@@ -125,22 +125,33 @@ class ClientImpl :
         val randomUuid = Random.nextBytes(uuidArray);
         val randomFirmwareVer = Random.nextBytes(firmwareVerArray)
 
-        clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-            devtype = CommonEnums.DevType.SOILDER
-            wasEarlyConnected = false
-            kitTick = 10000
-            deviceId = connected.get() + 1
-            serialNumber = 123456
-            uuid = ByteString.copyFrom(randomUuid)
-            firmwareVer = ByteString.copyFrom(randomFirmwareVer)
-        })
+        if (connected.get() == 0)
+            clientApis[connected.get()].sendHelloFromDev(helloFromDev {
+                devtype = CommonEnums.DevType.TANK
+                wasEarlyConnected = false
+                kitTick = 10000
+                deviceId = connected.get() + 1
+                serialNumber = 123456
+                uuid = ByteString.copyFrom(randomUuid)
+                firmwareVer = ByteString.copyFrom(randomFirmwareVer)
+            })
+        else
+            clientApis[connected.get()].sendHelloFromDev(helloFromDev {
+                devtype = CommonEnums.DevType.TARGET_SHOOTER
+                wasEarlyConnected = false
+                kitTick = 10000
+                deviceId = connected.get() + 1
+                serialNumber = 123456
+                uuid = ByteString.copyFrom(randomUuid)
+                firmwareVer = ByteString.copyFrom(randomFirmwareVer)
+            })
 
         connected.incrementAndGet()
     }
 
     private suspend fun sendGpsCoordinate() {
         repeat(120000) {
-            delay(500)
+            delay(2500)
 
             clientApis.forEach {
                 val deltaLong = Random.nextFloat()
@@ -194,23 +205,29 @@ class ClientImpl :
     }
 
     override fun onDisconnected() {
-        //clients.forEach { it.isConnected = false }
         println("onDisconnected")
     }
-
 
     fun reconect() {
         startWork()
     }
 
-    override fun onMessageCatch(commandId: Int, message: MessageLite?) {
-        message?.let {
-            caughtMessages.add(it)
-        }
-
-        runBlocking {
-            _clientMessagesState.emit(MessagesState.Messages(caughtMessages))
+    override fun onStartGameReceived(message: Base.StartGame?) {
+        println("StartGame")
+        CoroutineScope(Dispatchers.Default).launch {
+            delay(10_000)
         }
     }
 
+    override fun onSettingAntiSniperReceived(message: AntiSniper.SettingAntiSniper?) {
+        println(message)
+    }
+
+    override fun onCommandReceived(message: AntiSniper.Command?) {
+        println(message)
+    }
+
+    override fun onSetVolumeReceived(message: Multimedia.SetVolume?) {
+        print(message)
+    }
 }

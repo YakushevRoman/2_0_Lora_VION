@@ -1,4 +1,5 @@
 include(":proto_files")
+include(":feature_protobuff_server_client")
 
 pluginManagement {
     repositories {
@@ -9,5 +10,4 @@ pluginManagement {
     
 }
 rootProject.name = "2_0_Lora_VION"
-
 

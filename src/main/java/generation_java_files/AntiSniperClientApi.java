@@ -3,18 +3,18 @@
 package generation_java_files;
 
 import build.generated.source.proto.main.java.*;
+import clients.ProtoClient;
+import clients.UIThreadClientCommandDispatcher;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
-import proto_server_client.client.ProtoClient;
-import proto_server_client.client.UIThreadClientCommandDispatcher;
-import proto_server_client.utils.HandlerWrapper;
+import utils.HandlerWrapper;
 
 import java.io.IOException;
 
-public class EspClientApi implements ProtoClient.ProtocolDispatcher {
+public class AntiSniperClientApi implements ProtoClient.ProtocolDispatcher {
 
-  public EspClientApi (ProtoClient client, boolean callListenersInUIThread, HandlerWrapper handlerWrapper) {
+  public AntiSniperClientApi(ProtoClient client, boolean callListenersInUIThread, HandlerWrapper handlerWrapper) {
     this.client = client;
     if (callListenersInUIThread)
       client.setProtocolDispatcher(new UIThreadClientCommandDispatcher(this, handlerWrapper));
@@ -152,50 +152,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
   	return client.sendCommand(801, message);
   }
 
-  public boolean sendEspConnectToAp(Esp.ESPConnectToAP message) {
-  	return client.sendCommand(1001, message);
-  }
-
-  public boolean sendEspConnectToTcp(Esp.ESPConnectToTCP message) {
-  	return client.sendCommand(1002, message);
-  }
-
-  public boolean sendEspSendByUdp(Esp.ESPSendByUDP message) {
-  	return client.sendCommand(1003, message);
-  }
-
-  public boolean sendEspDiscoverServers(Esp.ESPDiscoverServers message) {
-  	return client.sendCommand(1004, message);
-  }
-
-  public boolean sendEspSendLogByUdp(Esp.ESPSendLogByUDP message) {
-  	return client.sendCommand(1005, message);
-  }
-
-  public boolean sendEspConnectToTcpReply(Esp.ESPConnectToTCPReply message) {
-  	return client.sendCommand(1006, message);
-  }
-
-  public boolean sendEspTcpConfirmation(Esp.ESPTcpConfirmation message) {
-  	return client.sendCommand(1007, message);
-  }
-
-  public boolean sendEspGetRssiByNetworkName(Esp.ESPGetRssiByNetworkName message) {
-  	return client.sendCommand(1008, message);
-  }
-
-  public boolean sendEspScanWifiByChannel(Esp.ESPScanWifiByChannel message) {
-  	return client.sendCommand(1009, message);
-  }
-
-  public boolean sendEspSetWifiAccessPoint(Esp.ESPSetWifiAccessPoint message) {
-  	return client.sendCommand(1010, message);
-  }
-
-  public boolean sendEspKillWifiAccessPoint() {
-  	return client.sendCommand(1011, null);
-  }
-
   public boolean sendVersionReply(Firmware.VersionReply message) {
   	return client.sendCommand(1101, message);
   }
@@ -206,34 +162,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
 
   public boolean sendFirmwareTaskReply(Firmware.FirmwareTaskReply message) {
   	return client.sendCommand(1104, message);
-  }
-
-  public boolean sendStackState(RuntimeDbg.StackState message) {
-  	return client.sendCommand(1201, message);
-  }
-
-  public boolean sendStackUsage(RuntimeDbg.StackUsage message) {
-  	return client.sendCommand(1202, message);
-  }
-
-  public boolean sendAssert(RuntimeDbg.Assert message) {
-  	return client.sendCommand(1203, message);
-  }
-
-  public boolean sendBuffersState(RuntimeDbg.BuffersState message) {
-  	return client.sendCommand(1204, message);
-  }
-
-  public boolean sendSomeData(RuntimeDbg.SomeData message) {
-  	return client.sendCommand(1205, message);
-  }
-
-  public boolean sendRuntimeError(RuntimeDbg.RuntimeError message) {
-  	return client.sendCommand(1206, message);
-  }
-
-  public boolean sendRuntimeSystemSnapshot(RuntimeDbg.RuntimeSystemSnapshot message) {
-  	return client.sendCommand(1207, message);
   }
 
   public boolean sendEspWiFiRssi(EspSrv.ESP_WiFiRSSI message) {
@@ -262,110 +190,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
 
   public boolean sendEspRuntimeError(EspSrv.ESP_RuntimeError message) {
   	return client.sendCommand(2007, message);
-  }
-
-  public boolean sendRsHelloFromDevice(RsMilitary.RsHelloFromDevice message) {
-  	return client.sendCommand(4001, message);
-  }
-
-  public boolean sendRsReciveIr(RsMilitary.RsReciveIr message) {
-  	return client.sendCommand(4002, message);
-  }
-
-  public boolean sendRsButState(RsMilitary.RsButState message) {
-  	return client.sendCommand(4004, message);
-  }
-
-  public boolean sendRsStressBeltSettings(RsMilitary.RsStressBeltSettings message) {
-  	return client.sendCommand(4005, message);
-  }
-
-  public boolean sendRsStressBeltCheangeDamageMode(RsMilitary.RsStressBeltCheangeDamageMode message) {
-  	return client.sendCommand(4006, message);
-  }
-
-  public boolean sendRsSlaveConnected(RsMilitary.RsSlaveConnected message) {
-  	return client.sendCommand(4007, message);
-  }
-
-  public boolean sendRsSlaveDisconnected(RsMilitary.RsSlaveDisconnected message) {
-  	return client.sendCommand(4008, message);
-  }
-
-  public boolean sendRsSlaveBatteryLevel(RsMilitary.RsSlaveBatteryLevel message) {
-  	return client.sendCommand(4009, message);
-  }
-
-  public boolean sendRsIlluminationLevel(RsMilitary.RsIlluminationLevel message) {
-  	return client.sendCommand(4010, message);
-  }
-
-  public boolean sendRsSwitchState(RsMilitary.RsSwitchState message) {
-  	return client.sendCommand(4011, message);
-  }
-
-  public boolean sendRsGpsCoordinates(RsMilitary.RsGpsCoordinates message) {
-  	return client.sendCommand(4012, message);
-  }
-
-  public boolean sendRsCompasData(RsMilitary.RsCompasData message) {
-  	return client.sendCommand(4013, message);
-  }
-
-  public boolean sendRsStatusCompasIrEmiter(RsMilitary.RsStatusCompasIrEmiter message) {
-  	return client.sendCommand(4014, message);
-  }
-
-  public boolean sendRsPowerOn() {
-  	return client.sendCommand(4015, null);
-  }
-
-  public boolean sendRsPowerOff() {
-  	return client.sendCommand(4016, null);
-  }
-
-  public boolean sendSetPositionComplited() {
-  	return client.sendCommand(4017, null);
-  }
-
-  public boolean sendRotationComplited() {
-  	return client.sendCommand(4018, null);
-  }
-
-  public boolean sendAzimuth(RsMilitary.Azimuth message) {
-  	return client.sendCommand(4019, message);
-  }
-
-  public boolean sendRsDeviceError(RsMilitary.RsDeviceError message) {
-  	return client.sendCommand(4020, message);
-  }
-
-  public boolean sendWiredHelloFromSlave(WiredConnection.WiredHelloFromSlave message) {
-  	return client.sendCommand(5001, message);
-  }
-
-  public boolean sendWiredStateByDevice(WiredConnection.WiredStateByDevice message) {
-  	return client.sendCommand(5002, message);
-  }
-
-  public boolean sendWiredInfoFromPyrotechny(WiredConnection.WiredInfoFromPyrotechny message) {
-  	return client.sendCommand(5003, message);
-  }
-
-  public boolean sendWiredStateByIr(WiredConnection.WiredStateByIr message) {
-  	return client.sendCommand(5004, message);
-  }
-
-  public boolean sendWiredInfoFromTargetShooter(WiredConnection.WiredInfoFromTargetShooter message) {
-  	return client.sendCommand(5005, message);
-  }
-
-  public boolean sendWiredInfoMovingEvent(WiredConnection.WiredInfoMovingEvent message) {
-  	return client.sendCommand(5006, message);
-  }
-
-  public boolean sendWiredInfoFromGrenadeThrower(WiredConnection.WiredInfoFromGrenadeThrower message) {
-  	return client.sendCommand(5007, message);
   }
 
   public boolean sendBatteryLevel(CommonMilitary.BatteryLevel message) {
@@ -508,20 +332,8 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
   	return client.sendCommand(10603, message);
   }
 
-  public boolean sendDwmTagPosition(IndoorNavigation.DwmTagPosition message) {
-  	return client.sendCommand(10801, message);
-  }
-
-  public boolean sendDwmAnchorCount(IndoorNavigation.DwmAnchorCount message) {
-  	return client.sendCommand(10802, message);
-  }
-
-  public boolean sendDwmAnchorList(IndoorNavigation.DwmAnchorList message) {
-  	return client.sendCommand(10803, message);
-  }
-
-  public boolean sendDwmPositionFull(IndoorNavigation.DwmPositionFull message) {
-  	return client.sendCommand(10804, message);
+  public boolean sendAntisniperOperationType(AntiSniper.AntisniperOperationType message) {
+  	return client.sendCommand(10604, message);
   }
 
   public void diconnect() {
@@ -694,34 +506,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     void onMineThrowerSettingsReceived(MineThrower.MineThrowerSettings message);
   }
 
-  public interface OnEspConectionStateListener {
-    void onEspConectionStateReceived(Esp.ESPConectionState message);
-  }
-
-  public interface OnEspConnectToTcpReplyListener {
-    void onEspConnectToTcpReplyReceived(Esp.ESPConnectToTCPReply message);
-  }
-
-  public interface OnEspTcpConfirmationListener {
-    void onEspTcpConfirmationReceived(Esp.ESPTcpConfirmation message);
-  }
-
-  public interface OnEspServerDiscoveredListener {
-    void onEspServerDiscoveredReceived(Esp.ESPServerDiscovered message);
-  }
-
-  public interface OnEspRssiForNetworkNameListener {
-    void onEspRssiForNetworkNameReceived(Esp.ESPRssiForNetworkName message);
-  }
-
-  public interface OnEspWifiAccessPointListener {
-    void onEspWifiAccessPointReceived(Esp.ESPWifiAccessPoint message);
-  }
-
-  public interface OnEspKillWifiAccessPointReplyListener {
-    void onEspKillWifiAccessPointReplyReceived(Esp.ESPKillWifiAccessPointReply message);
-  }
-
   public interface OnRebootListener {
     void onRebootReceived();
   }
@@ -740,30 +524,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
 
   public interface OnFinishUpdateResourcesListener {
     void onFinishUpdateResourcesReceived();
-  }
-
-  public interface OnGetStackListener {
-    void onGetStackReceived();
-  }
-
-  public interface OnGetBuffersStateListener {
-    void onGetBuffersStateReceived();
-  }
-
-  public interface OnSomeDataListener {
-    void onSomeDataReceived(RuntimeDbg.SomeData message);
-  }
-
-  public interface OnRuntimeErrorListener {
-    void onRuntimeErrorReceived(RuntimeDbg.RuntimeError message);
-  }
-
-  public interface OnRuntimeGetErrorsListener {
-    void onRuntimeGetErrorsReceived();
-  }
-
-  public interface OnRuntimeClearErrorMessagesListener {
-    void onRuntimeClearErrorMessagesReceived();
   }
 
   public interface OnEspRebootListener {
@@ -792,138 +552,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
 
   public interface OnEspFinishUpdateResourcesListener {
     void onEspFinishUpdateResourcesReceived();
-  }
-
-  public interface OnRsHelloFromMasterListener {
-    void onRsHelloFromMasterReceived(RsMilitary.RsHelloFromMaster message);
-  }
-
-  public interface OnRsSendIrListener {
-    void onRsSendIrReceived(RsMilitary.RsSendIr message);
-  }
-
-  public interface OnRsSystemCommandListener {
-    void onRsSystemCommandReceived(RsMilitary.RsSystemCommand message);
-  }
-
-  public interface OnRsChangeIdListener {
-    void onRsChangeIdReceived(RsMilitary.RsChangeID message);
-  }
-
-  public interface OnRsSetIndicationListener {
-    void onRsSetIndicationReceived(RsMilitary.RsSetIndication message);
-  }
-
-  public interface OnRsPowerOnListener {
-    void onRsPowerOnReceived();
-  }
-
-  public interface OnRsPowerOffListener {
-    void onRsPowerOffReceived();
-  }
-
-  public interface OnRsStressBeltSettingsListener {
-    void onRsStressBeltSettingsReceived(RsMilitary.RsStressBeltSettings message);
-  }
-
-  public interface OnRsSendIrCustomListener {
-    void onRsSendIrCustomReceived(RsMilitary.RsSendIrCustom message);
-  }
-
-  public interface OnRsIlluminationLevelQueryListener {
-    void onRsIlluminationLevelQueryReceived();
-  }
-
-  public interface OnRsButtonsStateQueryListener {
-    void onRsButtonsStateQueryReceived();
-  }
-
-  public interface OnRsVisibleLaserOnListener {
-    void onRsVisibleLaserOnReceived(RsMilitary.RsVisibleLaserOn message);
-  }
-
-  public interface OnRsGetGpsListener {
-    void onRsGetGpsReceived();
-  }
-
-  public interface OnRsGetCompasListener {
-    void onRsGetCompasReceived();
-  }
-
-  public interface OnRsGetStatusListener {
-    void onRsGetStatusReceived();
-  }
-
-  public interface OnPlaySoundToSlaveListener {
-    void onPlaySoundToSlaveReceived(RsMilitary.PlaySoundToSlave message);
-  }
-
-  public interface OnSetPositionListener {
-    void onSetPositionReceived(RsMilitary.SetPosition message);
-  }
-
-  public interface OnBrakeOnListener {
-    void onBrakeOnReceived();
-  }
-
-  public interface OnBrakeOffListener {
-    void onBrakeOffReceived();
-  }
-
-  public interface OnRotationBySectorOnTimeListener {
-    void onRotationBySectorOnTimeReceived(RsMilitary.RotationBySectorOnTime message);
-  }
-
-  public interface OnStopRotationListener {
-    void onStopRotationReceived();
-  }
-
-  public interface OnWiredHelloFromMasterListener {
-    void onWiredHelloFromMasterReceived(WiredConnection.WiredHelloFromMaster message);
-  }
-
-  public interface OnWiredActionPyrotechnyListener {
-    void onWiredActionPyrotechnyReceived(WiredConnection.WiredActionPyrotechny message);
-  }
-
-  public interface OnWiredSettingsIrEmitterListener {
-    void onWiredSettingsIrEmitterReceived(WiredConnection.WiredSettingsIrEmitter message);
-  }
-
-  public interface OnWiredSendSequenceIrPacketsListener {
-    void onWiredSendSequenceIrPacketsReceived(WiredConnection.WiredSendSequenceIrPackets message);
-  }
-
-  public interface OnWiredSendIrPacketListener {
-    void onWiredSendIrPacketReceived(WiredConnection.WiredSendIrPacket message);
-  }
-
-  public interface OnWiredChangeIdListener {
-    void onWiredChangeIdReceived(WiredConnection.WiredChangeID message);
-  }
-
-  public interface OnWiredSettingsTargetShooterListener {
-    void onWiredSettingsTargetShooterReceived(WiredConnection.WiredSettingsTargetShooter message);
-  }
-
-  public interface OnWiredTargetShooterActionListener {
-    void onWiredTargetShooterActionReceived(WiredConnection.WiredTargetShooterAction message);
-  }
-
-  public interface OnWiredActionGrenadeThrowerListener {
-    void onWiredActionGrenadeThrowerReceived();
-  }
-
-  public interface OnWiredSetIndicationListener {
-    void onWiredSetIndicationReceived(WiredConnection.WiredSetIndication message);
-  }
-
-  public interface OnWiredPlaySoundListener {
-    void onWiredPlaySoundReceived(WiredConnection.WiredPlaySound message);
-  }
-
-  public interface OnWiredStopActionsListener {
-    void onWiredStopActionsReceived();
   }
 
   public interface OnGetBatteryLevelListener {
@@ -1042,8 +670,12 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     void onDefeatTargetReceived();
   }
 
-  public interface OnSetDwmPanIdListener {
-    void onSetDwmPanIdReceived(IndoorNavigation.SetDwmPanId message);
+  public interface OnAntisniperOperationTypeListener {
+    void onAntisniperOperationTypeReceived(AntiSniper.AntisniperOperationType message);
+  }
+
+  public interface OnGetAntisniperOperationTypeListener {
+    void onGetAntisniperOperationTypeReceived();
   }
 
   public interface OnConnectedListener {
@@ -1099,24 +731,11 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
   private volatile OnMovingCartReverseDirectionListener onMovingCartReverseDirectionListener = null;
   private volatile OnStopMovingCartListener onStopMovingCartListener = null;
   private volatile OnMineThrowerSettingsListener onMineThrowerSettingsListener = null;
-  private volatile OnEspConectionStateListener onEspConectionStateListener = null;
-  private volatile OnEspConnectToTcpReplyListener onEspConnectToTcpReplyListener = null;
-  private volatile OnEspTcpConfirmationListener onEspTcpConfirmationListener = null;
-  private volatile OnEspServerDiscoveredListener onEspServerDiscoveredListener = null;
-  private volatile OnEspRssiForNetworkNameListener onEspRssiForNetworkNameListener = null;
-  private volatile OnEspWifiAccessPointListener onEspWifiAccessPointListener = null;
-  private volatile OnEspKillWifiAccessPointReplyListener onEspKillWifiAccessPointReplyListener = null;
   private volatile OnRebootListener onRebootListener = null;
   private volatile OnVersionRequestListener onVersionRequestListener = null;
   private volatile OnFirmwareTaskListener onFirmwareTaskListener = null;
   private volatile OnBeginUpdateResourcesListener onBeginUpdateResourcesListener = null;
   private volatile OnFinishUpdateResourcesListener onFinishUpdateResourcesListener = null;
-  private volatile OnGetStackListener onGetStackListener = null;
-  private volatile OnGetBuffersStateListener onGetBuffersStateListener = null;
-  private volatile OnSomeDataListener onSomeDataListener = null;
-  private volatile OnRuntimeErrorListener onRuntimeErrorListener = null;
-  private volatile OnRuntimeGetErrorsListener onRuntimeGetErrorsListener = null;
-  private volatile OnRuntimeClearErrorMessagesListener onRuntimeClearErrorMessagesListener = null;
   private volatile OnEspRebootListener onEspRebootListener = null;
   private volatile OnEspVersionRequestListener onEspVersionRequestListener = null;
   private volatile OnEspFirmwareTaskListener onEspFirmwareTaskListener = null;
@@ -1124,39 +743,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
   private volatile OnEspRuntimeErrorListener onEspRuntimeErrorListener = null;
   private volatile OnEspBeginUpdateResourcesListener onEspBeginUpdateResourcesListener = null;
   private volatile OnEspFinishUpdateResourcesListener onEspFinishUpdateResourcesListener = null;
-  private volatile OnRsHelloFromMasterListener onRsHelloFromMasterListener = null;
-  private volatile OnRsSendIrListener onRsSendIrListener = null;
-  private volatile OnRsSystemCommandListener onRsSystemCommandListener = null;
-  private volatile OnRsChangeIdListener onRsChangeIdListener = null;
-  private volatile OnRsSetIndicationListener onRsSetIndicationListener = null;
-  private volatile OnRsPowerOnListener onRsPowerOnListener = null;
-  private volatile OnRsPowerOffListener onRsPowerOffListener = null;
-  private volatile OnRsStressBeltSettingsListener onRsStressBeltSettingsListener = null;
-  private volatile OnRsSendIrCustomListener onRsSendIrCustomListener = null;
-  private volatile OnRsIlluminationLevelQueryListener onRsIlluminationLevelQueryListener = null;
-  private volatile OnRsButtonsStateQueryListener onRsButtonsStateQueryListener = null;
-  private volatile OnRsVisibleLaserOnListener onRsVisibleLaserOnListener = null;
-  private volatile OnRsGetGpsListener onRsGetGpsListener = null;
-  private volatile OnRsGetCompasListener onRsGetCompasListener = null;
-  private volatile OnRsGetStatusListener onRsGetStatusListener = null;
-  private volatile OnPlaySoundToSlaveListener onPlaySoundToSlaveListener = null;
-  private volatile OnSetPositionListener onSetPositionListener = null;
-  private volatile OnBrakeOnListener onBrakeOnListener = null;
-  private volatile OnBrakeOffListener onBrakeOffListener = null;
-  private volatile OnRotationBySectorOnTimeListener onRotationBySectorOnTimeListener = null;
-  private volatile OnStopRotationListener onStopRotationListener = null;
-  private volatile OnWiredHelloFromMasterListener onWiredHelloFromMasterListener = null;
-  private volatile OnWiredActionPyrotechnyListener onWiredActionPyrotechnyListener = null;
-  private volatile OnWiredSettingsIrEmitterListener onWiredSettingsIrEmitterListener = null;
-  private volatile OnWiredSendSequenceIrPacketsListener onWiredSendSequenceIrPacketsListener = null;
-  private volatile OnWiredSendIrPacketListener onWiredSendIrPacketListener = null;
-  private volatile OnWiredChangeIdListener onWiredChangeIdListener = null;
-  private volatile OnWiredSettingsTargetShooterListener onWiredSettingsTargetShooterListener = null;
-  private volatile OnWiredTargetShooterActionListener onWiredTargetShooterActionListener = null;
-  private volatile OnWiredActionGrenadeThrowerListener onWiredActionGrenadeThrowerListener = null;
-  private volatile OnWiredSetIndicationListener onWiredSetIndicationListener = null;
-  private volatile OnWiredPlaySoundListener onWiredPlaySoundListener = null;
-  private volatile OnWiredStopActionsListener onWiredStopActionsListener = null;
   private volatile OnGetBatteryLevelListener onGetBatteryLevelListener = null;
   private volatile OnGetSettingsListener onGetSettingsListener = null;
   private volatile OnChangeTeamListener onChangeTeamListener = null;
@@ -1186,7 +772,8 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
   private volatile OnSettingAntiSniperListener onSettingAntiSniperListener = null;
   private volatile OnCommandListener onCommandListener = null;
   private volatile OnDefeatTargetListener onDefeatTargetListener = null;
-  private volatile OnSetDwmPanIdListener onSetDwmPanIdListener = null;
+  private volatile OnAntisniperOperationTypeListener onAntisniperOperationTypeListener = null;
+  private volatile OnGetAntisniperOperationTypeListener onGetAntisniperOperationTypeListener = null;
   private volatile OnConnectedListener onConnectedListener = null;
   private volatile OnErrorListener onErrorListener = null;
   private volatile OnDisconnectedListener onDisconnectedListener = null;
@@ -1431,48 +1018,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
       localCopy.onMineThrowerSettingsReceived(message);
   }
 
-  private void notifyEspConectionStateReceived(Esp.ESPConectionState message) {
-    OnEspConectionStateListener localCopy = onEspConectionStateListener;
-    if (localCopy != null)
-      localCopy.onEspConectionStateReceived(message);
-  }
-
-  private void notifyEspConnectToTcpReplyReceived(Esp.ESPConnectToTCPReply message) {
-    OnEspConnectToTcpReplyListener localCopy = onEspConnectToTcpReplyListener;
-    if (localCopy != null)
-      localCopy.onEspConnectToTcpReplyReceived(message);
-  }
-
-  private void notifyEspTcpConfirmationReceived(Esp.ESPTcpConfirmation message) {
-    OnEspTcpConfirmationListener localCopy = onEspTcpConfirmationListener;
-    if (localCopy != null)
-      localCopy.onEspTcpConfirmationReceived(message);
-  }
-
-  private void notifyEspServerDiscoveredReceived(Esp.ESPServerDiscovered message) {
-    OnEspServerDiscoveredListener localCopy = onEspServerDiscoveredListener;
-    if (localCopy != null)
-      localCopy.onEspServerDiscoveredReceived(message);
-  }
-
-  private void notifyEspRssiForNetworkNameReceived(Esp.ESPRssiForNetworkName message) {
-    OnEspRssiForNetworkNameListener localCopy = onEspRssiForNetworkNameListener;
-    if (localCopy != null)
-      localCopy.onEspRssiForNetworkNameReceived(message);
-  }
-
-  private void notifyEspWifiAccessPointReceived(Esp.ESPWifiAccessPoint message) {
-    OnEspWifiAccessPointListener localCopy = onEspWifiAccessPointListener;
-    if (localCopy != null)
-      localCopy.onEspWifiAccessPointReceived(message);
-  }
-
-  private void notifyEspKillWifiAccessPointReplyReceived(Esp.ESPKillWifiAccessPointReply message) {
-    OnEspKillWifiAccessPointReplyListener localCopy = onEspKillWifiAccessPointReplyListener;
-    if (localCopy != null)
-      localCopy.onEspKillWifiAccessPointReplyReceived(message);
-  }
-
   private void notifyRebootReceived() {
     OnRebootListener localCopy = onRebootListener;
     if (localCopy != null)
@@ -1501,42 +1046,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     OnFinishUpdateResourcesListener localCopy = onFinishUpdateResourcesListener;
     if (localCopy != null)
       localCopy.onFinishUpdateResourcesReceived();
-  }
-
-  private void notifyGetStackReceived() {
-    OnGetStackListener localCopy = onGetStackListener;
-    if (localCopy != null)
-      localCopy.onGetStackReceived();
-  }
-
-  private void notifyGetBuffersStateReceived() {
-    OnGetBuffersStateListener localCopy = onGetBuffersStateListener;
-    if (localCopy != null)
-      localCopy.onGetBuffersStateReceived();
-  }
-
-  private void notifySomeDataReceived(RuntimeDbg.SomeData message) {
-    OnSomeDataListener localCopy = onSomeDataListener;
-    if (localCopy != null)
-      localCopy.onSomeDataReceived(message);
-  }
-
-  private void notifyRuntimeErrorReceived(RuntimeDbg.RuntimeError message) {
-    OnRuntimeErrorListener localCopy = onRuntimeErrorListener;
-    if (localCopy != null)
-      localCopy.onRuntimeErrorReceived(message);
-  }
-
-  private void notifyRuntimeGetErrorsReceived() {
-    OnRuntimeGetErrorsListener localCopy = onRuntimeGetErrorsListener;
-    if (localCopy != null)
-      localCopy.onRuntimeGetErrorsReceived();
-  }
-
-  private void notifyRuntimeClearErrorMessagesReceived() {
-    OnRuntimeClearErrorMessagesListener localCopy = onRuntimeClearErrorMessagesListener;
-    if (localCopy != null)
-      localCopy.onRuntimeClearErrorMessagesReceived();
   }
 
   private void notifyEspRebootReceived() {
@@ -1579,204 +1088,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     OnEspFinishUpdateResourcesListener localCopy = onEspFinishUpdateResourcesListener;
     if (localCopy != null)
       localCopy.onEspFinishUpdateResourcesReceived();
-  }
-
-  private void notifyRsHelloFromMasterReceived(RsMilitary.RsHelloFromMaster message) {
-    OnRsHelloFromMasterListener localCopy = onRsHelloFromMasterListener;
-    if (localCopy != null)
-      localCopy.onRsHelloFromMasterReceived(message);
-  }
-
-  private void notifyRsSendIrReceived(RsMilitary.RsSendIr message) {
-    OnRsSendIrListener localCopy = onRsSendIrListener;
-    if (localCopy != null)
-      localCopy.onRsSendIrReceived(message);
-  }
-
-  private void notifyRsSystemCommandReceived(RsMilitary.RsSystemCommand message) {
-    OnRsSystemCommandListener localCopy = onRsSystemCommandListener;
-    if (localCopy != null)
-      localCopy.onRsSystemCommandReceived(message);
-  }
-
-  private void notifyRsChangeIdReceived(RsMilitary.RsChangeID message) {
-    OnRsChangeIdListener localCopy = onRsChangeIdListener;
-    if (localCopy != null)
-      localCopy.onRsChangeIdReceived(message);
-  }
-
-  private void notifyRsSetIndicationReceived(RsMilitary.RsSetIndication message) {
-    OnRsSetIndicationListener localCopy = onRsSetIndicationListener;
-    if (localCopy != null)
-      localCopy.onRsSetIndicationReceived(message);
-  }
-
-  private void notifyRsPowerOnReceived() {
-    OnRsPowerOnListener localCopy = onRsPowerOnListener;
-    if (localCopy != null)
-      localCopy.onRsPowerOnReceived();
-  }
-
-  private void notifyRsPowerOffReceived() {
-    OnRsPowerOffListener localCopy = onRsPowerOffListener;
-    if (localCopy != null)
-      localCopy.onRsPowerOffReceived();
-  }
-
-  private void notifyRsStressBeltSettingsReceived(RsMilitary.RsStressBeltSettings message) {
-    OnRsStressBeltSettingsListener localCopy = onRsStressBeltSettingsListener;
-    if (localCopy != null)
-      localCopy.onRsStressBeltSettingsReceived(message);
-  }
-
-  private void notifyRsSendIrCustomReceived(RsMilitary.RsSendIrCustom message) {
-    OnRsSendIrCustomListener localCopy = onRsSendIrCustomListener;
-    if (localCopy != null)
-      localCopy.onRsSendIrCustomReceived(message);
-  }
-
-  private void notifyRsIlluminationLevelQueryReceived() {
-    OnRsIlluminationLevelQueryListener localCopy = onRsIlluminationLevelQueryListener;
-    if (localCopy != null)
-      localCopy.onRsIlluminationLevelQueryReceived();
-  }
-
-  private void notifyRsButtonsStateQueryReceived() {
-    OnRsButtonsStateQueryListener localCopy = onRsButtonsStateQueryListener;
-    if (localCopy != null)
-      localCopy.onRsButtonsStateQueryReceived();
-  }
-
-  private void notifyRsVisibleLaserOnReceived(RsMilitary.RsVisibleLaserOn message) {
-    OnRsVisibleLaserOnListener localCopy = onRsVisibleLaserOnListener;
-    if (localCopy != null)
-      localCopy.onRsVisibleLaserOnReceived(message);
-  }
-
-  private void notifyRsGetGpsReceived() {
-    OnRsGetGpsListener localCopy = onRsGetGpsListener;
-    if (localCopy != null)
-      localCopy.onRsGetGpsReceived();
-  }
-
-  private void notifyRsGetCompasReceived() {
-    OnRsGetCompasListener localCopy = onRsGetCompasListener;
-    if (localCopy != null)
-      localCopy.onRsGetCompasReceived();
-  }
-
-  private void notifyRsGetStatusReceived() {
-    OnRsGetStatusListener localCopy = onRsGetStatusListener;
-    if (localCopy != null)
-      localCopy.onRsGetStatusReceived();
-  }
-
-  private void notifyPlaySoundToSlaveReceived(RsMilitary.PlaySoundToSlave message) {
-    OnPlaySoundToSlaveListener localCopy = onPlaySoundToSlaveListener;
-    if (localCopy != null)
-      localCopy.onPlaySoundToSlaveReceived(message);
-  }
-
-  private void notifySetPositionReceived(RsMilitary.SetPosition message) {
-    OnSetPositionListener localCopy = onSetPositionListener;
-    if (localCopy != null)
-      localCopy.onSetPositionReceived(message);
-  }
-
-  private void notifyBrakeOnReceived() {
-    OnBrakeOnListener localCopy = onBrakeOnListener;
-    if (localCopy != null)
-      localCopy.onBrakeOnReceived();
-  }
-
-  private void notifyBrakeOffReceived() {
-    OnBrakeOffListener localCopy = onBrakeOffListener;
-    if (localCopy != null)
-      localCopy.onBrakeOffReceived();
-  }
-
-  private void notifyRotationBySectorOnTimeReceived(RsMilitary.RotationBySectorOnTime message) {
-    OnRotationBySectorOnTimeListener localCopy = onRotationBySectorOnTimeListener;
-    if (localCopy != null)
-      localCopy.onRotationBySectorOnTimeReceived(message);
-  }
-
-  private void notifyStopRotationReceived() {
-    OnStopRotationListener localCopy = onStopRotationListener;
-    if (localCopy != null)
-      localCopy.onStopRotationReceived();
-  }
-
-  private void notifyWiredHelloFromMasterReceived(WiredConnection.WiredHelloFromMaster message) {
-    OnWiredHelloFromMasterListener localCopy = onWiredHelloFromMasterListener;
-    if (localCopy != null)
-      localCopy.onWiredHelloFromMasterReceived(message);
-  }
-
-  private void notifyWiredActionPyrotechnyReceived(WiredConnection.WiredActionPyrotechny message) {
-    OnWiredActionPyrotechnyListener localCopy = onWiredActionPyrotechnyListener;
-    if (localCopy != null)
-      localCopy.onWiredActionPyrotechnyReceived(message);
-  }
-
-  private void notifyWiredSettingsIrEmitterReceived(WiredConnection.WiredSettingsIrEmitter message) {
-    OnWiredSettingsIrEmitterListener localCopy = onWiredSettingsIrEmitterListener;
-    if (localCopy != null)
-      localCopy.onWiredSettingsIrEmitterReceived(message);
-  }
-
-  private void notifyWiredSendSequenceIrPacketsReceived(WiredConnection.WiredSendSequenceIrPackets message) {
-    OnWiredSendSequenceIrPacketsListener localCopy = onWiredSendSequenceIrPacketsListener;
-    if (localCopy != null)
-      localCopy.onWiredSendSequenceIrPacketsReceived(message);
-  }
-
-  private void notifyWiredSendIrPacketReceived(WiredConnection.WiredSendIrPacket message) {
-    OnWiredSendIrPacketListener localCopy = onWiredSendIrPacketListener;
-    if (localCopy != null)
-      localCopy.onWiredSendIrPacketReceived(message);
-  }
-
-  private void notifyWiredChangeIdReceived(WiredConnection.WiredChangeID message) {
-    OnWiredChangeIdListener localCopy = onWiredChangeIdListener;
-    if (localCopy != null)
-      localCopy.onWiredChangeIdReceived(message);
-  }
-
-  private void notifyWiredSettingsTargetShooterReceived(WiredConnection.WiredSettingsTargetShooter message) {
-    OnWiredSettingsTargetShooterListener localCopy = onWiredSettingsTargetShooterListener;
-    if (localCopy != null)
-      localCopy.onWiredSettingsTargetShooterReceived(message);
-  }
-
-  private void notifyWiredTargetShooterActionReceived(WiredConnection.WiredTargetShooterAction message) {
-    OnWiredTargetShooterActionListener localCopy = onWiredTargetShooterActionListener;
-    if (localCopy != null)
-      localCopy.onWiredTargetShooterActionReceived(message);
-  }
-
-  private void notifyWiredActionGrenadeThrowerReceived() {
-    OnWiredActionGrenadeThrowerListener localCopy = onWiredActionGrenadeThrowerListener;
-    if (localCopy != null)
-      localCopy.onWiredActionGrenadeThrowerReceived();
-  }
-
-  private void notifyWiredSetIndicationReceived(WiredConnection.WiredSetIndication message) {
-    OnWiredSetIndicationListener localCopy = onWiredSetIndicationListener;
-    if (localCopy != null)
-      localCopy.onWiredSetIndicationReceived(message);
-  }
-
-  private void notifyWiredPlaySoundReceived(WiredConnection.WiredPlaySound message) {
-    OnWiredPlaySoundListener localCopy = onWiredPlaySoundListener;
-    if (localCopy != null)
-      localCopy.onWiredPlaySoundReceived(message);
-  }
-
-  private void notifyWiredStopActionsReceived() {
-    OnWiredStopActionsListener localCopy = onWiredStopActionsListener;
-    if (localCopy != null)
-      localCopy.onWiredStopActionsReceived();
   }
 
   private void notifyGetBatteryLevelReceived() {
@@ -1953,10 +1264,16 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
       localCopy.onDefeatTargetReceived();
   }
 
-  private void notifySetDwmPanIdReceived(IndoorNavigation.SetDwmPanId message) {
-    OnSetDwmPanIdListener localCopy = onSetDwmPanIdListener;
+  private void notifyAntisniperOperationTypeReceived(AntiSniper.AntisniperOperationType message) {
+    OnAntisniperOperationTypeListener localCopy = onAntisniperOperationTypeListener;
     if (localCopy != null)
-      localCopy.onSetDwmPanIdReceived(message);
+      localCopy.onAntisniperOperationTypeReceived(message);
+  }
+
+  private void notifyGetAntisniperOperationTypeReceived() {
+    OnGetAntisniperOperationTypeListener localCopy = onGetAntisniperOperationTypeListener;
+    if (localCopy != null)
+      localCopy.onGetAntisniperOperationTypeReceived();
   }
 
 
@@ -2182,41 +1499,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     onMineThrowerSettingsListener = listener;
   }
 
-  public void setOnEspConectionStateListener(OnEspConectionStateListener listener)
-  {
-    onEspConectionStateListener = listener;
-  }
-
-  public void setOnEspConnectToTcpReplyListener(OnEspConnectToTcpReplyListener listener)
-  {
-    onEspConnectToTcpReplyListener = listener;
-  }
-
-  public void setOnEspTcpConfirmationListener(OnEspTcpConfirmationListener listener)
-  {
-    onEspTcpConfirmationListener = listener;
-  }
-
-  public void setOnEspServerDiscoveredListener(OnEspServerDiscoveredListener listener)
-  {
-    onEspServerDiscoveredListener = listener;
-  }
-
-  public void setOnEspRssiForNetworkNameListener(OnEspRssiForNetworkNameListener listener)
-  {
-    onEspRssiForNetworkNameListener = listener;
-  }
-
-  public void setOnEspWifiAccessPointListener(OnEspWifiAccessPointListener listener)
-  {
-    onEspWifiAccessPointListener = listener;
-  }
-
-  public void setOnEspKillWifiAccessPointReplyListener(OnEspKillWifiAccessPointReplyListener listener)
-  {
-    onEspKillWifiAccessPointReplyListener = listener;
-  }
-
   public void setOnRebootListener(OnRebootListener listener)
   {
     onRebootListener = listener;
@@ -2240,36 +1522,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
   public void setOnFinishUpdateResourcesListener(OnFinishUpdateResourcesListener listener)
   {
     onFinishUpdateResourcesListener = listener;
-  }
-
-  public void setOnGetStackListener(OnGetStackListener listener)
-  {
-    onGetStackListener = listener;
-  }
-
-  public void setOnGetBuffersStateListener(OnGetBuffersStateListener listener)
-  {
-    onGetBuffersStateListener = listener;
-  }
-
-  public void setOnSomeDataListener(OnSomeDataListener listener)
-  {
-    onSomeDataListener = listener;
-  }
-
-  public void setOnRuntimeErrorListener(OnRuntimeErrorListener listener)
-  {
-    onRuntimeErrorListener = listener;
-  }
-
-  public void setOnRuntimeGetErrorsListener(OnRuntimeGetErrorsListener listener)
-  {
-    onRuntimeGetErrorsListener = listener;
-  }
-
-  public void setOnRuntimeClearErrorMessagesListener(OnRuntimeClearErrorMessagesListener listener)
-  {
-    onRuntimeClearErrorMessagesListener = listener;
   }
 
   public void setOnEspRebootListener(OnEspRebootListener listener)
@@ -2305,171 +1557,6 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
   public void setOnEspFinishUpdateResourcesListener(OnEspFinishUpdateResourcesListener listener)
   {
     onEspFinishUpdateResourcesListener = listener;
-  }
-
-  public void setOnRsHelloFromMasterListener(OnRsHelloFromMasterListener listener)
-  {
-    onRsHelloFromMasterListener = listener;
-  }
-
-  public void setOnRsSendIrListener(OnRsSendIrListener listener)
-  {
-    onRsSendIrListener = listener;
-  }
-
-  public void setOnRsSystemCommandListener(OnRsSystemCommandListener listener)
-  {
-    onRsSystemCommandListener = listener;
-  }
-
-  public void setOnRsChangeIdListener(OnRsChangeIdListener listener)
-  {
-    onRsChangeIdListener = listener;
-  }
-
-  public void setOnRsSetIndicationListener(OnRsSetIndicationListener listener)
-  {
-    onRsSetIndicationListener = listener;
-  }
-
-  public void setOnRsPowerOnListener(OnRsPowerOnListener listener)
-  {
-    onRsPowerOnListener = listener;
-  }
-
-  public void setOnRsPowerOffListener(OnRsPowerOffListener listener)
-  {
-    onRsPowerOffListener = listener;
-  }
-
-  public void setOnRsStressBeltSettingsListener(OnRsStressBeltSettingsListener listener)
-  {
-    onRsStressBeltSettingsListener = listener;
-  }
-
-  public void setOnRsSendIrCustomListener(OnRsSendIrCustomListener listener)
-  {
-    onRsSendIrCustomListener = listener;
-  }
-
-  public void setOnRsIlluminationLevelQueryListener(OnRsIlluminationLevelQueryListener listener)
-  {
-    onRsIlluminationLevelQueryListener = listener;
-  }
-
-  public void setOnRsButtonsStateQueryListener(OnRsButtonsStateQueryListener listener)
-  {
-    onRsButtonsStateQueryListener = listener;
-  }
-
-  public void setOnRsVisibleLaserOnListener(OnRsVisibleLaserOnListener listener)
-  {
-    onRsVisibleLaserOnListener = listener;
-  }
-
-  public void setOnRsGetGpsListener(OnRsGetGpsListener listener)
-  {
-    onRsGetGpsListener = listener;
-  }
-
-  public void setOnRsGetCompasListener(OnRsGetCompasListener listener)
-  {
-    onRsGetCompasListener = listener;
-  }
-
-  public void setOnRsGetStatusListener(OnRsGetStatusListener listener)
-  {
-    onRsGetStatusListener = listener;
-  }
-
-  public void setOnPlaySoundToSlaveListener(OnPlaySoundToSlaveListener listener)
-  {
-    onPlaySoundToSlaveListener = listener;
-  }
-
-  public void setOnSetPositionListener(OnSetPositionListener listener)
-  {
-    onSetPositionListener = listener;
-  }
-
-  public void setOnBrakeOnListener(OnBrakeOnListener listener)
-  {
-    onBrakeOnListener = listener;
-  }
-
-  public void setOnBrakeOffListener(OnBrakeOffListener listener)
-  {
-    onBrakeOffListener = listener;
-  }
-
-  public void setOnRotationBySectorOnTimeListener(OnRotationBySectorOnTimeListener listener)
-  {
-    onRotationBySectorOnTimeListener = listener;
-  }
-
-  public void setOnStopRotationListener(OnStopRotationListener listener)
-  {
-    onStopRotationListener = listener;
-  }
-
-  public void setOnWiredHelloFromMasterListener(OnWiredHelloFromMasterListener listener)
-  {
-    onWiredHelloFromMasterListener = listener;
-  }
-
-  public void setOnWiredActionPyrotechnyListener(OnWiredActionPyrotechnyListener listener)
-  {
-    onWiredActionPyrotechnyListener = listener;
-  }
-
-  public void setOnWiredSettingsIrEmitterListener(OnWiredSettingsIrEmitterListener listener)
-  {
-    onWiredSettingsIrEmitterListener = listener;
-  }
-
-  public void setOnWiredSendSequenceIrPacketsListener(OnWiredSendSequenceIrPacketsListener listener)
-  {
-    onWiredSendSequenceIrPacketsListener = listener;
-  }
-
-  public void setOnWiredSendIrPacketListener(OnWiredSendIrPacketListener listener)
-  {
-    onWiredSendIrPacketListener = listener;
-  }
-
-  public void setOnWiredChangeIdListener(OnWiredChangeIdListener listener)
-  {
-    onWiredChangeIdListener = listener;
-  }
-
-  public void setOnWiredSettingsTargetShooterListener(OnWiredSettingsTargetShooterListener listener)
-  {
-    onWiredSettingsTargetShooterListener = listener;
-  }
-
-  public void setOnWiredTargetShooterActionListener(OnWiredTargetShooterActionListener listener)
-  {
-    onWiredTargetShooterActionListener = listener;
-  }
-
-  public void setOnWiredActionGrenadeThrowerListener(OnWiredActionGrenadeThrowerListener listener)
-  {
-    onWiredActionGrenadeThrowerListener = listener;
-  }
-
-  public void setOnWiredSetIndicationListener(OnWiredSetIndicationListener listener)
-  {
-    onWiredSetIndicationListener = listener;
-  }
-
-  public void setOnWiredPlaySoundListener(OnWiredPlaySoundListener listener)
-  {
-    onWiredPlaySoundListener = listener;
-  }
-
-  public void setOnWiredStopActionsListener(OnWiredStopActionsListener listener)
-  {
-    onWiredStopActionsListener = listener;
   }
 
   public void setOnGetBatteryLevelListener(OnGetBatteryLevelListener listener)
@@ -2617,9 +1704,14 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     onDefeatTargetListener = listener;
   }
 
-  public void setOnSetDwmPanIdListener(OnSetDwmPanIdListener listener)
+  public void setOnAntisniperOperationTypeListener(OnAntisniperOperationTypeListener listener)
   {
-    onSetDwmPanIdListener = listener;
+    onAntisniperOperationTypeListener = listener;
+  }
+
+  public void setOnGetAntisniperOperationTypeListener(OnGetAntisniperOperationTypeListener listener)
+  {
+    onGetAntisniperOperationTypeListener = listener;
   }
 
 
@@ -2665,40 +1757,10 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     case 652: return PanzerMilitary.StatisticsPanzerGun.parser().parsePartialFrom(inputStream);
     case 653: return PanzerMilitary.StatisticsPanzerCannon.parser().parsePartialFrom(inputStream);
     case 801: return MineThrower.MineThrowerSettings.parser().parsePartialFrom(inputStream);
-    case 1001: return Esp.ESPConectionState.parser().parsePartialFrom(inputStream);
-    case 1002: return Esp.ESPConnectToTCPReply.parser().parsePartialFrom(inputStream);
-    case 1003: return Esp.ESPTcpConfirmation.parser().parsePartialFrom(inputStream);
-    case 1004: return Esp.ESPServerDiscovered.parser().parsePartialFrom(inputStream);
-    case 1005: return Esp.ESPRssiForNetworkName.parser().parsePartialFrom(inputStream);
-    case 1006: return Esp.ESPWifiAccessPoint.parser().parsePartialFrom(inputStream);
-    case 1007: return Esp.ESPKillWifiAccessPointReply.parser().parsePartialFrom(inputStream);
     case 1103: return Firmware.FirmwareTask.parser().parsePartialFrom(inputStream);
-    case 1203: return RuntimeDbg.SomeData.parser().parsePartialFrom(inputStream);
-    case 1204: return RuntimeDbg.RuntimeError.parser().parsePartialFrom(inputStream);
     case 2003: return EspSrv.ESP_FirmwareTask.parser().parsePartialFrom(inputStream);
     case 2005: return EspSrv.ESP_SomeData.parser().parsePartialFrom(inputStream);
     case 2006: return EspSrv.ESP_RuntimeError.parser().parsePartialFrom(inputStream);
-    case 4001: return RsMilitary.RsHelloFromMaster.parser().parsePartialFrom(inputStream);
-    case 4002: return RsMilitary.RsSendIr.parser().parsePartialFrom(inputStream);
-    case 4003: return RsMilitary.RsSystemCommand.parser().parsePartialFrom(inputStream);
-    case 4006: return RsMilitary.RsChangeID.parser().parsePartialFrom(inputStream);
-    case 4007: return RsMilitary.RsSetIndication.parser().parsePartialFrom(inputStream);
-    case 4010: return RsMilitary.RsStressBeltSettings.parser().parsePartialFrom(inputStream);
-    case 4011: return RsMilitary.RsSendIrCustom.parser().parsePartialFrom(inputStream);
-    case 4014: return RsMilitary.RsVisibleLaserOn.parser().parsePartialFrom(inputStream);
-    case 4020: return RsMilitary.PlaySoundToSlave.parser().parsePartialFrom(inputStream);
-    case 4021: return RsMilitary.SetPosition.parser().parsePartialFrom(inputStream);
-    case 4024: return RsMilitary.RotationBySectorOnTime.parser().parsePartialFrom(inputStream);
-    case 5001: return WiredConnection.WiredHelloFromMaster.parser().parsePartialFrom(inputStream);
-    case 5002: return WiredConnection.WiredActionPyrotechny.parser().parsePartialFrom(inputStream);
-    case 5003: return WiredConnection.WiredSettingsIrEmitter.parser().parsePartialFrom(inputStream);
-    case 5004: return WiredConnection.WiredSendSequenceIrPackets.parser().parsePartialFrom(inputStream);
-    case 5005: return WiredConnection.WiredSendIrPacket.parser().parsePartialFrom(inputStream);
-    case 5006: return WiredConnection.WiredChangeID.parser().parsePartialFrom(inputStream);
-    case 5007: return WiredConnection.WiredSettingsTargetShooter.parser().parsePartialFrom(inputStream);
-    case 5008: return WiredConnection.WiredTargetShooterAction.parser().parsePartialFrom(inputStream);
-    case 5010: return WiredConnection.WiredSetIndication.parser().parsePartialFrom(inputStream);
-    case 5011: return WiredConnection.WiredPlaySound.parser().parsePartialFrom(inputStream);
     case 10003: return CommonMilitary.ChangeTeam.parser().parsePartialFrom(inputStream);
     case 10004: return CommonMilitary.KillPlayer.parser().parsePartialFrom(inputStream);
     case 10006: return CommonMilitary.SetTypeExercise.parser().parsePartialFrom(inputStream);
@@ -2719,272 +1781,183 @@ public class EspClientApi implements ProtoClient.ProtocolDispatcher {
     case 10502: return PZRKMilitary.PzrkSetting.parser().parsePartialFrom(inputStream);
     case 10601: return AntiSniper.SettingAntiSniper.parser().parsePartialFrom(inputStream);
     case 10602: return AntiSniper.Command.parser().parsePartialFrom(inputStream);
-    case 10801: return IndoorNavigation.SetDwmPanId.parser().parsePartialFrom(inputStream);
+    case 10604: return AntiSniper.AntisniperOperationType.parser().parsePartialFrom(inputStream);
     default:
        return null;
     }
   }
 
   @Override
-  public void dispatchMessage(int commandId, MessageLite message) {
+  public boolean dispatchMessage(int commandId, MessageLite message) {
     switch(commandId) {
     case 3: notifyStartGameReceived((Base.StartGame)message);
-      break;
+      return true;
     case 4: notifyStopGameReceived();
-      break;
+      return true;
     case 10: notifyPauseGameReceived();
-      break;
+      return true;
     case 12: notifyChangeIdReceived((Base.ChangeId)message);
-      break;
+      return true;
     case 14: notifySetVolumeReceived((Multimedia.SetVolume)message);
-      break;
+      return true;
     case 17: notifyPingReceived();
-      break;
+      return true;
     case 25: notifyUpdateDevReceived();
-      break;
+      return true;
     case 26: notifySetLanguageReceived((Base.setLanguage)message);
-      break;
+      return true;
     case 30: notifyPlaySoundReceived((Multimedia.PlaySound)message);
-      break;
+      return true;
     case 31: notifyStopSoundReceived((Multimedia.StopSound)message);
-      break;
+      return true;
     case 32: notifyGetSoundsInfoReceived();
-      break;
+      return true;
     case 34: notifySendDevTypeReceived((Base.SendDevType)message);
-      break;
+      return true;
     case 36: notifyTurnOffDeviceReceived();
-      break;
+      return true;
     case 37: notifyGetInfoSlavesReceived();
-      break;
+      return true;
     case 301: notifyFsInfoReceived();
-      break;
+      return true;
     case 302: notifyFormatFsReceived();
-      break;
+      return true;
     case 303: notifyLsDirReceived((Filesystem.LsDir)message);
-      break;
+      return true;
     case 304: notifyFileInfoReceived((Filesystem.FileInfo)message);
-      break;
+      return true;
     case 305: notifyDelFileReceived((Filesystem.DelFile)message);
-      break;
+      return true;
     case 306: notifyReadFileReceived((Filesystem.ReadFile)message);
-      break;
+      return true;
     case 307: notifyWriteFileReceived((Filesystem.WriteFile)message);
-      break;
+      return true;
     case 308: notifyCalcMd5Received((Filesystem.CalcMD5)message);
-      break;
+      return true;
     case 501: notifyStatFromPtrkReceived((PTRKMilitary.StatFromPTRK)message);
-      break;
+      return true;
     case 502: notifyPtrkSettingsReceived((PTRKMilitary.PTRKSettings)message);
-      break;
+      return true;
     case 503: notifyReloadPtrkReceived((PTRKMilitary.ReloadPtrk)message);
-      break;
+      return true;
     case 601: notifySettingsTargetReceived((TargetMilitary.SettingsTarget)message);
-      break;
+      return true;
     case 602: notifyShowTargetReceived();
-      break;
+      return true;
     case 603: notifyHideTargetReceived();
-      break;
+      return true;
     case 604: notifyStatisticsTargetReceived((TargetMilitary.StatisticsTarget)message);
-      break;
+      return true;
     case 605: notifyResetErrorReceived((TargetMilitary.ResetError)message);
-      break;
+      return true;
     case 651: notifySettingsPanzerReceived((PanzerMilitary.SettingsPanzer)message);
-      break;
+      return true;
     case 652: notifyStatisticsPanzerGunReceived((PanzerMilitary.StatisticsPanzerGun)message);
-      break;
+      return true;
     case 653: notifyStatisticsPanzerCannonReceived((PanzerMilitary.StatisticsPanzerCannon)message);
-      break;
+      return true;
     case 655: notifyGetStatisticsPanzerGunReceived();
-      break;
+      return true;
     case 656: notifyGetStatisticsPanzerCannonReceived();
-      break;
+      return true;
     case 657: notifyGetSettingsPanzerReceived();
-      break;
+      return true;
     case 701: notifyMovingCartForwardDirectionReceived();
-      break;
+      return true;
     case 702: notifyMovingCartReverseDirectionReceived();
-      break;
+      return true;
     case 703: notifyStopMovingCartReceived();
-      break;
+      return true;
     case 801: notifyMineThrowerSettingsReceived((MineThrower.MineThrowerSettings)message);
-      break;
-    case 1001: notifyEspConectionStateReceived((Esp.ESPConectionState)message);
-      break;
-    case 1002: notifyEspConnectToTcpReplyReceived((Esp.ESPConnectToTCPReply)message);
-      break;
-    case 1003: notifyEspTcpConfirmationReceived((Esp.ESPTcpConfirmation)message);
-      break;
-    case 1004: notifyEspServerDiscoveredReceived((Esp.ESPServerDiscovered)message);
-      break;
-    case 1005: notifyEspRssiForNetworkNameReceived((Esp.ESPRssiForNetworkName)message);
-      break;
-    case 1006: notifyEspWifiAccessPointReceived((Esp.ESPWifiAccessPoint)message);
-      break;
-    case 1007: notifyEspKillWifiAccessPointReplyReceived((Esp.ESPKillWifiAccessPointReply)message);
-      break;
+      return true;
     case 1101: notifyRebootReceived();
-      break;
+      return true;
     case 1102: notifyVersionRequestReceived();
-      break;
+      return true;
     case 1103: notifyFirmwareTaskReceived((Firmware.FirmwareTask)message);
-      break;
+      return true;
     case 1104: notifyBeginUpdateResourcesReceived();
-      break;
+      return true;
     case 1105: notifyFinishUpdateResourcesReceived();
-      break;
-    case 1201: notifyGetStackReceived();
-      break;
-    case 1202: notifyGetBuffersStateReceived();
-      break;
-    case 1203: notifySomeDataReceived((RuntimeDbg.SomeData)message);
-      break;
-    case 1204: notifyRuntimeErrorReceived((RuntimeDbg.RuntimeError)message);
-      break;
-    case 1205: notifyRuntimeGetErrorsReceived();
-      break;
-    case 1206: notifyRuntimeClearErrorMessagesReceived();
-      break;
+      return true;
     case 2001: notifyEspRebootReceived();
-      break;
+      return true;
     case 2002: notifyEspVersionRequestReceived();
-      break;
+      return true;
     case 2003: notifyEspFirmwareTaskReceived((EspSrv.ESP_FirmwareTask)message);
-      break;
+      return true;
     case 2005: notifyEspSomeDataReceived((EspSrv.ESP_SomeData)message);
-      break;
+      return true;
     case 2006: notifyEspRuntimeErrorReceived((EspSrv.ESP_RuntimeError)message);
-      break;
+      return true;
     case 2007: notifyEspBeginUpdateResourcesReceived();
-      break;
+      return true;
     case 2008: notifyEspFinishUpdateResourcesReceived();
-      break;
-    case 4001: notifyRsHelloFromMasterReceived((RsMilitary.RsHelloFromMaster)message);
-      break;
-    case 4002: notifyRsSendIrReceived((RsMilitary.RsSendIr)message);
-      break;
-    case 4003: notifyRsSystemCommandReceived((RsMilitary.RsSystemCommand)message);
-      break;
-    case 4006: notifyRsChangeIdReceived((RsMilitary.RsChangeID)message);
-      break;
-    case 4007: notifyRsSetIndicationReceived((RsMilitary.RsSetIndication)message);
-      break;
-    case 4008: notifyRsPowerOnReceived();
-      break;
-    case 4009: notifyRsPowerOffReceived();
-      break;
-    case 4010: notifyRsStressBeltSettingsReceived((RsMilitary.RsStressBeltSettings)message);
-      break;
-    case 4011: notifyRsSendIrCustomReceived((RsMilitary.RsSendIrCustom)message);
-      break;
-    case 4012: notifyRsIlluminationLevelQueryReceived();
-      break;
-    case 4013: notifyRsButtonsStateQueryReceived();
-      break;
-    case 4014: notifyRsVisibleLaserOnReceived((RsMilitary.RsVisibleLaserOn)message);
-      break;
-    case 4015: notifyRsGetGpsReceived();
-      break;
-    case 4016: notifyRsGetCompasReceived();
-      break;
-    case 4017: notifyRsGetStatusReceived();
-      break;
-    case 4020: notifyPlaySoundToSlaveReceived((RsMilitary.PlaySoundToSlave)message);
-      break;
-    case 4021: notifySetPositionReceived((RsMilitary.SetPosition)message);
-      break;
-    case 4022: notifyBrakeOnReceived();
-      break;
-    case 4023: notifyBrakeOffReceived();
-      break;
-    case 4024: notifyRotationBySectorOnTimeReceived((RsMilitary.RotationBySectorOnTime)message);
-      break;
-    case 4025: notifyStopRotationReceived();
-      break;
-    case 5001: notifyWiredHelloFromMasterReceived((WiredConnection.WiredHelloFromMaster)message);
-      break;
-    case 5002: notifyWiredActionPyrotechnyReceived((WiredConnection.WiredActionPyrotechny)message);
-      break;
-    case 5003: notifyWiredSettingsIrEmitterReceived((WiredConnection.WiredSettingsIrEmitter)message);
-      break;
-    case 5004: notifyWiredSendSequenceIrPacketsReceived((WiredConnection.WiredSendSequenceIrPackets)message);
-      break;
-    case 5005: notifyWiredSendIrPacketReceived((WiredConnection.WiredSendIrPacket)message);
-      break;
-    case 5006: notifyWiredChangeIdReceived((WiredConnection.WiredChangeID)message);
-      break;
-    case 5007: notifyWiredSettingsTargetShooterReceived((WiredConnection.WiredSettingsTargetShooter)message);
-      break;
-    case 5008: notifyWiredTargetShooterActionReceived((WiredConnection.WiredTargetShooterAction)message);
-      break;
-    case 5009: notifyWiredActionGrenadeThrowerReceived();
-      break;
-    case 5010: notifyWiredSetIndicationReceived((WiredConnection.WiredSetIndication)message);
-      break;
-    case 5011: notifyWiredPlaySoundReceived((WiredConnection.WiredPlaySound)message);
-      break;
-    case 5012: notifyWiredStopActionsReceived();
-      break;
+      return true;
     case 10001: notifyGetBatteryLevelReceived();
-      break;
+      return true;
     case 10002: notifyGetSettingsReceived();
-      break;
+      return true;
     case 10003: notifyChangeTeamReceived((CommonMilitary.ChangeTeam)message);
-      break;
+      return true;
     case 10004: notifyKillPlayerReceived((CommonMilitary.KillPlayer)message);
-      break;
+      return true;
     case 10005: notifyResetAllErrorsReceived();
-      break;
+      return true;
     case 10006: notifySetTypeExerciseReceived((CommonMilitary.SetTypeExercise)message);
-      break;
+      return true;
     case 10201: notifyStatFromKitReceived((KitMilitary.StatFromKit)message);
-      break;
+      return true;
     case 10202: notifyWeaponStatReceived((KitMilitary.WeaponStat)message);
-      break;
+      return true;
     case 10203: notifyKitSettingsReceived((KitMilitary.KitSettings)message);
-      break;
+      return true;
     case 10204: notifyStressBeltSettingsReceived((KitMilitary.StressBeltSettings)message);
-      break;
+      return true;
     case 10205: notifyWeaponSettingsReceived((KitMilitary.WeaponSettings)message);
-      break;
+      return true;
     case 10206: notifyGetAllStatReceived();
-      break;
+      return true;
     case 10207: notifySilentModeReceived((KitMilitary.SilentMode)message);
-      break;
+      return true;
     case 10208: notifyGetActivatedMinesReceived();
-      break;
+      return true;
     case 10209: notifyGetDeactivatedMinesReceived();
-      break;
+      return true;
     case 10210: notifyGetInfoFromHingedBlockReceived((KitMilitary.GetInfoFromHingedBlock)message);
-      break;
+      return true;
     case 10211: notifyIrEmitterSettingsReceived((KitMilitary.IrEmitterSettings)message);
-      break;
+      return true;
     case 10212: notifyIrEmitterStatisticReceived((KitMilitary.IrEmitterStatistic)message);
-      break;
+      return true;
     case 10213: notifySetDamageAppropriateToWeaponReceived((KitMilitary.SetDamageAppropriateToWeapon)message);
-      break;
+      return true;
     case 10214: notifySaveTableDamageReceived();
-      break;
+      return true;
     case 10215: notifySetTypeVehicleReceived((KitMilitary.SetTypeVehicle)message);
-      break;
+      return true;
     case 10216: notifyGetQuantityBlocksPosReceived((KitMilitary.GetQuantityBlocksPos)message);
-      break;
+      return true;
     case 10217: notifyGetBlockByTimePosReceived((KitMilitary.GetBlockByTimePos)message);
-      break;
+      return true;
     case 10218: notifyDeleteBlocksPosReceived((KitMilitary.DeleteBlocksPos)message);
-      break;
+      return true;
     case 10501: notifyGetAllEventsPzrkReceived();
-      break;
+      return true;
     case 10502: notifyPzrkSettingReceived((PZRKMilitary.PzrkSetting)message);
-      break;
+      return true;
     case 10601: notifySettingAntiSniperReceived((AntiSniper.SettingAntiSniper)message);
-      break;
+      return true;
     case 10602: notifyCommandReceived((AntiSniper.Command)message);
-      break;
+      return true;
     case 10603: notifyDefeatTargetReceived();
-      break;
-    case 10801: notifySetDwmPanIdReceived((IndoorNavigation.SetDwmPanId)message);
-      break;
+      return true;
+    case 10604: notifyAntisniperOperationTypeReceived((AntiSniper.AntisniperOperationType)message);
+      return true;
+    case 10605: notifyGetAntisniperOperationTypeReceived();
+      return true;
     default:
+       return false;
     }
   }
 

@@ -81,7 +81,7 @@ fun main() = application {
 
     Window(onCloseRequest = ::exitApplication) {
         appServer(server.messages){
-            server.sendListOfMessages()
+            //server.sendListOfMessages()
         }
     }
 

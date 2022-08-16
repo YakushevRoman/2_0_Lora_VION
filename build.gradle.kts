@@ -22,6 +22,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(project(":feature_protobuff_server_client"))
     implementation(compose.desktop.currentOs)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
@@ -68,12 +69,12 @@ compose.desktop {
 
 val pathSubmodule = "proto_files"
 
-val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
-val pathProtoFilesCommercial = "$pathSubmodule/Proto_files_commerc"
+//val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
+//val pathProtoFilesCommercial = "$pathSubmodule/Proto_files_commerc"
 val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_military_"
 
 val protoDirectories = listOfNotNull(
-    pathProtoFilesCommon,
+    //pathProtoFilesCommon,
     pathProtoFilesMilitary
 )
 
@@ -122,7 +123,7 @@ protobuf {
     generateProtoTasks {
         all().forEach {
             it.plugins {
-                //id("javaapi"){}
+                // id("javaapi"){}
             }
             it.builtins {
                 id("kotlin") {}

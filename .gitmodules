@@ -1,3 +1,6 @@
 [submodule "proto_files"]
 	path = proto_files
 	url = http://forpost.ddns.net:22222/Library/Proto_files.git
+[submodule "feature_protobuff_server_client"]
+	path = feature_protobuff_server_client
+	url = http://forpost.ddns.net:22222/Android/features/feature_protobuff_server_client.git
