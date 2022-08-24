@@ -39,11 +39,11 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
 
-    testImplementation ("junit:junit:4.13.2")
-    testImplementation ("org.junit.vintage:junit-vintage-engine:5.8.0")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.8.0")
 }
 
-tasks.named<JavaCompile>("compileJava"){
+tasks.named<JavaCompile>("compileJava") {
     options.encoding = "UTF-8"
 }
 
@@ -69,12 +69,11 @@ compose.desktop {
 
 val pathSubmodule = "proto_files"
 
-//val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
-//val pathProtoFilesCommercial = "$pathSubmodule/Proto_files_commerc"
-val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_military_"
+val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
+val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_military"
 
 val protoDirectories = listOfNotNull(
-    //pathProtoFilesCommon,
+    pathProtoFilesCommon,
     pathProtoFilesMilitary
 )
 
@@ -87,6 +86,20 @@ sourceSets {
     main {
         proto {
             srcDirs(protoDirectories)
+            exclude(
+                "**/esp.proto",
+                "**/runtime_dbg.proto",
+                "**/IndoorNavigation.proto",
+                "**/Rs_military.proto",
+                "**/vehicle_settings.proto",
+                "**/wiredConnection.proto",
+                "**/nrf_drv_proto_config.proto",
+                "**/nrf_drv_proto_manage.proto",
+                "**/nrf_drv_proto_messages.proto",
+                "**/nrf_drv_proto_provision.proto",
+                "**/posix_file_system.proto",
+                "**/*ShootHouse"
+            )
         }
         java.srcDirs("src/main/java")
     }
@@ -123,7 +136,7 @@ protobuf {
     generateProtoTasks {
         all().forEach {
             it.plugins {
-                // id("javaapi"){}
+                id("javaapi") {}
             }
             it.builtins {
                 id("kotlin") {}
