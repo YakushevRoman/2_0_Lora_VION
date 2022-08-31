@@ -1,28 +1,32 @@
 package server_client
 
+import AntiSniper
+import EspClientApi
 import MessagesState
 import androidx.compose.runtime.mutableStateListOf
-import build.generated.source.proto.main.java.*
-import clients.ProtoClient
+import batteryLevel
 import com.google.protobuf.ByteString
-import com.google.protobuf.MessageLite
-import generation_java_files.AntiSniperClientApi
+import gPSCoordinate
+import helloFromDev
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import utils.FastServerLogger
-import utils.HandlerWrapper
-import utils.NetworkThread
+import statById
+import statFromKit
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
+import clients.ProtoClient
+import utils.FastServerLogger
+import utils.HandlerWrapper
+import utils.NetworkThread
 
 class ClientImpl :
-    AntiSniperClientApi.OnConnectedListener,
-    AntiSniperClientApi.OnDisconnectedListener,
-    AntiSniperClientApi.OnStartGameListener,
-    AntiSniperClientApi.OnSettingAntiSniperListener,
-    AntiSniperClientApi.OnSetVolumeListener,
-    AntiSniperClientApi.OnCommandListener {
+    EspClientApi.OnConnectedListener,
+    EspClientApi.OnDisconnectedListener,
+    EspClientApi.OnStartGameListener,
+    EspClientApi.OnSettingAntiSniperListener,
+    EspClientApi.OnSetVolumeListener,
+    EspClientApi.OnCommandListener {
 
     companion object {
         const val clientsCount = 5
@@ -36,7 +40,7 @@ class ClientImpl :
     var messages = mutableStateListOf<String>()
 
     private val clients = mutableListOf<ProtoClient>()
-    private val clientApis = mutableListOf<AntiSniperClientApi>()
+    private val clientApis = mutableListOf<EspClientApi>()
 
     private val _clientMessagesState = MutableSharedFlow<MessagesState>()
     val clientMessagesState = _clientMessagesState.asSharedFlow()
@@ -51,14 +55,13 @@ class ClientImpl :
     }
 
     private fun createClients() {
+
         repeat(clientsCount) {
             val client = ProtoClient(logger, true)
             clients.add(client)
 
-            val clientApi = AntiSniperClientApi(
-                client,
-                true,
-                handler
+            val clientApi = EspClientApi(
+                client
             )
 
             clientApi.setOnConnectedListener(this)
@@ -103,8 +106,8 @@ class ClientImpl :
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            delay(10_000)
-            //sendStatById()
+            delay(15_000)
+            sendStatById()
         }
     }
 
@@ -156,7 +159,7 @@ class ClientImpl :
             clientApis.forEach {
                 val deltaLong = Random.nextFloat()
                 val deltaLat = Random.nextFloat()
-                it.sendGpsCoordinate(gPSCoordinate {
+                it.sendGPSCoordinate(gPSCoordinate {
                     longtude = 36.5F + deltaLong
                     latitude = 50.0F + deltaLat
                 })
@@ -177,14 +180,15 @@ class ClientImpl :
     }
 
     private suspend fun sendStatById() {
-        repeat(1200) {
-            delay(1000)
 
-            clientApis.forEach {
+            clientApis[0].let{
 
                 it.sendStatFromKit(statFromKit {
-                    currentHealth = 50
+                    currentHealth = 10
+                    gameStatus = 1
                 })
+
+                delay(1000)
 
                 it.sendStatById(statById {
                     id = 2
@@ -192,7 +196,6 @@ class ClientImpl :
                     kitSysTime = 30_000
                 })
             }
-        }
     }
 
     private suspend fun sendPing() {
@@ -213,7 +216,6 @@ class ClientImpl :
     }
 
     override fun onStartGameReceived(message: Base.StartGame?) {
-        println("StartGame")
         CoroutineScope(Dispatchers.Default).launch {
             delay(10_000)
         }

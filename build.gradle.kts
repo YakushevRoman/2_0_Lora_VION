@@ -22,25 +22,19 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation(project(":feature_protobuff_server_client"))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    //implementation(project(":feature_protobuff_server_client"))
+
     implementation(compose.desktop.currentOs)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-// https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
-    implementation("com.google.protobuf:protobuf-kotlin:3.20.1")
-    api("com.google.protobuf:protobuf-java-util:3.20.1")
-    api("com.google.protobuf:protobuf-kotlin:3.20.1")
+    implementation("com.google.protobuf:protobuf-kotlin:3.21.5")
+    api("com.google.protobuf:protobuf-java-util:3.21.5")
+    api("com.google.protobuf:protobuf-kotlin:3.21.5")
     // https://mvnrepository.com/artifact/com.googlecode.protobuf-java-format/protobuf-java-format
     implementation("com.googlecode.protobuf-java-format:protobuf-java-format:1.4")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
-
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.8.0")
 }
 
 tasks.named<JavaCompile>("compileJava") {
@@ -66,7 +60,6 @@ compose.desktop {
     }
 }
 
-
 val pathSubmodule = "proto_files"
 
 val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
@@ -77,17 +70,11 @@ val protoDirectories = listOfNotNull(
     pathProtoFilesMilitary
 )
 
-// If you need to change directories for generating and coping files
-val pathAutoGenerationFiles = "generated/source/proto/main"
-val pathSrcKotlinFiles = "src/main/kotlin/generation_java_files"
-val pathSrcJavaFiles = "src/main/java/generation_kotlin_files"
-
 sourceSets {
     main {
         proto {
             srcDirs(protoDirectories)
             exclude(
-                "**/esp.proto",
                 "**/runtime_dbg.proto",
                 "**/IndoorNavigation.proto",
                 "**/Rs_military.proto",
@@ -101,7 +88,7 @@ sourceSets {
                 "**/*ShootHouse"
             )
         }
-        java.srcDirs("src/main/java")
+        java.srcDirs("src/main/java", "src/main/kotlin")
     }
 
     test {
@@ -110,7 +97,6 @@ sourceSets {
 }
 
 protobuf {
-
     for (directory in protoDirectories) {
         val files = file(directory).list() ?: throw GradleException(
             "Directory - $directory was not found. " +
@@ -129,37 +115,21 @@ protobuf {
 
     plugins {
         id("javaapi") {
-            path = "tools/protoc-gen-javaapi.exe"
+            path = "tools/protoc-gen-javaapi_4.exe"
         }
     }
 
     generateProtoTasks {
         all().forEach {
-            it.plugins {
-                id("javaapi") {}
-            }
             it.builtins {
                 id("kotlin") {}
             }
+            it.plugins {
+                id("javaapi") {
+                    outputSubDir = "java"
+                }
+            }
+
         }
     }
 }
-
-// start task : gradle for project -> other -> copyJavaServerClientApiFile
-val copyJavaServerClientApiFile = tasks.register<Copy>("copyJavaServerClientApiFile") {
-    val srcPath = "$buildDir/$pathAutoGenerationFiles/javaapi"
-    from(srcPath)
-
-    val outPath = "$projectDir/$pathSrcJavaFiles"
-    into(outPath)
-}
-
-// start task : gradle for project -> other -> copyKotlinServerClientApiFile
-val copyKotlinServerClientApiFile = tasks.register<Copy>("copyKotlinServerClientApiFile") {
-    val srcPath = "$buildDir/$pathAutoGenerationFiles/javaapi"
-    from(srcPath)
-
-    val outPath = "$projectDir/$pathSrcKotlinFiles"
-    into(outPath)
-}
-

@@ -3,10 +3,8 @@ package server_client
 import MessagesState
 import ServerClientState
 import androidx.compose.runtime.mutableStateListOf
-import build.generated.source.proto.main.java.*
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.MessageLite
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -14,7 +12,6 @@ import servers.ProtoTCPServer
 import servers.ProtoUDPServer
 import utils.FastServerLogger
 import utils.NetworkThread
-import java.util.concurrent.Executors
 
 class ServerImpl {
     var messages = mutableStateListOf<String>()

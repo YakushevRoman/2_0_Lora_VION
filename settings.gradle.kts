@@ -1,5 +1,8 @@
 include(":proto_files")
-include(":feature_protobuff_server_client")
+/**
+ * for use submodule
+ * include(":feature_protobuff_server_client")
+ */
 
 pluginManagement {
     repositories {
