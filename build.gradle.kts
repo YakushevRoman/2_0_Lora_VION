@@ -80,11 +80,9 @@ sourceSets {
                 "**/Rs_military.proto",
                 "**/vehicle_settings.proto",
                 "**/wiredConnection.proto",
-                "**/nrf_drv_proto_config.proto",
-                "**/nrf_drv_proto_manage.proto",
-                "**/nrf_drv_proto_messages.proto",
-                "**/nrf_drv_proto_provision.proto",
                 "**/posix_file_system.proto",
+                "**/*Fourth_generation_BLE",
+                "**/*Nrf_driver",
                 "**/*ShootHouse"
             )
         }
@@ -115,7 +113,7 @@ protobuf {
 
     plugins {
         id("javaapi") {
-            path = "tools/protoc-gen-javaapi_4.exe"
+            path = "proto_files/protoc-gen-javaapi_4.exe"
         }
     }
 
@@ -125,9 +123,9 @@ protobuf {
                 id("kotlin") {}
             }
             it.plugins {
-                id("javaapi") {
-                    outputSubDir = "java"
-                }
+                //id("javaapi") {
+                //    outputSubDir = "java"
+                //}
             }
 
         }
