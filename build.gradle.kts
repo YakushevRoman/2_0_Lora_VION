@@ -63,7 +63,7 @@ compose.desktop {
 val pathSubmodule = "proto_files"
 
 val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
-val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_military"
+val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_commerc"
 
 val protoDirectories = listOfNotNull(
     pathProtoFilesCommon,
@@ -75,12 +75,10 @@ sourceSets {
         proto {
             srcDirs(protoDirectories)
             exclude(
-                "**/runtime_dbg.proto",
-                "**/IndoorNavigation.proto",
-                "**/Rs_military.proto",
-                "**/vehicle_settings.proto",
-                "**/wiredConnection.proto",
+                "**/vest_rs485.proto",
+                "**/vest_setting.proto",
                 "**/posix_file_system.proto",
+                "**/tvout.proto",
                 "**/*Fourth_generation_BLE",
                 "**/*Nrf_driver",
                 "**/*ShootHouse"

@@ -1,32 +1,25 @@
 package server_client
 
-import AntiSniper
-import EspClientApi
+import AdditionalDeviceClientApi
 import MessagesState
 import androidx.compose.runtime.mutableStateListOf
-import batteryLevel
 import com.google.protobuf.ByteString
-import gPSCoordinate
 import helloFromDev
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import statById
-import statFromKit
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 import clients.ProtoClient
+import responseBatteryLevel
 import utils.FastServerLogger
 import utils.HandlerWrapper
 import utils.NetworkThread
 
 class ClientImpl :
-    EspClientApi.OnConnectedListener,
-    EspClientApi.OnDisconnectedListener,
-    EspClientApi.OnStartGameListener,
-    EspClientApi.OnSettingAntiSniperListener,
-    EspClientApi.OnSetVolumeListener,
-    EspClientApi.OnCommandListener {
+    AdditionalDeviceClientApi.OnConnectedListener,
+    AdditionalDeviceClientApi.OnDisconnectedListener,
+    AdditionalDeviceClientApi.OnStartGameListener {
 
     companion object {
         const val clientsCount = 5
@@ -40,7 +33,7 @@ class ClientImpl :
     var messages = mutableStateListOf<String>()
 
     private val clients = mutableListOf<ProtoClient>()
-    private val clientApis = mutableListOf<EspClientApi>()
+    private val clientApis = mutableListOf<AdditionalDeviceClientApi>()
 
     private val _clientMessagesState = MutableSharedFlow<MessagesState>()
     val clientMessagesState = _clientMessagesState.asSharedFlow()
@@ -60,16 +53,13 @@ class ClientImpl :
             val client = ProtoClient(logger, true)
             clients.add(client)
 
-            val clientApi = EspClientApi(
+            val clientApi = AdditionalDeviceClientApi(
                 client
             )
 
             clientApi.setOnConnectedListener(this)
             clientApi.setOnDisconnectedListener(this)
-            clientApi.setOnSettingAntiSniperListener(this)
-            clientApi.setOnCommandListener(this)
             clientApi.setOnStartGameListener(this)
-            clientApi.setOnSetVolumeListener(this)
 
             client.setProtocolDispatcher(clientApi)
             clientApis.add(clientApi)
@@ -80,8 +70,8 @@ class ClientImpl :
     fun startWork() {
         connected.set(0)
         clients.forEach {
-            it.connect("localhost", TCP_PORT_SERVER_PROTO)
-            //it.connect("192.168.1.104", TCP_PORT_SERVER_PROTO)
+            //it.connect("localhost", TCP_PORT_SERVER_PROTO)
+            it.connect("192.168.1.101", TCP_PORT_SERVER_PROTO)
         }
 
 
@@ -90,24 +80,9 @@ class ClientImpl :
             sendPing()
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(10_000)
-            sendGpsCoordinate()
-        }
-
         CoroutineScope(Dispatchers.Default).launch {
             delay(10_000)
             sendBattery()
-        }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            delay(10_000)
-            //sendBattery()
-        }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            delay(15_000)
-            sendStatById()
         }
     }
 
@@ -117,54 +92,51 @@ class ClientImpl :
         }
     }
 
+    /**
+     * // this is hello message, must be first message after connection
+    message HelloFromDev {
+    option (c2s_id) = 1;
+
+    int32 device_id           		= 1;  // Игровой ID устройства
+    int32 kit_tick            		= 2;  // msec from start kit (internal clock)
+    bool was_early_connected  		= 3;  // Eказатель на реконект к серверу значение (1) - повторное подключение, значение (0) - первое подключение
+    int32 firmware_version    		= 4 [deprecated=true];  // DEPRECATED! Текущая версия прошивки
+    int32 global_changes      		= 5 [deprecated=true];  // DEPRECATED! Глобальные изменения в тек.версии
+    int32 minor_changes       		= 6 [deprecated=true];  // DEPRECATED! Мелкие изменения в тек.версии
+    DevType devtype           		= 7;
+    int32 SerialNumber        		= 8;  // Физический номер флэш памяти
+    uint32 diodes_brightness  		= 9;  // Яркость светодиодов, (0 - 100, в %)
+    uint32 display_brightness 		= 10; // Яркость дисплея, (0 - 100, в %)
+    uint32 sound_volume       		= 11; // Громкость устройства, (0 - 100, в %)
+    LangugeType lang          		= 12; // Locale that currently used
+    bytes firmware_ver        		= 13;
+    DisplayType type_display  	  	= 14 [deprecated=true]; // DEPRECATED! type of use display
+    bytes bios_ver					= 15; // версия бута устройства
+    bytes boot_ver					= 16; // версия биоса устройства
+    }
+     */
     @Synchronized
     override fun onConnected() {
         CoroutineScope(Dispatchers.Default).launch {
             _clientMessagesState.emit(MessagesState.Empty)
         }
 
-        val uuidArray = ByteArray(12)
         val firmwareVerArray = ByteArray(6)
-        val randomUuid = Random.nextBytes(uuidArray);
         val randomFirmwareVer = Random.nextBytes(firmwareVerArray)
 
-        if (connected.get() == 0)
-            clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-                devtype = CommonEnums.DevType.TANK
-                wasEarlyConnected = false
-                kitTick = 10000
-                deviceId = connected.get() + 1
-                serialNumber = 123456
-                uuid = ByteString.copyFrom(randomUuid)
-                firmwareVer = ByteString.copyFrom(randomFirmwareVer)
-            })
-        else
-            clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-                devtype = CommonEnums.DevType.TARGET_SHOOTER
-                wasEarlyConnected = false
-                kitTick = 10000
-                deviceId = connected.get() + 1
-                serialNumber = 123456
-                uuid = ByteString.copyFrom(randomUuid)
-                firmwareVer = ByteString.copyFrom(randomFirmwareVer)
-            })
+        clientApis[connected.get()].sendHelloFromDev(helloFromDev {
+            devtype = ForpostServer.DevType.TAGER_F05
+            wasEarlyConnected = false
+            kitTick = 10000
+            deviceId = connected.get() + 1
+            serialNumber = Random.nextInt()
+            lang = ForpostServer.LangugeType.FRENCH
+            firmwareVer = ByteString.copyFrom(randomFirmwareVer)
+            biosVer = ByteString.copyFrom(randomFirmwareVer)
+            bootVer = ByteString.copyFrom(randomFirmwareVer)
+        })
 
         connected.incrementAndGet()
-    }
-
-    private suspend fun sendGpsCoordinate() {
-        repeat(120000) {
-            delay(2500)
-
-            clientApis.forEach {
-                val deltaLong = Random.nextFloat()
-                val deltaLat = Random.nextFloat()
-                it.sendGPSCoordinate(gPSCoordinate {
-                    longtude = 36.5F + deltaLong
-                    latitude = 50.0F + deltaLat
-                })
-            }
-        }
     }
 
     private suspend fun sendBattery() {
@@ -172,31 +144,13 @@ class ClientImpl :
             delay(1000)
 
             clientApis.forEach {
-                it.sendBatteryLevel(batteryLevel {
-                    batteryLevel = Random.nextInt(0, 100)
+                it.sendResponseBatteryLevel(responseBatteryLevel {
+                    batteryLevel = Random.nextInt(0,100)
                 })
             }
         }
     }
 
-    private suspend fun sendStatById() {
-
-            clientApis[0].let{
-
-                it.sendStatFromKit(statFromKit {
-                    currentHealth = 10
-                    gameStatus = 1
-                })
-
-                delay(1000)
-
-                it.sendStatById(statById {
-                    id = 2
-                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
-                    kitSysTime = 30_000
-                })
-            }
-    }
 
     private suspend fun sendPing() {
         repeat(6000) {
@@ -215,21 +169,8 @@ class ClientImpl :
         startWork()
     }
 
-    override fun onStartGameReceived(message: Base.StartGame?) {
-        CoroutineScope(Dispatchers.Default).launch {
-            delay(10_000)
-        }
+    override fun onStartGameReceived(message: ForpostServer.StartGame?) {
+        println("on start game")
     }
 
-    override fun onSettingAntiSniperReceived(message: AntiSniper.SettingAntiSniper?) {
-        println(message)
-    }
-
-    override fun onCommandReceived(message: AntiSniper.Command?) {
-        println(message)
-    }
-
-    override fun onSetVolumeReceived(message: Multimedia.SetVolume?) {
-        print(message)
-    }
 }
