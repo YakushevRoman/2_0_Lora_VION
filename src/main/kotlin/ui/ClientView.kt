@@ -33,20 +33,6 @@ fun appClient(messages: MutableList<String>, reconnect: () -> Unit, sendStat: ()
                     fontSize = 16.sp
                 )
                 Button(
-                    onClick = {},
-                    colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
-                )
-                {
-                    Text("Send messages")
-                }
-                Button(
-                    onClick = { messages.clear() },
-                    colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
-                )
-                {
-                    Text("Clear messages")
-                }
-                Button(
                     onClick = reconnect,
                     colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
                 )
