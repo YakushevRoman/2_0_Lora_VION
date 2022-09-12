@@ -16,7 +16,7 @@ import server_client.ClientImpl
 
 @Composable
 @Preview
-fun appClient( messages : MutableList<String>, reconnect: () -> Unit) {
+fun appClient(messages: MutableList<String>, reconnect: () -> Unit, sendStat: () -> Unit) {
 
     MaterialTheme {
         Column {
@@ -32,23 +32,34 @@ fun appClient( messages : MutableList<String>, reconnect: () -> Unit) {
                     text = "Messages: ",
                     fontSize = 16.sp
                 )
-                Button(onClick = {},
+                Button(
+                    onClick = {},
                     colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
                 )
                 {
                     Text("Send messages")
                 }
-                Button(onClick = {messages.clear()},
+                Button(
+                    onClick = { messages.clear() },
                     colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
                 )
                 {
                     Text("Clear messages")
                 }
-                Button(onClick = reconnect,
+                Button(
+                    onClick = reconnect,
                     colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
                 )
                 {
                     Text("Reconnect")
+                }
+
+                Button(
+                    onClick = sendStat,
+                    colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Red)
+                )
+                {
+                    Text("Send statFromKit and statByID")
                 }
             }
 
@@ -79,27 +90,19 @@ fun appClient( messages : MutableList<String>, reconnect: () -> Unit) {
     }
 }
 
-var b1 = false
-var b2 = fix(b1)
-
-
-fun fix(b1: Boolean): Boolean {
-    var b1 = b1
-    b1 = true
-    return true
-}
-
 fun main() = application {
     val client = ClientImpl()
 
     Window(onCloseRequest = ::exitApplication) {
         appClient(
-            client.messages
-        ) {
-            client.reconect()
-        }
+            client.messages,
+            {
+                client.reconect()
+            },
+            {
+                client.sendStatById()
+            })
     }
-
 }
 
 

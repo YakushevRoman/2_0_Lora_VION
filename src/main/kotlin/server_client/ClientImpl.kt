@@ -29,10 +29,13 @@ class ClientImpl :
     EspClientApi.OnCommandListener {
 
     companion object {
-        const val clientsCount = 5
+        const val clientsCount = 3
         const val UDP_PORT_SERVER_PROTO = 4011
         const val TCP_PORT_SERVER_PROTO = 4000
     }
+
+    var time = 15331
+    var time2 = 16331
 
     @Volatile
     var connected = AtomicInteger(0)
@@ -53,6 +56,8 @@ class ClientImpl :
     init {
         createClients()
     }
+
+    val soldiersId = listOf(31,21)
 
     private fun createClients() {
 
@@ -81,7 +86,7 @@ class ClientImpl :
         connected.set(0)
         clients.forEach {
             it.connect("localhost", TCP_PORT_SERVER_PROTO)
-            //it.connect("192.168.1.104", TCP_PORT_SERVER_PROTO)
+            //it.connect("192.168.1.101", TCP_PORT_SERVER_PROTO)
         }
 
 
@@ -104,11 +109,6 @@ class ClientImpl :
             delay(10_000)
             //sendBattery()
         }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            delay(15_000)
-            sendStatById()
-        }
     }
 
     fun stopWork() {
@@ -130,21 +130,21 @@ class ClientImpl :
 
         if (connected.get() == 0)
             clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-                devtype = CommonEnums.DevType.TANK
+                devtype = CommonEnums.DevType.TARGET_ANTISNIPER
                 wasEarlyConnected = false
                 kitTick = 10000
-                deviceId = connected.get() + 1
+                deviceId = 2
                 serialNumber = 123456
                 uuid = ByteString.copyFrom(randomUuid)
                 firmwareVer = ByteString.copyFrom(randomFirmwareVer)
             })
         else
             clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-                devtype = CommonEnums.DevType.TARGET_SHOOTER
+                devtype = CommonEnums.DevType.SOILDER
                 wasEarlyConnected = false
                 kitTick = 10000
-                deviceId = connected.get() + 1
-                serialNumber = 123456
+                deviceId = soldiersId[connected.get() - 1]
+                serialNumber = 1234561
                 uuid = ByteString.copyFrom(randomUuid)
                 firmwareVer = ByteString.copyFrom(randomFirmwareVer)
             })
@@ -179,23 +179,80 @@ class ClientImpl :
         }
     }
 
-    private suspend fun sendStatById() {
+    fun sendStatById() {
 
-            clientApis[0].let{
+        CoroutineScope(Dispatchers.Default).launch {
+            clientApis[0].let {
+                time += 6000
 
                 it.sendStatFromKit(statFromKit {
-                    currentHealth = 10
+                    currentHealth = 65
                     gameStatus = 1
+                    kitSysTime = time
                 })
-
-                delay(1000)
 
                 it.sendStatById(statById {
-                    id = 2
+                    id = 31
                     typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
-                    kitSysTime = 30_000
+                    kitSysTime = time
                 })
+
+                time += 6000
+                it.sendStatFromKit(statFromKit {
+                    currentHealth = 0
+                    gameStatus = 1
+                    kitSysTime = time
+                })
+
+                it.sendStatById(statById {
+                    id = 31
+                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
+                    kitSysTime = time
+                })
+
             }
+
+            delay(5000)
+
+            clientApis[2].let {
+                time2 += 1000
+
+                it.sendStatFromKit(statFromKit {
+                    currentHealth = 100
+                    gameStatus = 1
+                    kitSysTime = time2
+                })
+                time2 += 6000
+
+                it.sendStatFromKit(statFromKit {
+                    currentHealth = 65
+                    gameStatus = 1
+                    kitSysTime = time2
+                })
+
+                it.sendStatById(statById {
+                    id = 31
+                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
+                    kitSysTime = time2
+                })
+
+                time2 += 6000
+
+                it.sendStatFromKit(statFromKit {
+                    currentHealth = 0
+                    gameStatus = 1
+                    kitSysTime = time2
+                })
+
+                it.sendStatById(statById {
+                    id = 31
+                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
+                    kitSysTime = time2
+                })
+
+            }
+        }
+
     }
 
     private suspend fun sendPing() {
