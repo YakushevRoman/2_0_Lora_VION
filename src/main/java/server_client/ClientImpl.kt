@@ -1,17 +1,11 @@
 package server_client
 
-import AntiSniper
 import EspClientApi
 import MessagesState
 import androidx.compose.runtime.mutableStateListOf
-import batteryLevel
 import com.google.protobuf.ByteString
-import gPSCoordinate
-import helloFromDev
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import statById
-import statFromKit
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
@@ -128,26 +122,34 @@ class ClientImpl :
         val randomUuid = Random.nextBytes(uuidArray);
         val randomFirmwareVer = Random.nextBytes(firmwareVerArray)
 
-        if (connected.get() == 0)
-            clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-                devtype = CommonEnums.DevType.TARGET_ANTISNIPER
-                wasEarlyConnected = false
-                kitTick = 10000
-                deviceId = 2
-                serialNumber = 123456
-                uuid = ByteString.copyFrom(randomUuid)
-                firmwareVer = ByteString.copyFrom(randomFirmwareVer)
-            })
-        else
-            clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-                devtype = CommonEnums.DevType.SOILDER
-                wasEarlyConnected = false
-                kitTick = 10000
-                deviceId = soldiersId[connected.get() - 1]
-                serialNumber = 1234561
-                uuid = ByteString.copyFrom(randomUuid)
-                firmwareVer = ByteString.copyFrom(randomFirmwareVer)
-            })
+        if (connected.get() == 0) {
+            val message = Base.HelloFromDev
+                .newBuilder()
+                .setDevtype(CommonEnums.DevType.TARGET_ANTISNIPER)
+                .setWasEarlyConnected(false)
+                .setKitTick(10000)
+                .setDeviceId(2)
+                .setSerialNumber(123456)
+                .setUuid(ByteString.copyFrom(randomUuid))
+                .setFirmwareVer(ByteString.copyFrom(randomFirmwareVer))
+                .build()
+
+            clientApis[connected.get()].sendHelloFromDev(message)
+        }
+        else {
+            val message = Base.HelloFromDev
+                .newBuilder()
+                .setDevtype(CommonEnums.DevType.SOILDER)
+                .setWasEarlyConnected(false)
+                .setKitTick(10000)
+                .setDeviceId(soldiersId[connected.get() - 1])
+                .setSerialNumber(123456)
+                .setUuid(ByteString.copyFrom(randomUuid))
+                .setFirmwareVer(ByteString.copyFrom(randomFirmwareVer))
+                .build()
+
+            clientApis[connected.get()].sendHelloFromDev(message)
+        }
 
         connected.incrementAndGet()
     }
@@ -159,10 +161,13 @@ class ClientImpl :
             clientApis.forEach {
                 val deltaLong = Random.nextFloat()
                 val deltaLat = Random.nextFloat()
-                it.sendGPSCoordinate(gPSCoordinate {
-                    longtude = 36.5F + deltaLong
-                    latitude = 50.0F + deltaLat
-                })
+
+                val message = CommonMilitary.GPSCoordinate.newBuilder()
+                    .setAltitude(0)
+                    .setLongtude(36.5F + deltaLong)
+                    .setLatitude(50.0F + deltaLat)
+                    .build()
+                it.sendGPSCoordinate(message)
             }
         }
     }
@@ -172,9 +177,10 @@ class ClientImpl :
             delay(1000)
 
             clientApis.forEach {
-                it.sendBatteryLevel(batteryLevel {
-                    batteryLevel = Random.nextInt(0, 100)
-                })
+                val message = CommonMilitary.BatteryLevel.newBuilder()
+                    .setBatteryLevel(Random.nextInt(0, 100))
+                    .build()
+                it.sendBatteryLevel(message)
             }
         }
     }
@@ -185,30 +191,34 @@ class ClientImpl :
             clientApis[0].let {
                 time += 6000
 
-                it.sendStatFromKit(statFromKit {
-                    currentHealth = 65
-                    gameStatus = 1
-                    kitSysTime = time
-                })
+                val message1 = KitMilitary.StatFromKit.newBuilder()
+                    .setCurrentHealth(65)
+                    .setGameStatus(1)
+                    .setKitSysTime(time)
+                    .build()
+                it.sendStatFromKit(message1)
 
-                it.sendStatById(statById {
-                    id = 31
-                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
-                    kitSysTime = time
-                })
+                val mesage2 = KitMilitary.StatById.newBuilder()
+                    .setKitSysTime(time)
+                    .setId(31)
+                    .setTypeOfWeapon(CommonEnums.TypeWeapon.ASSAULT_RIFLE)
+                    .build()
+                it.sendStatById(mesage2)
 
                 time += 6000
-                it.sendStatFromKit(statFromKit {
-                    currentHealth = 0
-                    gameStatus = 1
-                    kitSysTime = time
-                })
+                val message3 = KitMilitary.StatFromKit.newBuilder()
+                    .setCurrentHealth(0)
+                    .setGameStatus(1)
+                    .setKitSysTime(time)
+                    .build()
+                it.sendStatFromKit(message3)
 
-                it.sendStatById(statById {
-                    id = 31
-                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
-                    kitSysTime = time
-                })
+                val mesage4 = KitMilitary.StatById.newBuilder()
+                    .setKitSysTime(time)
+                    .setId(31)
+                    .setTypeOfWeapon(CommonEnums.TypeWeapon.ASSAULT_RIFLE)
+                    .build()
+                it.sendStatById(mesage4)
 
             }
 
@@ -217,38 +227,34 @@ class ClientImpl :
             clientApis[2].let {
                 time2 += 1000
 
-                it.sendStatFromKit(statFromKit {
-                    currentHealth = 100
-                    gameStatus = 1
-                    kitSysTime = time2
-                })
-                time2 += 6000
+                val message1 = KitMilitary.StatFromKit.newBuilder()
+                    .setCurrentHealth(65)
+                    .setGameStatus(1)
+                    .setKitSysTime(time)
+                    .build()
+                it.sendStatFromKit(message1)
 
-                it.sendStatFromKit(statFromKit {
-                    currentHealth = 65
-                    gameStatus = 1
-                    kitSysTime = time2
-                })
+                val mesage2 = KitMilitary.StatById.newBuilder()
+                    .setKitSysTime(time)
+                    .setId(31)
+                    .setTypeOfWeapon(CommonEnums.TypeWeapon.ASSAULT_RIFLE)
+                    .build()
+                it.sendStatById(mesage2)
 
-                it.sendStatById(statById {
-                    id = 31
-                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
-                    kitSysTime = time2
-                })
+                time += 6000
+                val message3 = KitMilitary.StatFromKit.newBuilder()
+                    .setCurrentHealth(0)
+                    .setGameStatus(1)
+                    .setKitSysTime(time)
+                    .build()
+                it.sendStatFromKit(message3)
 
-                time2 += 6000
-
-                it.sendStatFromKit(statFromKit {
-                    currentHealth = 0
-                    gameStatus = 1
-                    kitSysTime = time2
-                })
-
-                it.sendStatById(statById {
-                    id = 31
-                    typeOfWeapon = CommonEnums.TypeWeapon.ASSAULT_RIFLE
-                    kitSysTime = time2
-                })
+                val mesage4 = KitMilitary.StatById.newBuilder()
+                    .setKitSysTime(time)
+                    .setId(31)
+                    .setTypeOfWeapon(CommonEnums.TypeWeapon.ASSAULT_RIFLE)
+                    .build()
+                it.sendStatById(mesage4)
 
             }
         }
@@ -272,21 +278,21 @@ class ClientImpl :
         startWork()
     }
 
-    override fun onStartGameReceived(message: Base.StartGame?) {
+    override fun onStartGameReceived(message: Base.StartGame) {
         CoroutineScope(Dispatchers.Default).launch {
             delay(10_000)
         }
     }
 
-    override fun onSettingAntiSniperReceived(message: AntiSniper.SettingAntiSniper?) {
+    override fun onSettingAntiSniperReceived(message: AntiSniper.SettingAntiSniper) {
         println(message)
     }
 
-    override fun onCommandReceived(message: AntiSniper.Command?) {
+    override fun onCommandReceived(message: AntiSniper.Command) {
         println(message)
     }
 
-    override fun onSetVolumeReceived(message: Multimedia.SetVolume?) {
+    override fun onSetVolumeReceived(message: Multimedia.SetVolume) {
         print(message)
     }
 }

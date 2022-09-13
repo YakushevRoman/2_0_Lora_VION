@@ -112,22 +112,17 @@ protobuf {
     }
 
     plugins {
-        id("javaapi") {
-            path = "proto_files/protoc-gen-javaapi_4.exe"
+        protoc {
+            path = "proto_files/protoc"
         }
     }
 
     generateProtoTasks {
         all().forEach {
-            it.builtins {
-                id("kotlin") {}
-            }
             it.plugins {
-                //id("javaapi") {
-                //    outputSubDir = "java"
-                //}
+                id("javaapi") { outputSubDir = "java" }
             }
-
         }
     }
+
 }
