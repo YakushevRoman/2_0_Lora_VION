@@ -19,10 +19,11 @@ import utils.NetworkThread
 class ClientImpl :
     AdditionalDeviceClientApi.OnConnectedListener,
     AdditionalDeviceClientApi.OnDisconnectedListener,
+    AdditionalDeviceClientApi.OnSettingsNotAgrListener,
     AdditionalDeviceClientApi.OnStartGameListener {
 
     companion object {
-        const val clientsCount = 5
+        const val clientsCount = 1
         const val UDP_PORT_SERVER_PROTO = 4011
         const val TCP_PORT_SERVER_PROTO = 4000
     }
@@ -60,6 +61,7 @@ class ClientImpl :
             clientApi.setOnConnectedListener(this)
             clientApi.setOnDisconnectedListener(this)
             clientApi.setOnStartGameListener(this)
+            clientApi.setOnSettingsNotAgrListener(this)
 
             client.setProtocolDispatcher(clientApi)
             clientApis.add(clientApi)
@@ -69,12 +71,13 @@ class ClientImpl :
 
     fun startWork() {
         connected.set(0)
-        clients.forEach {
-            //it.connect("localhost", TCP_PORT_SERVER_PROTO)
-            it.connect("192.168.1.101", TCP_PORT_SERVER_PROTO)
+        CoroutineScope(Dispatchers.Default).launch {
+            clients.forEach {
+                delay(2500)
+                    it.connect("localhost", TCP_PORT_SERVER_PROTO)
+                    //it.connect("192.168.1.102", TCP_PORT_SERVER_PROTO)
+            }
         }
-
-
 
         CoroutineScope(Dispatchers.Default).launch {
             sendPing()
@@ -125,7 +128,7 @@ class ClientImpl :
         val randomFirmwareVer = Random.nextBytes(firmwareVerArray)
 
         clientApis[connected.get()].sendHelloFromDev(helloFromDev {
-            devtype = ForpostServer.DevType.TAGER_F05
+            devtype = ForpostServer.DevType.TAGER_ECLIPSE
             wasEarlyConnected = false
             kitTick = 10000
             deviceId = connected.get() + 1
@@ -173,4 +176,9 @@ class ClientImpl :
         println("on start game")
     }
 
+    override fun onSettingsNotAgrReceived(message: Tagger.SettingsNotAgr?) {
+        message?.let {
+            println("on settings not agr $message")
+        }
+    }
 }

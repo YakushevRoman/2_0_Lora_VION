@@ -111,7 +111,7 @@ protobuf {
 
     plugins {
         id("javaapi") {
-            path = "proto_files/protoc-gen-javaapi_4.exe"
+            path = "proto_files/protoc-gen-javaapi.exe"
         }
     }
 
