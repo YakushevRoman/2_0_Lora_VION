@@ -4,13 +4,13 @@ import AdditionalDeviceClientApi
 import MessagesState
 import androidx.compose.runtime.mutableStateListOf
 import com.google.protobuf.ByteString
-import helloFromDev
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 import clients.ProtoClient
+import helloFromDev
 import responseBatteryLevel
 import utils.FastServerLogger
 import utils.HandlerWrapper
@@ -20,10 +20,13 @@ class ClientImpl :
     AdditionalDeviceClientApi.OnConnectedListener,
     AdditionalDeviceClientApi.OnDisconnectedListener,
     AdditionalDeviceClientApi.OnSettingsNotAgrListener,
+    AdditionalDeviceClientApi.OnWeaponSettingsListener,
+    AdditionalDeviceClientApi.OnChangeColorListener,
+    AdditionalDeviceClientApi.OnStopGameListener,
     AdditionalDeviceClientApi.OnStartGameListener {
 
     companion object {
-        const val clientsCount = 1
+        const val clientsCount = 2
         const val UDP_PORT_SERVER_PROTO = 4011
         const val TCP_PORT_SERVER_PROTO = 4000
     }
@@ -44,10 +47,6 @@ class ClientImpl :
     val logger = FastServerLogger("src/logs/client_logs")
     private val networkThread = NetworkThread(logger)
 
-    init {
-        createClients()
-    }
-
     private fun createClients() {
 
         repeat(clientsCount) {
@@ -61,7 +60,10 @@ class ClientImpl :
             clientApi.setOnConnectedListener(this)
             clientApi.setOnDisconnectedListener(this)
             clientApi.setOnStartGameListener(this)
+            clientApi.setOnStopGameListener(this)
             clientApi.setOnSettingsNotAgrListener(this)
+            clientApi.setOnChangeColorListener(this)
+            clientApi.setOnWeaponSettingsListener(this)
 
             client.setProtocolDispatcher(clientApi)
             clientApis.add(clientApi)
@@ -70,12 +72,17 @@ class ClientImpl :
     }
 
     fun startWork() {
+        clients.clear()
+        clientApis.clear()
+        createClients()
+
         connected.set(0)
         CoroutineScope(Dispatchers.Default).launch {
             clients.forEach {
-                delay(2500)
-                    it.connect("localhost", TCP_PORT_SERVER_PROTO)
-                    //it.connect("192.168.1.102", TCP_PORT_SERVER_PROTO)
+                delay(200)
+                it.connect("localhost", TCP_PORT_SERVER_PROTO)
+                //it.connect("10.0.2.16", TCP_PORT_SERVER_PROTO)
+                //it.connect("192.168.1.102", TCP_PORT_SERVER_PROTO)
             }
         }
 
@@ -120,6 +127,7 @@ class ClientImpl :
      */
     @Synchronized
     override fun onConnected() {
+        println("Connected")
         CoroutineScope(Dispatchers.Default).launch {
             _clientMessagesState.emit(MessagesState.Empty)
         }
@@ -148,7 +156,7 @@ class ClientImpl :
 
             clientApis.forEach {
                 it.sendResponseBatteryLevel(responseBatteryLevel {
-                    batteryLevel = Random.nextInt(0,100)
+                    batteryLevel = Random.nextInt(0, 100)
                 })
             }
         }
@@ -176,9 +184,25 @@ class ClientImpl :
         println("on start game")
     }
 
+    override fun onStopGameReceived() {
+        println("on stop game")
+    }
+
     override fun onSettingsNotAgrReceived(message: Tagger.SettingsNotAgr?) {
         message?.let {
             println("on settings not agr $message")
+        }
+    }
+
+    override fun onWeaponSettingsReceived(message: Tagger.WeaponSettings?) {
+        message?.let {
+            println("on weapon settings $message")
+        }
+    }
+
+    override fun onChangeColorReceived(message: Tagger.ChangeColor?) {
+        message?.let {
+            println("on change color $message")
         }
     }
 }

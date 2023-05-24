@@ -23,7 +23,6 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    //implementation(project(":feature_protobuff_server_client"))
 
     implementation(compose.desktop.currentOs)
 
@@ -63,11 +62,11 @@ compose.desktop {
 val pathSubmodule = "proto_files"
 
 val pathProtoFilesCommon = "$pathSubmodule/Proto_files_common"
-val pathProtoFilesMilitary = "$pathSubmodule/Proto_files_commerc"
+val pathProtoFilesCommerc = "$pathSubmodule/Proto_files_military"
 
 val protoDirectories = listOfNotNull(
     pathProtoFilesCommon,
-    pathProtoFilesMilitary
+    pathProtoFilesCommerc
 )
 
 sourceSets {
@@ -75,13 +74,18 @@ sourceSets {
         proto {
             srcDirs(protoDirectories)
             exclude(
-                "**/vest_rs485.proto",
-                "**/vest_setting.proto",
-                "**/posix_file_system.proto",
+                "**/runtime_dbg.proto",
                 "**/tvout.proto",
+                "**/IndoorNavigation.proto",
+                "**/Rs_military.proto",
+                "**/vehicle_settings.proto",
+                "**/wiredConnection.proto",
+                "**/posix_file_system.proto",
                 "**/*Fourth_generation_BLE",
                 "**/*Nrf_driver",
-                "**/*ShootHouse"
+                "**/*Fourth_generation_BLE",
+                "**/*ShootHouse",
+                "**/Stinger.proto",
             )
         }
         java.srcDirs("src/main/java", "src/main/kotlin")
@@ -109,9 +113,15 @@ protobuf {
         artifact = "com.google.protobuf:protoc:3.20.1"
     }
 
+    /*plugins {
+        protoc {
+            path = "tools/protoc-gen-javaapi.exe"
+        }
+    }*/
+
     plugins {
         id("javaapi") {
-            path = "proto_files/protoc-gen-javaapi.exe"
+            path = "tools/protoc-gen-javaapi.exe"
         }
     }
 
@@ -121,11 +131,9 @@ protobuf {
                 id("kotlin") {}
             }
             it.plugins {
-                //id("javaapi") {
-                //    outputSubDir = "java"
-                //}
+                id("javaapi") { outputSubDir = "java" }
             }
-
         }
     }
+
 }
