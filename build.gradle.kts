@@ -76,10 +76,47 @@ val pathAutoGenerationFiles = "generated/source/proto/main"
 val pathSrcKotlinFiles = "src/main/kotlin/generation_java_files"
 val pathSrcJavaFiles = "src/main/java/generation_kotlin_files"
 
+// tvout
+// "**/*Generation_BLE",
+//                 "**/*Nrf_driver",
+//                 "**/*Fourth_generation_BLE",
+//                 "**/BombPro.proto",
+//                 "**/additional_device.proto",
+//                 "**/stress_belt.proto",
+//                 "**/vest_rs485.proto",
+//                 "**/forpost_server.proto",
+//                 "**/tagger.proto",
+//                 "**/common_enums.proto",
+//                 "**/vest_setting.proto",
+//                 "**/esp.proto",
+//                 "**/esp_srv.proto",
+//                 "**/filesystem.proto",
+//                 "**/firmware.proto",
+//                 "**/posix_file_system.proto",
+//                 "**/runtime_dbg.proto"
 sourceSets {
     main {
         proto {
             srcDirs(protoDirectories)
+            exclude(
+                "**/*Generation_BLE",
+                "**/*Nrf_driver",
+                "**/*Fourth_generation_BLE",
+                "**/BombPro.proto",
+                "**/additional_device.proto",
+                "**/stress_belt.proto",
+                "**/vest_rs485.proto",
+                "**/forpost_server.proto",
+                "**/tagger.proto",
+                "**/common_enums.proto",
+                "**/vest_setting.proto",
+                "**/esp.proto",
+                "**/esp_srv.proto",
+                "**/filesystem.proto",
+                "**/firmware.proto",
+                "**/posix_file_system.proto",
+                "**/runtime_dbg.proto"
+            )
         }
         java.srcDirs("src/main/java")
     }
@@ -104,22 +141,22 @@ protobuf {
     }
 
     protoc {
-        artifact = "com.google.protobuf:protoc:3.20.1"
+        artifact = "com.google.protobuf:protoc:3.24.1"
     }
 
     plugins {
         id("javaapi") {
-            path = "tools/protoc"
+            path = "tools/protoc-gen-javaapi_4.exe"
         }
     }
 
     generateProtoTasks {
         all().forEach {
-            it.plugins {
-                //id("javaapi"){}
-            }
             it.builtins {
                 id("kotlin") {}
+            }
+            it.plugins {
+                id("javaapi") { outputSubDir = "java" }
             }
         }
     }
