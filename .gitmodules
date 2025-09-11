@@ -1,3 +1,3 @@
 [submodule "proto_files"]
 	path = proto_files
-	url = http://forpost.ddns.net:22222/Library/Proto_files.git
+	url = https://gitpmk.netronic.team/Library/Proto_files.git
